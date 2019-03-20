@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhjy.app.modules.dao.GoodsReturnDao">
+
+    <insert id="insertGoodsReturn" parameterType="com.tangmo.zhjy.app.modules.bean.GoodsReturn">
+        insert into goods_return (go_id,user_id,merchant_id,reason,gr_explain)
+         VALUES (#{goId},#{userId},#{merchantId},#{reason},#{grExplain})
+    </insert>
+</mapper>

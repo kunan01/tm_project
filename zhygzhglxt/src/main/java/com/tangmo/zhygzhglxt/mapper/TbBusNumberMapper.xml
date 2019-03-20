@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhygzhglxt.dao.TbBusNumberMapper">
+    <resultMap id="BaseResultMap" type="com.tangmo.zhygzhglxt.entity.TbBusNumber">
+        <!--
+          列匹配实体属性
+        -->
+        <id column="bus_id" property="busId" jdbcType="VARCHAR"/>
+        <result column="bus_number" property="busNumber" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select
+        bus_id, bus_number
+        from tb_bus_number
+        where bus_id = #{busId}
+    </select>
+
+</mapper>

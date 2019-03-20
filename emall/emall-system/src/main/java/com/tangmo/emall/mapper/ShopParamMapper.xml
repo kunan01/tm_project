@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.emall.dao.ShopParamDao" >
+
+    <resultMap id="BaseParamType" type="com.tangmo.emall.entity.ParamType">
+        <id column="type_id" property="typeId" jdbcType="INTEGER" />
+        <result column="type_name" property="typeName" jdbcType="VARCHAR" />
+        <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="state" property="state" jdbcType="TINYINT" />
+        <result column="data_flag" property="dataFlag" jdbcType="TINYINT" />
+    </resultMap>
+
+    <resultMap id="BaseParamValue" type="com.tangmo.emall.entity.ParamValue">
+        <id column="value_id" property="valueId" jdbcType="INTEGER" />
+        <result column="param_value" property="paramValue" jdbcType="VARCHAR" />
+        <result column="type_id" property="typeId" jdbcType="INTEGER" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="param_image" property="paramImage" jdbcType="VARCHAR" />
+        <result column="state" property="state" jdbcType="TINYINT" />
+        <result column="data_flag" property="dataFlag" jdbcType="TINYINT" />
+    </resultMap>
+
+    <sql id="Base_Column_Type">
+        type_id,type_name,shop_id,created_time,state,data_flag
+    </sql>
+    
+    <sql id="Base_Column_Value">
+        t_param_value.value_id,t_param_value.param_value,t_param_value.type_id,t_param_value.created_time,
+        t_param_value.state,t_param_value.data_flag
+    </sql>
+
+    <select id="getParamTypeByName" parameterType="com.tangmo.emall.entity.ParamType" resultMap="BaseParamType">
+        select
+        <include refid="Base_Column_Type" />
+        from t_param_type where type_name = #{typeName} and shop_id = #{shopId}
+    </select>
+
+    <insert id="addShopParamType" parameterType="com.tangmo.emall.entity.ParamType">
+        insert into t_param_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="typeName != null">
+                type_name,
+            </if>
+            <if test="shopId != null">
+                shop_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="typeName != null">
+                #{typeName},
+            </if>
+            <if test="shopId != null">
+                #{shopId},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getParamValueByName" parameterType="com.tangmo.emall.entity.ParamValue" resultMap="BaseParamValue">
+        select
+        <include refid="Base_Column_Value" />
+        ,t_param_value.param_image
+        from t_param_value
+        where t_param_value.param_value = #{paramValue} and t_param_value.type_id = #{typeId}
+    </select>
+
+    <insert id="addShopParamValue" parameterType="com.tangmo.emall.entity.ParamValue">
+        insert into t_param_value
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="paramValue != null">
+                param_value,
+            </if>
+            <if test="typeId != null">
+                type_id,
+            </if>
+            <if test="paramImage != null">
+                param_image,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="paramValue != null">
+                #{paramValue},
+            </if>
+            <if test="typeId != null">
+                #{typeId},
+            </if>
+            <if test="paramImage != null">
+                #{paramImage},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getParamTypeById" parameterType="java.lang.Integer" resultMap="BaseParamType">
+        select
+        <include refid="Base_Column_Type" />
+        from t_param_type
+        where type_id = #{tId}
+    </select>
+
+    <update id="updShopParamType" parameterType="com.tangmo.emall.entity.ParamType">
+        update t_param_type
+        <set>
+            <if test="typeName != null">
+                type_name = #{typeName},
+            </if>
+            <if test="state != null">
+                state = #{state},
+            </if>
+
+        </set>
+        where type_id = #{typeId}
+    </update>
+
+    <select id="getParamValueById" parameterType="java.lang.Integer" resultMap="BaseParamValue">
+        select
+        <include refid="Base_Column_Value" />
+        ,t_param_value.param_image
+        from t_param_value
+        where t_param_value.value_id = #{valueId}
+    </select>
+
+    <update id="updShopParamValue" parameterType="com.tangmo.emall.entity.ParamValue">
+        update t_param_value
+        <set>
+            <if test="paramValue != null">
+                param_value = #{paramValue},
+            </if>
+            <if test="typeId != null">
+                type_id = #{typeId},
+            </if>
+            <if test="paramImage != null">
+                param_image = #{paramImage},
+            </if>
+            <if test="state != null">
+                state = #{state},
+            </if>
+        </set>
+        where value_id = #{valueId}
+    </update>
+
+    <update id="delShopParamValue" parameterType="java.lang.Integer">
+        update t_param_value set data_flag = 1 where value_id = #{valueId}
+    </update>
+
+    <update id="delShopParamType" parameterType="java.lang.Integer">
+        update t_param_type set data_flag = 1 where type_id = #{typeId}
+    </update>
+
+    <update id="delShopParamValueByTypeId" parameterType="java.lang.Integer">
+        update t_param_value set data_flag = 1 where type_id = #{typeId}
+    </update>
+
+    <select id="getParamTypeListByShopId" parameterType="java.lang.Integer" resultMap="BaseParamType">
+        select
+        <include refid="Base_Column_Type" />
+        from t_param_type
+        where shop_id = #{shopId} and data_flag = 0
+        order by created_time desc
+    </select>
+
+    <select id="getParamValueListByTypeId" parameterType="java.lang.Integer" resultMap="BaseParamValue">
+        select
+        <include refid="Base_Column_Value" />
+        ,t_param_value.param_image
+        from t_param_value
+        where t_param_value.type_id = #{typeId} and t_param_value.data_flag = 0
+        order by t_param_value.created_time desc
+    </select>
+
+</mapper>

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhjy.app.modules.dao.AppCommunityInformBeanMapper">
+	<resultMap id="BaseResultMap"
+		type="com.tangmo.zhjy.app.modules.bean.AppCommunityInformBean">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="publish_data" property="publishData" jdbcType="TIMESTAMP" />
+		<result column="cover" property="cover" jdbcType="VARCHAR" />
+		<result column="is_checked" property="isChecked" jdbcType="INTEGER" />
+		<result column="is_show" property="isShow" jdbcType="INTEGER" />
+		<result column="total" property="total" jdbcType="INTEGER" />
+		<result column="redtotal" property="redTotal" jdbcType="INTEGER" />
+		<result column="community_id" property="communityId" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime"></result>
+	</resultMap>
+	<resultMap id="ResultMapWithBLOBs"
+		type="com.tangmo.zhjy.app.modules.bean.AppCommunityInformBean"
+		extends="BaseResultMap">
+		<result column="content" property="content" jdbcType="LONGVARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, title, publish_data, cover, is_checked, is_show,
+		community_id,create_time
+	</sql>
+	<sql id="Blob_Column_List">
+		content
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from app_community_inform
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<!-- 分页查询社区通知 -->
+	<select id="findByPage" resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from app_community_inform
+		where title like #{title,jdbcType=VARCHAR}
+		and is_checked = 2 and is_show=0
+		order by id desc
+	</select>
+
+    <select id="findCommunityInfomByUserId" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List" />
+        ,
+        <include refid="Blob_Column_List" />
+        from app_community_inform
+        where <if test="type == 0">community_id in (select community_id from app_community_user where user_id = #{userId})</if>
+        <if test="type == 1">id in (select app_community_inform from app_community_inform_appuser where app_user_id = #{userId} AND is_read = 0)</if>
+        and is_checked = 2 and is_show=0
+        order by id desc
+    </select>
+
+
+	<!-- 查询未读社区通知 -->
+	<select id="findByUnread" resultMap="ResultMapWithBLOBs">
+		select * from
+		app_community_inform where id in (select app_community_inform
+		from
+		app_community_inform_appuser where is_read = 0 and
+		app_user_id=#{userId,jdbcType=INTEGER})
+		and is_checked=2 and is_show=0
+	</select>
+
+
+	<!-- 根据社区查询所有通知消息 -->
+	<select id="findByCommunityId" resultMap="BaseResultMap">
+
+		select * from app_community_inform where
+		community_id=#{communityId} order by id desc;
+
+
+	</select>
+
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		app_community_inform
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert"
+		parameterType="com.tangmo.zhjy.app.modules.bean.AppCommunityInformBean"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into app_community_inform
+		(id, title, publish_data,
+		cover, is_checked, is_show,
+		community_id,
+		content,create_time)
+		values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR},
+		now(),
+		#{cover,jdbcType=VARCHAR}, #{isChecked,jdbcType=INTEGER},
+		#{isShow,jdbcType=INTEGER},
+		#{communityId,jdbcType=INTEGER},
+		#{content,jdbcType=LONGVARBINARY},now())
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.tangmo.zhjy.app.modules.bean.AppCommunityInformBean">
+		insert into app_community_inform
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="title != null">
+				title,
+			</if>
+			<if test="publishData != null">
+				publish_data,
+			</if>
+			<if test="cover != null">
+				cover,
+			</if>
+			<if test="isChecked != null">
+				is_checked,
+			</if>
+			<if test="isShow != null">
+				is_show,
+			</if>
+			<if test="communityId != null">
+				community_id,
+			</if>
+			<if test="content != null">
+				content,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="publishData != null">
+				#{publishData,jdbcType=TIMESTAMP},
+			</if>
+			<if test="cover != null">
+				#{cover,jdbcType=VARCHAR},
+			</if>
+			<if test="isChecked != null">
+				#{isChecked,jdbcType=INTEGER},
+			</if>
+			<if test="isShow != null">
+				#{isShow,jdbcType=INTEGER},
+			</if>
+			<if test="communityId != null">
+				#{communityId,jdbcType=INTEGER},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=LONGVARBINARY},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.tangmo.zhjy.app.modules.bean.AppCommunityInformBean">
+		update app_community_inform
+		<set>
+			<if test="title != null">
+				title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="publishData != null">
+				publish_data = #{publishData,jdbcType=TIMESTAMP},
+			</if>
+			<if test="cover != null">
+				cover = #{cover,jdbcType=VARCHAR},
+			</if>
+			<if test="isChecked != null">
+				is_checked = #{isChecked,jdbcType=INTEGER},
+			</if>
+			<if test="isShow != null">
+				is_show = #{isShow,jdbcType=INTEGER},
+			</if>
+			<if test="communityId != null">
+				community_id = #{communityId,jdbcType=INTEGER},
+			</if>
+			<if test="content != null">
+				content = #{content,jdbcType=LONGVARBINARY},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs"
+		parameterType="com.tangmo.zhjy.app.modules.bean.AppCommunityInformBean">
+		update app_community_inform
+		set title =
+		#{title,jdbcType=VARCHAR},
+		publish_data =
+		#{publishData,jdbcType=TIMESTAMP},
+		cover = #{cover,jdbcType=VARCHAR},
+		is_checked = #{isChecked,jdbcType=INTEGER},
+		is_show =
+		#{isShow,jdbcType=INTEGER},
+		community_id =
+		#{communityId,jdbcType=INTEGER},
+		content =
+		#{content,jdbcType=LONGVARBINARY}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.tangmo.zhjy.app.modules.bean.AppCommunityInformBean">
+		update app_community_inform
+		set title =
+		#{title,jdbcType=VARCHAR},
+		publish_data =
+		#{publishData,jdbcType=TIMESTAMP},
+		cover = #{cover,jdbcType=VARCHAR},
+		is_checked = #{isChecked,jdbcType=INTEGER},
+		is_show =
+		#{isShow,jdbcType=INTEGER},
+		community_id =
+		#{communityId,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

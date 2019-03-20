@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.emall.dao.SlidesDao" >
+
+    <resultMap id="BaseSlides" type="com.tangmo.emall.entity.Slides">
+        <id column="slides_id" property="slidesId" jdbcType="INTEGER" />
+        <result column="slide_image" property="slideImage" jdbcType="VARCHAR" />
+        <result column="slide_sort" property="slideSort" jdbcType="INTEGER" />
+        <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+        <result column="is_effect" property="isEffect" jdbcType="TINYINT" />
+        <result column="create_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="object_type" property="objectType" jdbcType="TINYINT" />
+        <result column="object_id" property="objectId" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t_home_slides.slides_id,t_home_slides.slide_sort,t_home_slides.image_url,t_home_slides.is_effect,
+        t_home_slides.create_time,t_home_slides.object_type,t_home_slides.object_id
+    </sql>
+
+    <select id="getSlidesList" resultMap="BaseSlides">
+        select
+        <include refid="Base_Column_List" />
+        ,t_home_slides.slide_image
+        from t_home_slides
+        order by t_home_slides.slide_sort
+    </select>
+    
+    <insert id="addSlides" parameterType="com.tangmo.emall.entity.Slides">
+        insert into t_home_slides
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="slideImage != null">
+                slide_image,
+            </if>
+            <if test="slideSort != null">
+                slide_sort,
+            </if>
+            <if test="imageUrl != null">
+                image_url,
+            </if>
+            <if test="isEffect != null">
+                is_effect,
+            </if>
+            <if test="objectType != null">
+                object_type,
+            </if>
+            <if test="objectId != null">
+                object_id,
+            </if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="slideImage != null">
+                #{slideImage},
+            </if>
+            <if test="slideSort != null">
+                #{slideSort},
+            </if>
+            <if test="imageUrl != null">
+                #{imageUrl},
+            </if>
+            <if test="isEffect != null">
+                #{isEffect},
+            </if>
+            <if test="objectType != null">
+                #{objectType},
+            </if>
+            <if test="objectId != null">
+                #{objectId},
+            </if>
+            NOW()
+        </trim>
+    </insert>
+
+    <select id="getSlidesById" parameterType="java.lang.Integer" resultMap="BaseSlides">
+        select
+        <include refid="Base_Column_List" />
+        ,t_home_slides.slide_image
+        from t_home_slides where t_home_slides.slides_id = #{sId}
+    </select>
+
+    <update id="updSlides" parameterType="com.tangmo.emall.entity.Slides">
+        update t_home_slides
+        <set>
+            <if test="slideImage != null">
+                slide_image = #{slideImage},
+            </if>
+            <if test="slideSort != null">
+                slide_sort = #{slideSort},
+            </if>
+            <if test="imageUrl != null">
+                image_url = #{imageUrl},
+            </if>
+            <if test="isEffect != null">
+                is_effect = #{isEffect},
+            </if>
+            <if test="objectType != null">
+                object_type = #{objectType},
+            </if>
+            <if test="objectId != null">
+                object_id = #{objectId},
+            </if>
+        </set>
+        where slides_id = #{slidesId}
+    </update>
+
+    <delete id="delSlides" parameterType="java.lang.Integer">
+        delete from t_home_slides where slides_id = #{sId}
+    </delete>
+
+    <update id="updSlidesSort" parameterType="java.lang.Integer">
+        update t_home_slides set slide_sort = slide_sort + 1 where slide_sort >= #{slideSort}
+    </update>
+
+    <select id="getSlidesCount" resultType="java.lang.Integer">
+        select count(*) from t_home_slides
+    </select>
+
+    <update id="updSlidesByJian">
+        update t_home_slides set slide_sort = slide_sort - 1
+        where slide_sort &gt; #{slideSort} and slide_sort &lt;= #{newSlideSort}
+    </update>
+
+    <update id="updSlidesByJia">
+        update t_home_slides set slide_sort = slide_sort + 1
+        where slide_sort &lt; #{slideSort} and slide_sort &gt;= #{newSlideSort}
+    </update>
+
+    <update id="delSlidesCount" parameterType="java.lang.Integer">
+        update t_home_slides set slide_sort = slide_sort - 1
+        where slide_sort >= #{slideSort}
+    </update>
+</mapper>

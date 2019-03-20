@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhjy.system.modules.dao.SysSlideBeanMapper">
+	<resultMap id="BaseResultMap" type="com.tangmo.zhjy.system.modules.bean.SysSlideBean">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="url" property="url" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="is_show" property="isShow" jdbcType="INTEGER" />
+		<result column="rank" property="rank" jdbcType="INTEGER" />
+		<result column="freeze" property="freeze" jdbcType="INTEGER" />
+		<result column="informationId" property="informationId" jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, title, url, create_time, is_show, rank, freeze,informationId
+	</sql>
+
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from app_slide
+		where id = #{id,jdbcType=INTEGER} order by create_time DESC
+	</select>
+
+
+	<select id="findByPage" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from app_slide
+		where title like #{name,jdbcType=VARCHAR}
+		order by create_time DESC
+	</select>
+
+
+	<!--根据管理员id查询发表的文章id，在根据文章id删除有关联的轮播图-->
+	<delete id="deleteByInfomationId" parameterType="java.lang.Integer">
+		delete from app_slide
+		where informationId in(
+			select id from app_information where sys_userId=#{id}
+		)
+	</delete>
+
+	<!--根据管理员id查询发表的文章id，在根据文章id删除有关联的轮播图-->
+	<delete id="deleteByTwoClassifyId" parameterType="java.lang.Integer">
+		delete from app_slide
+		where informationId in(
+		select id from app_information where app_two_classifyId=#{twoClassifyId}
+		)
+	</delete>
+
+	<delete id="deleteByInfomation" parameterType="java.lang.Integer">
+		delete from app_slide
+		where informationId =#{id}
+	</delete>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from app_slide
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="insert" parameterType="com.tangmo.zhjy.system.modules.bean.SysSlideBean">
+		insert into app_slide (title, url,
+		create_time, rank,freeze,informationId)
+		values (#{title,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR},
+		now(),#{rank,jdbcType=INTEGER},#{freeze,jdbcType=INTEGER},#{informationId,jdbcType=INTEGER})
+	</insert>
+
+	<insert id="insertSelective" parameterType="com.tangmo.zhjy.system.modules.bean.SysSlideBean">
+		insert into app_slide
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="title != null">
+				title,
+			</if>
+			<if test="url != null">
+				url,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="isShow != null">
+				is_show,
+			</if>
+			<if test="rank != null">
+				rank,
+			</if>
+			<if test="freeze != null">
+				freeze,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="url != null">
+				#{url,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="isShow != null">
+				#{isShow,jdbcType=INTEGER},
+			</if>
+			<if test="rank != null">
+				#{rank,jdbcType=INTEGER},
+			</if>
+			<if test="freeze != null">
+				#{freeze,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.tangmo.zhjy.system.modules.bean.SysSlideBean">
+		update app_slide
+		<set>
+			<if test="title != null">
+				title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="url != null">
+				url = #{url,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="isShow != null">
+				is_show = #{isShow,jdbcType=INTEGER},
+			</if>
+			<if test="rank != null">
+				rank = #{rank,jdbcType=INTEGER},
+			</if>
+			<if test="freeze != null">
+				freeze = #{freeze,jdbcType=INTEGER},
+			</if>
+			<if test="informationId !=null">
+				informationId = #{informationId,jdbcType=INTEGER}
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<update id="updateByPrimaryKey" parameterType="com.tangmo.zhjy.system.modules.bean.SysSlideBean">
+		update app_slide
+		set title = #{title,jdbcType=VARCHAR},
+		url = #{url,jdbcType=VARCHAR},
+		create_time = #{createTime,jdbcType=TIMESTAMP},
+		is_show = #{isShow,jdbcType=INTEGER},
+		rank = #{rank,jdbcType=INTEGER},
+		freeze = #{freeze,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+</mapper>

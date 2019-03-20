@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.yiliao.dao.PermissionDao">
+
+    <resultMap id="BasePerm" type="com.tangmo.yiliao.entity.Permission">
+        <id column="permissions_id" property="permissionsId" jdbcType="VARCHAR" ></id>
+        <result column="permissions_name" property="permissionsName" jdbcType="VARCHAR" ></result>
+        <result column="module_id" property="moduleId" jdbcType="VARCHAR" ></result>
+        <result column="state" property="state" jdbcType="TINYINT" ></result>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR" ></result>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR" ></result>
+        <result column="create_userid" property="createUserId" jdbcType="VARCHAR" ></result>
+        <result column="update_userid" property="updateUserId" jdbcType="VARCHAR" ></result>
+    </resultMap>
+
+    <resultMap id="BaseRole" type="com.tangmo.yiliao.entity.Role">
+        <id column="role_id" property="roleId" jdbcType="VARCHAR" ></id>
+        <result column="role_name" property="roleName" jdbcType="VARCHAR" ></result>
+        <result column="permissions_id" property="permissionsId" jdbcType="VARCHAR" ></result>
+        <result column="state" property="state" jdbcType="TINYINT" ></result>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR" ></result>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR" ></result>
+        <result column="create_userid" property="createUserId" jdbcType="VARCHAR" ></result>
+        <result column="update_userid" property="updateUserId" jdbcType="VARCHAR" ></result>
+    </resultMap>
+
+    <select id="getPremAll" resultMap="BasePerm">
+        select permissions_id,permissions_name,module_id,CONVERT(varchar,create_time,120) as create_time
+        from tb_sys_permissions where state = 0
+    </select>
+
+    <select id="getPremById" resultMap="BasePerm">
+        select permissions_id,permissions_name,module_id,CONVERT(varchar,create_time,120) as create_time
+        from tb_sys_permissions where state = 0 and permissions_id = #{permId}
+    </select>
+
+    <select id="getRoleAll" resultMap="BaseRole">
+        select role_id,role_name,permissions_id,CONVERT(varchar,create_time,120) as create_time from tb_sys_role
+        where state = 0 and role_id != 'MEMBER'
+    </select>
+
+    <select id="getRoleCountByPermId" resultType="java.lang.Integer">
+        select COUNT(*) from tb_sys_role where permissions_id like '%'+#{permId}+'%' and state = 0
+    </select>
+
+    <select id="getUserCountByRoleId" resultType="java.lang.Integer">
+        select count(*) from tb_sys_user where role_id = #{roleId} and state = 0
+    </select>
+
+    <update id="delPermById">
+        update tb_sys_permissions set permissions_id = #{newPermId},state = 1,update_userid = #{userId},update_time = CONVERT(varchar,GETDATE(),120)
+        where permissions_id = #{permId}
+    </update>
+
+    <update id="delRoleById">
+        update tb_sys_role set role_id = #{newRoleId},state = 1,update_userid = #{userId},update_time = CONVERT(varchar,GETDATE(),120)
+		where role_id = #{roleId}
+    </update>
+
+    <update id="updPremById">
+        update tb_sys_permissions set permissions_name = #{permName},
+                               <if test="mId != null">module_id = #{mId},</if>
+							   update_time = CONVERT(varchar,GETDATE(),120),
+							   update_userid = #{userId}
+			where permissions_id = #{permId}
+    </update>
+
+    <update id="updRoleById">
+        update tb_sys_role set role_name = #{roleName},
+                      <if test="mId != null">permissions_id = #{mId},</if>
+					   update_time = CONVERT(varchar,GETDATE(),120),
+					   update_userid = #{userId}
+		where role_id = #{roleId}
+    </update>
+
+    <insert id="addPrem" parameterType="com.tangmo.yiliao.entity.Permission">
+        INSERT INTO [tb_sys_permissions]
+           ([permissions_id]
+           ,[permissions_name]
+           <if test="moduleId != null">,[module_id]</if>
+           ,[create_time]
+           ,[update_time]
+           ,[create_userid]
+           ,[update_userid])
+     VALUES
+           (#{permissionsId,jdbcType=VARCHAR}
+           ,#{permissionsName,jdbcType=VARCHAR}
+           <if test="moduleId != null">,#{moduleId,jdbcType=VARCHAR}</if>
+           ,CONVERT(varchar,GETDATE(),120)
+           ,CONVERT(varchar,GETDATE(),120)
+           ,#{createUserId,jdbcType=VARCHAR}
+           ,#{createUserId,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="addRole" parameterType="com.tangmo.yiliao.entity.Role">
+        INSERT INTO [tb_sys_role]
+            ([role_id]
+            ,[role_name]
+            <if test="permissionsId != null">,[permissions_id]</if>
+            ,[create_time]
+            ,[update_time]
+            ,[create_userid]
+            ,[update_userid])
+            VALUES
+            (#{roleId,jdbcType=VARCHAR}
+            ,#{roleName,jdbcType=VARCHAR}
+            <if test="permissionsId != null">,#{permissionsId,jdbcType=VARCHAR}</if>
+            ,CONVERT(varchar,GETDATE(),120)
+            ,CONVERT(varchar,GETDATE(),120)
+            ,#{createUserId,jdbcType=VARCHAR}
+            ,#{createUserId,jdbcType=VARCHAR})
+    </insert>
+</mapper>

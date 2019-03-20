@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhjy.system.modules.dao.AppCollectMapper" >
+  <resultMap id="BaseResultMap" type="com.tangmo.zhjy.system.modules.bean.AppCollect" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="informationId" property="informationid" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, informationId, user_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.tangmo.zhjy.system.modules.bean.AppCollect" >
+    select 
+    <include refid="Base_Column_List" />
+    from app_collect
+    where user_id = #{userId,jdbcType=INTEGER} and informationId=#{informationid,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" >
+    delete from app_collect
+    where informationId = #{informationId,jdbcType=INTEGER} and user_id=#{userId,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="deleteByInfomationId" >
+    delete from app_collect
+    where informationId in(
+      select id from app_information where sys_userId=#{id}
+    )
+  </delete>
+
+  <delete id="deleteByTwoClassifyId" >
+    delete from app_collect
+    where informationId in(
+    select id from app_information where app_two_classifyId=#{twoClassifyId}
+    )
+  </delete>
+
+  <delete id="deleteByInfomation" >
+    delete from app_collect
+    where informationId =#{id}
+  </delete>
+
+  <insert id="insert" parameterType="com.tangmo.zhjy.system.modules.bean.AppCollect" >
+    insert into app_collect (id, informationId, user_id
+      )
+    values (#{id,jdbcType=INTEGER}, #{informationid,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.tangmo.zhjy.system.modules.bean.AppCollect" >
+    insert into app_collect
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="informationid != null" >
+        informationId,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="informationid != null" >
+        #{informationid,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tangmo.zhjy.system.modules.bean.AppCollect" >
+    update app_collect
+    <set >
+      <if test="informationid != null" >
+        informationId = #{informationid,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tangmo.zhjy.system.modules.bean.AppCollect" >
+    update app_collect
+    set informationId = #{informationid,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

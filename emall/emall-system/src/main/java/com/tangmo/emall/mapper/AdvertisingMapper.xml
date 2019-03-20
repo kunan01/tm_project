@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.emall.dao.AdvertisingDao" >
+
+    <resultMap id="BaseAdvertising" type="com.tangmo.emall.entity.RecommendAdvertising">
+        <id column="ra_id" property="raId" jdbcType="INTEGER" />
+        <result column="advertising_image" property="advertisingImage" jdbcType="VARCHAR" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    
+    <resultMap id="BaseRecommend" type="com.tangmo.emall.entity.Recommend">
+        <id column="tr_id" property="trId" jdbcType="INTEGER" />
+        <result column="product_id" property="productId" jdbcType="INTEGER" />
+        <result column="ra_id" property="raId" jdbcType="INTEGER" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_Advertising_Column_List">
+        ra.ra_id,ra.advertising_image,ra.created_time
+    </sql>
+
+    <select id="getAdvertisingList" resultMap="BaseAdvertising">
+        select
+        <include refid="Base_Advertising_Column_List" />
+        from recommend_advertising ra
+        order by ra.created_time
+    </select>
+
+    <insert id="addAdvertising" parameterType="com.tangmo.emall.entity.RecommendAdvertising">
+        insert into recommend_advertising
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="advertisingImage != null">
+                advertising_image,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="advertisingImage != null">
+                #{advertisingImage},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getAdvertisingById" parameterType="java.lang.Integer" resultMap="BaseAdvertising">
+        select
+        <include refid="Base_Advertising_Column_List" />
+        from recommend_advertising ra
+        where ra.ra_id = #{raId}
+    </select>
+
+    <update id="updateAdvertising" parameterType="com.tangmo.emall.entity.RecommendAdvertising">
+        update recommend_advertising
+        <set>
+            <if test="advertisingImage != null">
+                advertising_image = #{advertisingImage},
+            </if>
+        </set>
+        where ra_id = #{raId}
+    </update>
+
+    <delete id="delAdvertising" parameterType="java.lang.Integer">
+        delete from recommend_advertising where ra_id = #{raId}
+    </delete>
+
+    <delete id="delAdvertisingProduct" parameterType="java.lang.Integer">
+        delete from t_recommend where ra_id = #{raId}
+    </delete>
+
+    <delete id="delAdvertisingProductById" parameterType="java.lang.Integer">
+        delete from t_recommend where tr_id = #{trId}
+    </delete>
+
+    <insert id="addAdvertisingProduct" parameterType="com.tangmo.emall.entity.Recommend">
+        insert into t_recommend
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productId != null">
+                product_id,
+            </if>
+            <if test="raId != null">
+                ra_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="productId != null">
+                #{productId},
+            </if>
+            <if test="raId != null">
+                #{raId},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getRecommendById" parameterType="java.lang.Integer" resultMap="BaseRecommend">
+        select tr_id,product_id,ra_id from t_recommend
+        where tr_id = #{trId}
+    </select>
+</mapper>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.yiliao.dao.DoctorDao">
+
+    <resultMap id="BaseDoctorDetails" type="com.tangmo.yiliao.entity.DoctorDetails">
+        <id column="dd_id" property="ddId" jdbcType="VARCHAR"></id>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"></result>
+        <result column="dd_hospital" property="ddHospital" jdbcType="VARCHAR" ></result>
+        <result column="dd_position" property="ddPosition" jdbcType="VARCHAR"></result>
+        <result column="dd_Service" property="ddService" jdbcType="VARCHAR"></result>
+        <result column="dd_experience" property="ddExperience" jdbcType="VARCHAR"></result>
+        <result column="dd_field" property="ddField" jdbcType="VARCHAR"></result>
+        <result column="dd_certificate" property="ddCertificate" jdbcType="VARCHAR"></result>
+        <result column="dd_certificateName" property="ddCertificateName" jdbcType="VARCHAR"></result>
+        <result column="dd_phone" property="ddPhone" jdbcType="VARCHAR"></result>
+        <result column="integral" property="integral" jdbcType="INTEGER"></result>
+        <result column="dd_state" property="ddState" jdbcType="TINYINT"></result>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"></result>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR"></result>
+        <result column="create_userid" property="createUserId" jdbcType="VARCHAR"></result>
+        <result column="update_userid" property="updateUserId" jdbcType="VARCHAR"></result>
+        <result column="user_imgurl" property="userImgUrl" jdbcType="VARCHAR"></result>
+        <result column="name" property="name" jdbcType="VARCHAR"></result>
+        <result column="ddFieldUU" property="ddFieldUU" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <select id="getFinePhysician" resultMap="BaseDoctorDetails">
+        select top 4 dd.user_id,ts.name,dd.dd_position,(select dt_name from department where dt_id = dd.dd_field)as dd_field,ts.user_imgurl from doctor_details dd
+        inner join tb_sys_user ts
+        on dd.user_id = ts.user_id
+        where ts.state = 0 and dd.dd_state = 0 order by dd.integral desc
+    </select>
+
+    <select id="getDepartmentDoctorTop2ById" resultMap="BaseDoctorDetails">
+        select top 2 dd.user_id,ts.name,dd.dd_position,ts.user_imgurl,(select dt_name from department where dt_id = dd.dd_field) as dd_field
+        from doctor_details dd
+        inner join tb_sys_user ts
+        on dd.user_id = ts.user_id
+        where ts.state = 0 and dd.dd_state = 0 and dd.dd_field = #{dtId}
+        order by dd.integral desc
+    </select>
+
+    <select id="getDepartmentDoctorTop3ById" resultMap="BaseDoctorDetails">
+        select top 3 dd.user_id,ts.name,dd.dd_position,dd.dd_Service,dd.integral,ts.user_imgurl from doctor_details dd
+        inner join tb_sys_user ts
+        on dd.user_id = ts.user_id
+        where ts.state = 0 and dd.dd_state = 0 and dd.dd_field = #{dtId}
+        order by dd.integral desc
+    </select>
+
+    <select id="getDepartmentDoctorAllById" resultMap="BaseDoctorDetails">
+        select top ${end} dd.user_id,ts.name,dd.dd_hospital,dd.dd_position,dd.integral,dd.dd_Service,ts.user_imgurl
+		from doctor_details dd
+        inner join tb_sys_user ts
+        on dd.user_id = ts.user_id
+        where ts.state = 0 and dd.dd_state = 0 and dd.dd_field = #{dtId} and dd.dd_id not in (select top ${start} dd.dd_id
+					from doctor_details dd
+					inner join tb_sys_user ts
+					on dd.user_id = ts.user_id
+					where ts.state = 0 and dd.dd_state = 0 and dd.dd_field = #{dtId} order by dd.integral desc)
+        order by dd.integral desc
+    </select>
+
+    <select id="getDepartmentDoctorAllByName" resultMap="BaseDoctorDetails">
+        select dd.user_id,ts.name,dd.dd_hospital,dd.dd_position,dd.integral,dd.dd_Service,ts.user_imgurl
+        from doctor_details dd
+        inner join tb_sys_user ts
+        on dd.user_id = ts.user_id
+        where ts.state = 0 and dd.dd_state = 0 and (ts.name like '%${name}%' or LEFT(ts.name,1) = #{nameToOne})
+    </select>
+
+    <insert id="applyForDoctor" parameterType="com.tangmo.yiliao.entity.DoctorApplied">
+        INSERT INTO [doctor_applied]
+        ([da_id]
+        ,[user_id]
+        ,[name]
+        ,[da_type]
+        ,[phone]
+        ,[da_hospital]
+        ,[dt_id]
+        ,[da_position]
+        ,[da_disease]
+        ,[da_achievement]
+        ,[da_certificate]
+        ,[da_certificateName]
+        ,[create_time]
+        ,[update_time]
+        ,[create_userid]
+        ,[update_userid])
+        VALUES
+        (#{daId,jdbcType=VARCHAR}
+        ,#{userId,jdbcType=VARCHAR}
+        ,#{name,jdbcType=VARCHAR}
+        ,#{daType,jdbcType=TINYINT}
+        ,#{phone,jdbcType=VARCHAR}
+        ,#{daHospital,jdbcType=VARCHAR}
+        ,#{dtId,jdbcType=VARCHAR}
+        ,#{daPosition,jdbcType=VARCHAR}
+        ,#{daDisease,jdbcType=VARCHAR}
+        ,#{daAchievement,jdbcType=VARCHAR}
+        ,#{daCertificate,jdbcType=VARCHAR}
+        ,#{daCertificateName,jdbcType=VARCHAR}
+        ,CONVERT(VARCHAR(19),GETDATE(),120)
+        ,CONVERT(VARCHAR(19),GETDATE(),120)
+        ,#{userId,jdbcType=VARCHAR}
+        ,#{userId,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="getUserApplicationStatus" resultType="java.lang.String">
+        select da_state from doctor_applied where [user_id] = #{userId} and da_type = #{type}
+    </select>
+
+    <select id="getDoctorInformation" resultMap="BaseDoctorDetails">
+        select dd_hospital,(select dt_name from department where dt_id = dd_field) as dd_field,dd_field as ddFieldUU,dd_position,dd_Service,dd_experience,dd_certificate,dd_certificateName,dd_phone from doctor_details
+	     where user_id = #{userId} and dd_state = 0
+    </select>
+
+    <select id="getDoctorDetailsById" resultMap="BaseDoctorDetails">
+        select ts.name,ts.user_imgurl,dd.integral,dd.dd_hospital,dd.dd_position,dd.dd_Service,dd.dd_experience,dd.dd_certificate,dd.dd_certificateName,dd.dd_phone,
+		(select dt_name from department where dt_id = dd.dd_field) as dd_field,dd.dd_field as ddFieldUU
+		from doctor_details dd
+        inner join tb_sys_user ts
+        on dd.user_id = ts.user_id
+        where ts.user_id = #{userId} and ts.state = 0 and dd.dd_state  = 0
+    </select>
+
+    <select id="getDoctorVideoCount" resultType="java.lang.Integer">
+        select count(*) from doctor_video where user_id = #{userId}
+    </select>
+</mapper>

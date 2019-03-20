@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.emall.dao.FileDao" >
+    
+    <resultMap id="BaseFile" type="com.tangmo.emall.entity.RsFile">
+        <id column="f_id" property="fId" jdbcType="VARCHAR" />
+        <result column="f_base" property="fBase" jdbcType="VARCHAR" />
+        <result column="f_state" property="fState" jdbcType="TINYINT" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <insert id="addFile" parameterType="com.tangmo.emall.entity.RsFile">
+        insert into t_file (f_id,f_base) values (#{fId} , #{fBase})
+    </insert>
+
+    <select id="getFileById" parameterType="java.lang.String" resultMap="BaseFile">
+        select f_id,f_base,f_state,created_time from t_file where f_id = #{fId}
+    </select>
+
+    <delete id="delFile" parameterType="java.lang.String">
+        delete from t_file where f_id = #{fId}
+    </delete>
+
+    <update id="updFile" parameterType="java.lang.String">
+        update t_file set f_state = 1 where f_id = #{fId}
+    </update>
+
+    <delete id="updateFile">
+        delete from t_file where round((UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(created_time))/60) > 30 and f_state = 2
+    </delete>
+
+</mapper>

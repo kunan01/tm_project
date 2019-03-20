@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhjy.system.modules.dao.SysInformationImagesMapper" >
+  <resultMap id="BaseResultMap" type="com.tangmo.zhjy.system.modules.bean.SysInformationImages" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="app_info_id" property="appInfoId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, url, app_info_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from app_information_images
+    where app_info_id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from app_information_images
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <!--根据管理员id查询发表的文章id，在根据文章id删除有关联的文章封面图-->
+  <delete id="deleteByInfomationId" parameterType="java.lang.Integer" >
+    delete from app_information_images
+    where app_info_id in(
+      select id from app_information where sys_userId=#{id}
+    )
+  </delete>
+
+  <!--根据管理员id查询发表的文章id，在根据文章id删除有关联的文章封面图-->
+  <delete id="deleteBTwoClassifyId" parameterType="java.lang.Integer" >
+    delete from app_information_images
+    where app_info_id in(
+    select id from app_information where app_two_classifyId=#{twoClassifyId}
+    )
+  </delete>
+
+  <delete id="deleteByInfomation" parameterType="java.lang.Integer" >
+    delete from app_information_images
+    where app_info_id =#{id}
+  </delete>
+
+  <insert id="insert" parameterType="com.tangmo.zhjy.system.modules.bean.SysInformationImages" >
+  	delete from  app_information_images where app_info_id=#{appInfoId,jdbcType=INTEGER};
+    insert into app_information_images ( url, app_info_id
+      )
+    values 
+    <foreach collection="urls" item="url" separator="," close=";">
+  	 (#{url,jdbcType=VARCHAR}, #{appInfoId,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+  <insert id="insertSelective" parameterType="com.tangmo.zhjy.system.modules.bean.SysInformationImages" >
+    insert into app_information_images
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="appInfoId != null" >
+        app_info_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="appInfoId != null" >
+        #{appInfoId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tangmo.zhjy.system.modules.bean.SysInformationImages" >
+    update app_information_images
+    <set >
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="appInfoId != null" >
+        app_info_id = #{appInfoId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tangmo.zhjy.system.modules.bean.SysInformationImages" >
+    update app_information_images
+    set url = #{url,jdbcType=VARCHAR},
+      app_info_id = #{appInfoId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

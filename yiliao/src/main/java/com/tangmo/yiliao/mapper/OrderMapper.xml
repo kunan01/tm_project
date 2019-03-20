@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.yiliao.dao.OrderDao">
+
+    <resultMap id="BaseOrder" type="com.tangmo.yiliao.entity.PayOrder">
+        <id column="go_id" property="goId" jdbcType="VARCHAR" />
+        <result column="go_type" property="goType" jdbcType="TINYINT" />
+        <result column="user_id" property="userId" jdbcType="VARCHAR" />
+        <result column="ua_id" property="uaId" jdbcType="VARCHAR" />
+        <result column="cd_id" property="cdId" jdbcType="VARCHAR" />
+        <result column="order_state" property="orderState" jdbcType="TINYINT" />
+        <result column="go_count" property="goCount" jdbcType="INTEGER" />
+        <result column="express_no" property="expressNo" jdbcType="VARCHAR" />
+        <result column="cd_size" property="cdSize" jdbcType="VARCHAR" />
+        <result column="cd_color" property="cdColor" jdbcType="VARCHAR" />
+        <result column="express_fee" property="expressFee" jdbcType="DECIMAL" />
+        <result column="discount_fee" property="discountFee" jdbcType="DECIMAL" />
+        <result column="pay_fee" property="payFee" jdbcType="DECIMAL" />
+        <result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
+        <result column="pay_number" property="payNumber" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+        <result column="pay_time" property="payTime" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <insert id="addOrder" parameterType="com.tangmo.yiliao.entity.PayOrder">
+        insert into pay_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="goId != null">
+                go_id,
+            </if>
+            <if test="goType != null">
+                go_type,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="uaId != null">
+                ua_id,
+            </if>
+            <if test="cdId != null">
+                cd_id,
+            </if>
+            <if test="goCount != null">
+                go_count,
+            </if>
+            <if test="cdSize != null">
+                cd_size,
+            </if>
+            <if test="cdColor != null">
+                cd_color,
+            </if>
+            <if test="expressFee != null">
+                express_fee,
+            </if>
+            <if test="discountFee != null">
+                discount_fee,
+            </if>
+            <if test="payFee != null">
+                pay_fee,
+            </if>
+            <if test="orderNumber != null">
+                order_number,
+            </if>
+            create_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="goId != null">
+                #{goId},
+            </if>
+            <if test="goType != null">
+                #{goType},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="uaId != null">
+                #{uaId},
+            </if>
+            <if test="cdId != null">
+                #{cdId},
+            </if>
+            <if test="goCount != null">
+                #{goCount},
+            </if>
+            <if test="cdSize != null">
+                #{cdSize},
+            </if>
+            <if test="cdColor != null">
+                #{cdColor},
+            </if>
+            <if test="expressFee != null">
+                #{expressFee},
+            </if>
+            <if test="discountFee != null">
+                #{discountFee},
+            </if>
+            <if test="payFee != null">
+                #{payFee},
+            </if>
+            <if test="orderNumber != null">
+                #{orderNumber},
+            </if>
+            CONVERT(varchar,GETDATE(),120),
+        </trim>
+    </insert>
+
+    <select id="getOrderById" parameterType="java.lang.String" resultMap="BaseOrder">
+        select go_id,go_type,user_id,ua_id,cd_id,order_state,go_count,express_no,cd_size,cd_color,
+        express_fee,discount_fee,pay_fee,order_number,pay_number,create_time,pay_time
+        from pay_order where go_id = #{goId}
+    </select>
+
+    <select id="getOrderByPayNo" parameterType="java.lang.String" resultMap="BaseOrder">
+        select go_id,go_type,user_id,ua_id,cd_id,order_state,go_count,express_no,cd_size,cd_color,
+        express_fee,discount_fee,pay_fee,order_number,pay_number,create_time,pay_time
+        from pay_order where pay_number = #{payNo}
+    </select>
+
+    <update id="updPayNo">
+        update pay_order set pay_number = #{payNo} where go_id = #{goId}
+    </update>
+
+    <update id="updateOrderDone">
+        update pay_order set order_state = #{type} where pay_number = #{payNo}
+    </update>
+
+</mapper>

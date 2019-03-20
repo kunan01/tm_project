@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.yiliao.dao.ManyTimesDao">
+
+    <resultMap id="BaseIntegralSubsidiary" type="com.tangmo.yiliao.entity.IntegralSubsidiary">
+        <id column="sy_id" property="syId" jdbcType="VARCHAR"></id>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"></result>
+        <result column="lt_id" property="ltId" jdbcType="VARCHAR"></result>
+        <result column="sy_bean" property="syBean" jdbcType="INTEGER"></result>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"></result>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR"></result>
+        <result column="create_userid" property="createUserId" jdbcType="VARCHAR"></result>
+        <result column="update_userid" property="updateUserId" jdbcType="VARCHAR"></result>
+        <result column="level_name" property="levelName" jdbcType="VARCHAR"></result>
+        <result column="superior_id" property="superiorId" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <insert id="addIntegralSubsidiary" parameterType="com.tangmo.yiliao.entity.IntegralSubsidiary">
+        INSERT INTO [integral_subsidiary]
+        ([sy_id]
+        ,[user_id]
+        ,[lt_id]
+        ,[sy_bean]
+        ,[create_time]
+        ,[update_time]
+        ,[create_userid]
+        ,[update_userid]
+        <if test="orderId != null" >,[order_id]</if>)
+        VALUES
+        (#{syId,jdbcType=VARCHAR}
+        ,#{userId,jdbcType=VARCHAR}
+        ,#{ltId,jdbcType=VARCHAR}
+        ,#{syBean,jdbcType=INTEGER}
+        ,CONVERT(varchar,GETDATE(),120)
+        ,CONVERT(varchar,GETDATE(),120)
+        ,#{createUserId,jdbcType=VARCHAR}
+        ,#{createUserId,jdbcType=VARCHAR}
+        <if test="orderId != null" >,#{orderId}</if>)
+    </insert>
+
+    <select id="getUserIntegralDetail" resultMap="BaseIntegralSubsidiary">
+        select it.level_name,it.superior_id,ig.sy_bean,CONVERT(varchar,ig.create_time,120) as create_time from integral_subsidiary ig
+         inner join integral_subsidiary_type it
+         on ig.lt_id = it.lt_id
+		 where ig.user_id = #{userId} order by ig.create_time desc
+    </select>
+
+</mapper>

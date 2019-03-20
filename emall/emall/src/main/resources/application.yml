@@ -1,0 +1,62 @@
+server:
+  port: 8080
+#  ssl:
+#    key-store: D:\
+##    key-alias: tomcat
+#    enabled: true
+#    key-store-password: 123456
+#    key-store-type: JKS
+
+spring:
+  application:
+    name: tangmo-emall
+  profiles:
+    active: dev
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
+      enabled: true
+
+logging:
+  path: D:\emall_Log/logs
+  level:
+    org:
+      springframework: INFO
+
+mybatis:
+  mapper-locations: classpath:com/tangmo/emall/mapper/*.xml
+
+---
+spring:
+  profiles: dev
+  datasource:
+    url: jdbc:mysql://114.115.211.170:3306/jm_optical?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useSSL=false&allowMultiQueries=true
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: tangmo
+  mybatis:
+    mapper-locations: classpath:com/tangmo/emall/mapper/*.xml
+
+
+token:
+  expire: 3600000
+
+jedis:
+  pool:
+    host: 127.0.0.1
+    port: 6379
+    config:
+      maxTotal: 100
+      maxIdle: 10
+      maxWaitMillis: 3000
+      testOnBorrow: true
+
+
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+

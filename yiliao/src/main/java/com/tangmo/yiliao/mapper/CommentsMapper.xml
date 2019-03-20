@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.yiliao.dao.CommentsDao" >
+
+    <resultMap id="BaseComments" type="com.tangmo.yiliao.entity.Comments">
+        <id column="c_id" property="cId" jdbcType="VARCHAR"></id>
+        <result column ="c_type" property="cType" jdbcType="TINYINT" ></result>
+        <result column ="ArticlesOrVideoId" property="articlesOrVideoId" jdbcType="VARCHAR" ></result>
+        <result column ="user_id" property="userId" jdbcType="VARCHAR" ></result>
+        <result column ="c_content" property="cContent" jdbcType="VARCHAR" ></result>
+        <result column ="c_attribute" property="cAttribute" jdbcType="TINYINT" ></result>
+        <result column ="c_status" property="cStatus" jdbcType="TINYINT" ></result>
+        <result column ="reply_id" property="replyId" jdbcType="VARCHAR" ></result>
+        <result column ="state" property="state" jdbcType="TINYINT" ></result>
+        <result column ="create_time" property="createTime" jdbcType="VARCHAR" ></result>
+        <result column ="update_time" property="updateTime" jdbcType="VARCHAR" ></result>
+        <result column ="create_userid" property="createUserId" jdbcType="VARCHAR" ></result>
+        <result column ="update_userid" property="updateUserId" jdbcType="VARCHAR" ></result>
+        <result column ="user_name" property="userName" jdbcType="VARCHAR" ></result>
+        <result column ="role_id" property="roleId" jdbcType="VARCHAR" ></result>
+        <result column ="user_imgurl" property="userImgUrl" jdbcType="VARCHAR" ></result>
+    </resultMap>
+
+    <select id="getCommentsTop3Q" resultMap="BaseComments">
+        select top 3 cs.c_id,cs.c_type,cs.ArticlesOrVideoId,ts.user_id,ts.user_name,ts.role_id,ts.user_imgurl,cs.c_content,cs.c_attribute,cs.c_status,CONVERT(VARCHAR(19),cs.create_time,120) as create_time
+	    from comments cs
+	    inner join tb_sys_user ts
+	    on cs.user_id = ts.user_id
+	    where cs.c_type = #{type} and cs.ArticlesOrVideoId = #{id} and cs.state = 0 and cs.c_status = 0 order by cs.create_time desc
+    </select>
+
+    <select id="getCommentsByIdF" resultMap="BaseComments">
+        select top ${end} cs.c_id,cs.c_type,cs.ArticlesOrVideoId,ts.user_id,ts.user_name,ts.role_id,ts.user_imgurl,cs.c_content,cs.c_attribute,cs.c_status,CONVERT(VARCHAR(19),cs.create_time,120) as create_time
+        from comments cs
+        inner join tb_sys_user ts
+        on cs.user_id = ts.user_id
+        where cs.c_type = #{type} and cs.ArticlesOrVideoId = #{id} and cs.state = 0 and cs.c_status = 0 and cs.c_id not in (select top ${start} cs.c_id
+        from comments cs
+        inner join tb_sys_user ts
+        on cs.user_id = ts.user_id
+        where cs.c_type = #{type} and cs.ArticlesOrVideoId = #{id} and cs.state = 0 and cs.c_status = 0 order by cs.create_time desc) order by cs.create_time desc
+    </select>
+
+    <select id="getCommentsByIdFOnH" resultMap="BaseComments">
+        select top ${end} cs.c_id,cs.c_type,cs.ArticlesOrVideoId,ts.user_id,ts.user_name,ts.role_id,ts.user_imgurl,cs.c_content,cs.c_attribute,cs.c_status,CONVERT(VARCHAR(19),cs.create_time,120) as create_time
+        from comments cs
+        inner join tb_sys_user ts
+        on cs.user_id = ts.user_id
+        where cs.state = 0 and cs.c_status = 1 and cs.reply_id = #{id} and cs.c_type = #{type} and cs.c_id not in (select top ${start} cs.c_id
+        from comments cs
+        inner join tb_sys_user ts
+        on cs.user_id = ts.user_id
+        where cs.state = 0 and cs.c_status = 1 and cs.reply_id = #{id} and cs.c_type = #{type} order by cs.create_time desc) order by cs.create_time desc
+    </select>
+
+    <select id="getCommentsCountByCId" resultType="java.lang.Integer">
+        select COUNT(*) from comments where state = 0 and c_status = 1 and reply_id = #{CId}
+    </select>
+
+    <select id="getCommentsTop3AByCId" resultMap="BaseComments">
+        select top 3 cs.c_id,cs.c_type,cs.ArticlesOrVideoId,ts.user_id,ts.user_name,ts.role_id,ts.user_imgurl,cs.c_content,cs.c_attribute,cs.c_status,CONVERT(VARCHAR(19),cs.create_time,120) as create_time
+	    from comments cs
+	    inner join tb_sys_user ts
+	    on cs.user_id = ts.user_id
+	    where cs.state = 0 and cs.c_status = 1 and cs.reply_id = #{CId} order by cs.create_time desc
+    </select>
+
+    <insert id="addComments" parameterType="com.tangmo.yiliao.entity.Comments">
+        INSERT INTO [comments]
+        ([c_id]
+        ,[c_type]
+        ,[ArticlesOrVideoId]
+        ,[user_id]
+        ,[c_content]
+        ,[c_attribute]
+        ,[c_status]
+        <if test="replyId != null">,[reply_id]</if>
+        ,[create_time]
+        ,[update_time]
+        ,[create_userid]
+        ,[update_userid])
+        VALUES
+        (#{cId,jdbcType=VARCHAR}
+        ,#{cType,jdbcType=TINYINT}
+        ,#{articlesOrVideoId,jdbcType=VARCHAR}
+        ,#{userId,jdbcType=VARCHAR}
+        ,#{cContent,jdbcType=VARCHAR}
+        ,#{cAttribute,jdbcType=TINYINT}
+        ,#{cStatus,jdbcType=TINYINT}
+        <if test="replyId != null">,#{replyId,jdbcType=VARCHAR}</if>
+        ,CONVERT(varchar,GETDATE(),120)
+        ,CONVERT(varchar,GETDATE(),120)
+        ,#{userId,jdbcType=VARCHAR}
+        ,#{userId,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="getCommentsById" resultMap="BaseComments">
+        select cs.c_id,cs.c_type,cs.ArticlesOrVideoId,ts.user_id,ts.user_name,ts.role_id,ts.user_imgurl,cs.c_content,cs.c_attribute,cs.c_status,CONVERT(VARCHAR(19),cs.create_time,120) as create_time
+        from comments cs
+        inner join tb_sys_user ts
+        on cs.user_id = ts.user_id
+        where cs.c_id = #{cId}
+    </select>
+
+    <select id="getCommentsAllAByCId" resultMap="BaseComments">
+        select cs.c_id,cs.c_type,cs.ArticlesOrVideoId,ts.user_id,ts.user_name,ts.role_id,ts.user_imgurl,cs.c_content,cs.c_attribute,cs.c_status,CONVERT(VARCHAR(19),cs.create_time,120) as create_time
+        from comments cs
+        inner join tb_sys_user ts
+        on cs.user_id = ts.user_id
+        where cs.state = 0 and cs.c_status = 1 and cs.reply_id = #{cId} order by cs.create_time desc
+    </select>
+
+    <select id="getCommentsAllQ" resultMap="BaseComments">
+        select cs.c_id,cs.c_type,cs.ArticlesOrVideoId,ts.user_id,ts.user_name,ts.role_id,ts.user_imgurl,cs.c_content,cs.c_attribute,cs.c_status,CONVERT(VARCHAR(19),cs.create_time,120) as create_time
+        from comments cs
+        inner join tb_sys_user ts
+        on cs.user_id = ts.user_id
+        where cs.c_type = #{type} and cs.ArticlesOrVideoId = #{id} and cs.state = 0 and cs.c_status = 0 order by cs.create_time desc
+    </select>
+
+    <select id="getRoleByUserId" resultType="java.lang.String">
+        select role_id from tb_sys_user where user_id = #{userId}
+    </select>
+
+    <select id="getUserIdBycId" resultType="java.lang.String">
+        select user_id from comments where c_id = #{cId}
+    </select>
+
+    <select id="getActitleById" resultType="java.lang.String">
+        select sa_title from system_the_article where sa_id = #{aId}
+    </select>
+
+    <select id="getVideotitleById" resultType="java.lang.String">
+        select dv_title from doctor_video where dv_id = #{vId}
+    </select>
+
+    <update id="delCommentsById">
+        update comments set state = 1 where c_id = #{cId}
+    </update>
+
+    <select id="getDoctorByActitleId" resultType="java.lang.String">
+        select user_id from doctor_details
+        where dd_field = (select dt_id from system_the_article where sa_id = #{aId})
+    </select>
+
+    <select id="getDoctorByVideoId" resultType="java.lang.String">
+        select user_id from doctor_details
+        where dd_field = (select dd_field from doctor_details
+                where user_id = (select user_id from doctor_video where dv_id = #{vId}))
+    </select>
+</mapper>

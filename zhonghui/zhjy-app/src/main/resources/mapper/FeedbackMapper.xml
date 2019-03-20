@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tangmo.zhjy.app.modules.dao.FeedbackMapper">
+
+    <resultMap id="BaseResultMap" type="com.tangmo.zhjy.app.modules.bean.Feedback">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="content"  property="content" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, content,user_id,create_time
+    </sql>
+<!--查询所有反馈信息-->
+    <select id="serchListFeedback" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from feedback
+    </select>
+<!--根据反馈主键id删除反馈信息-->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from feedback
+        where id = #{fbid,jdbcType=INTEGER}
+    </delete>
+
+<!--增加一条反馈信息-->
+    <insert id="addFeedBack" parameterType="com.tangmo.zhjy.app.modules.bean.Feedback">
+        insert into feedback (id, content,create_time,user_id)
+        values (#{id,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR},now(),#{userId,jdbcType=INTEGER})
+    </insert>
+
+</mapper>

@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhjy.app.modules.dao.AppCommunityBeanMapper">
+	<resultMap id="BaseResultMap"
+		type="com.tangmo.zhjy.app.modules.bean.AppCommunityBean">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="logo" property="logo" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="intro" property="intro" jdbcType="VARCHAR" />
+		<result column="longitude" property="longitude" jdbcType="VARCHAR" />
+		<result column="latitude" property="latitude" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="province" property="province" jdbcType="VARCHAR" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+		<result column="district" property="district" jdbcType="VARCHAR" />
+		<result column="is_show" property="isShow" jdbcType="INTEGER" />
+		<result column="isAttention" property="isAttention2" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, logo, name, intro, longitude, latitude, address, phone,
+		province,
+		city, district,
+		is_show
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from app_community
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<!-- 根据用户编号查找我所关注的社区 -->
+	<select id="findAttention" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from app_community
+		where id in (select community_id from
+		app_community_user where
+		user_id=#{userId,jdbcType=INTEGER}) and
+		is_show=0 order by id desc;
+	</select>
+	<!-- 根据管理员编号查询关联社区 -->
+	<select id="findBySysUserId" resultType="java.lang.Integer">
+		SELECT community_id from
+		app_community_sysuser where
+		sys_user_id=#{userId};
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		app_community
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.tangmo.zhjy.app.modules.bean.AppCommunityBean">
+		insert into app_community
+		(logo, name,
+		intro, longitude, latitude,
+		address, phone, province,
+		city,
+		district, is_show
+		)
+		values (#{logo,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},
+		#{intro,jdbcType=VARCHAR},
+		#{longitude,jdbcType=VARCHAR},
+		#{latitude,jdbcType=VARCHAR},
+		#{address,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+		#{province,jdbcType=VARCHAR},
+		#{city,jdbcType=VARCHAR},
+		#{district,jdbcType=VARCHAR},
+		#{isShow,jdbcType=INTEGER}
+		)
+	</insert>
+	<!-- 分页查询 -->
+	<select id="findBySysPage" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from app_community
+		where name like #{name,jdbcType=VARCHAR}
+	</select>
+
+	<!-- 分页查询离我最近的 -->
+	<select id="queryDistance" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+			, ROUND(
+			6378.138 * 2 * ASIN(
+			SQRT(
+			POW(
+			SIN( ( #{latitude} * PI() / 180 - latitude * PI() / 180 ) / 2 ) , 2 )
+			+
+			COS( #{latitude} * PI( ) / 180 ) * COS( latitude * PI( ) / 180 )
+			* POW( SIN( ( #{longitude} * PI() / 180 - longitude * PI() / 180 ) / 2 ) , 2 )
+			)
+			) * 1000
+			) AS distance
+		from app_community where id not in (select community_id from
+        app_community_user where user_id = #{userId,jdbcType=INTEGER})
+        and city like '%${city}%'
+		ORDER BY distance ASC
+	</select>
+
+    <select id="queryCity" resultType="java.lang.String">
+        select city
+        from app_community where id not in (select community_id from
+        app_community_user where user_id = #{userId,jdbcType=INTEGER})
+        GROUP BY city
+    </select>
+
+	<!-- 查询所有 -->
+	<select id="queryAll" resultMap="BaseResultMap">
+		select a.*,b.id 'isAttention'
+		from
+		app_community a left join (select id,community_id from
+		app_community_user where user_id=#{userId,jdbcType=INTEGER}) b on
+		a.id=b.community_id where is_show=0
+	</select>
+
+    <select id="queryAllNoAttention" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from app_community
+        where id not in (select community_id from
+        app_community_user where user_id = #{userId,jdbcType=INTEGER})
+    </select>
+
+
+
+
+
+
+	<!-- 查询关注社区未读通知（根据社区消息外键查找社区） -->
+	<select id="findByUnreadCommunity" resultMap="BaseResultMap">
+
+		select * from app_community where id in
+		<foreach collection="list" item="bean" open="(" separator=","
+			close=");">
+			#{bean.communityId,jdbcType=INTEGER}
+		</foreach>
+
+
+	<!--	查找用户关注的所有社区
+		SELECT ac.name,u.nike_name FROM app_community ac,app_community_user au,USER u
+		WHERE ac.id = au.community_id
+		AND au.user_id =u.id
+    -->
+
+	</select>
+
+
+
+
+
+
+	<insert id="insertSelective" parameterType="com.tangmo.zhjy.app.modules.bean.AppCommunityBean">
+		insert into app_community
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="logo != null">
+				logo,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="intro != null">
+				intro,
+			</if>
+			<if test="longitude != null">
+				longitude,
+			</if>
+			<if test="latitude != null">
+				latitude,
+			</if>
+			<if test="address != null">
+				address,
+			</if>
+			<if test="phone != null">
+				phone,
+			</if>
+			<if test="province != null">
+				province,
+			</if>
+			<if test="city != null">
+				city,
+			</if>
+			<if test="district != null">
+				district,
+			</if>
+			<if test="isShow != null">
+				is_show,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="logo != null">
+				#{logo,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="intro != null">
+				#{intro,jdbcType=VARCHAR},
+			</if>
+			<if test="longitude != null">
+				#{longitude,jdbcType=VARCHAR},
+			</if>
+			<if test="latitude != null">
+				#{latitude,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				#{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="province != null">
+				#{province,jdbcType=VARCHAR},
+			</if>
+			<if test="city != null">
+				#{city,jdbcType=VARCHAR},
+			</if>
+			<if test="district != null">
+				#{district,jdbcType=VARCHAR},
+			</if>
+			<if test="isShow != null">
+				#{isShow,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.tangmo.zhjy.app.modules.bean.AppCommunityBean">
+		update app_community
+		<set>
+			<if test="logo != null">
+				logo = #{logo,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="intro != null">
+				intro = #{intro,jdbcType=VARCHAR},
+			</if>
+			<if test="longitude != null">
+				longitude = #{longitude,jdbcType=VARCHAR},
+			</if>
+			<if test="latitude != null">
+				latitude = #{latitude,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				phone = #{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="province != null">
+				province = #{province,jdbcType=VARCHAR},
+			</if>
+			<if test="city != null">
+				city = #{city,jdbcType=VARCHAR},
+			</if>
+			<if test="district != null">
+				district = #{district,jdbcType=VARCHAR},
+			</if>
+			<if test="isShow != null">
+				is_show = #{isShow,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.tangmo.zhjy.app.modules.bean.AppCommunityBean">
+		update
+		app_community
+		set logo = #{logo,jdbcType=VARCHAR},
+		name =
+		#{name,jdbcType=VARCHAR},
+		intro = #{intro,jdbcType=VARCHAR},
+		longitude =
+		#{longitude,jdbcType=VARCHAR},
+		latitude = #{latitude,jdbcType=VARCHAR},
+		address = #{address,jdbcType=VARCHAR},
+		phone =
+		#{phone,jdbcType=VARCHAR},
+		province = #{province,jdbcType=VARCHAR},
+		city = #{city,jdbcType=VARCHAR},
+		district =
+		#{district,jdbcType=VARCHAR},
+		is_show = #{isShow,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

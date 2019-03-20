@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhjy.app.modules.dao.CommonDao">
+
+    <resultMap id="BaseMessageList" type="com.tangmo.zhjy.app.modules.bean.Message">
+        <id column="mi_id" property="miId" jdbcType="INTEGER"></id>
+        <result column="title" property="title" jdbcType="VARCHAR"></result>
+        <result column="mi_content" property="miContent" jdbcType="VARCHAR"></result>
+        <result column="mi_category" property="miCategory" jdbcType="TINYINT"></result>
+        <result column="state" property="state" jdbcType="TINYINT"></result>
+        <result column="createtime" property="createTime" jdbcType="TIMESTAMP"></result>
+        <result column="user_id" property="userId" jdbcType="INTEGER"></result>
+    </resultMap>
+
+
+    <select id="selectDistrict" resultType="java.util.HashMap">
+        SELECT id,district FROM city_district WHERE city = #{city}
+    </select>
+
+    <select id="getMessage" resultMap="BaseMessageList">
+        SELECT mi_id,title,mi_content,mi_category,state,createtime,user_id FROM message_info
+        WHERE mi_category = 0 AND state = 0
+    </select>
+
+</mapper>

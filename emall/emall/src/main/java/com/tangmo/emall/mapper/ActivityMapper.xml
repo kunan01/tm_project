@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.emall.dao.ActivityDao" >
+
+    <resultMap id="BaseAdvertising" type="com.tangmo.emall.entity.RecommendAdvertising">
+        <id column="ra_id" property="raId" jdbcType="INTEGER" />
+        <result column="advertising_image" property="advertisingImage" jdbcType="VARCHAR" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <resultMap id="BaseTrendAdvertising" type="com.tangmo.emall.entity.TrendAdvertising">
+        <id column="ta_id" property="taId" jdbcType="INTEGER" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="advertising_image" property="advertisingImage" jdbcType="VARCHAR" />
+        <result column="descript" property="descript" jdbcType="VARCHAR" />
+        <result column="location" property="location" jdbcType="TINYINT" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <resultMap id="BaseDiscount" type="com.tangmo.emall.entity.Discount">
+        <id column="discount_id" property="discountId" jdbcType="INTEGER" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="description" property="description" jdbcType="VARCHAR" />
+        <result column="ad_image" property="adImage" jdbcType="VARCHAR" />
+        <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+        <result column="event_type" property="eventType" jdbcType="TINYINT" />
+        <result column="event_rule" property="eventRule" jdbcType="VARCHAR" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="object_type" property="objectType" jdbcType="TINYINT" />
+        <result column="object_count" property="objectCount" jdbcType="INTEGER" />
+        <result column="is_count" property="isCount" jdbcType="TINYINT" />
+    </resultMap>
+
+    <resultMap id="BaseDisUser" type="com.tangmo.emall.entity.DiscountUser">
+        <id column="du_id" property="duId" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="dis_id" property="disId" jdbcType="INTEGER" />
+        <result column="is_use" property="isUse" jdbcType="TINYINT" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="conversion_code" property="conversionCode" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Advertising_Column_List">
+        ra.ra_id,ra.created_time
+    </sql>
+
+    <sql id="Base_TrendAdvertising_Column_List">
+        ta.ta_id,ta.title,ta.descript,ta.location,ta.created_time
+    </sql>
+
+    <sql id="Base_Discount_Column_List">
+        discount_id,title,description,ad_image,start_time,end_time,event_type,event_rule,created_time,
+        object_type,object_count,is_count
+    </sql>
+
+    <sql id="Base_DisUser_Column_List">
+        du_id,user_id,dis_id,is_use,created_time,conversion_code
+    </sql>
+
+    <select id="getAdvertisingList" resultMap="BaseAdvertising">
+        select
+        <include refid="Base_Advertising_Column_List" />
+        ,ra.advertising_image
+        from recommend_advertising ra
+        order by created_time
+    </select>
+
+    <select id="getTrendList" resultMap="BaseTrendAdvertising">
+        select
+        <include refid="Base_TrendAdvertising_Column_List" />
+        ,ta.advertising_image
+        from trend_advertising ta
+        order by location
+    </select>
+
+    <select id="getDiscountList" resultMap="BaseDiscount">
+        select
+        <include refid="Base_Discount_Column_List" />
+        from t_discount
+        where start_time &lt; NOW() and end_time > NOW()
+        order by created_time desc
+    </select>
+
+    <select id="getDiscountListCount" resultType="java.lang.Integer">
+        select count(*) from t_discount
+        where start_time &lt; NOW() and end_time > NOW()
+    </select>
+
+    <select id="getDiscountById" resultMap="BaseDiscount">
+        select
+        <include refid="Base_Discount_Column_List" />
+        from t_discount
+        where start_time &lt; NOW() and end_time > NOW() and discount_id = #{disId}
+    </select>
+
+    <update id="updDisObject" parameterType="java.lang.Integer">
+        update t_discount set object
+    </update>
+
+    <select id="getDisUserByOne" resultMap="BaseDisUser">
+        select
+        <include refid="Base_DisUser_Column_List" />
+        from t_discount_user
+        where user_id = #{userId} and dis_id = #{disId}
+    </select>
+
+    <insert id="insertDisUser" parameterType="com.tangmo.emall.entity.DiscountUser">
+        insert into t_discount_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="disId != null">
+                dis_id,
+            </if>
+            <if test="conversionCode != null">
+                conversion_code,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="disId != null">
+                #{disId},
+            </if>
+            <if test="conversionCode != null">
+                #{conversionCode},
+            </if>
+        </trim>
+    </insert>
+</mapper>

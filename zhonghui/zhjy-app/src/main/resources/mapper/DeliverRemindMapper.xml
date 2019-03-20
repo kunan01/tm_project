@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhjy.app.modules.dao.DeliverRemindDao">
+
+    <insert id="insertDr" parameterType="com.tangmo.zhjy.app.modules.bean.DeliverRemind">
+        insert into deliver_remind (go_id,user_id,merchant_id)
+         VALUES (#{goId},#{userId},#{merchantId})
+    </insert>
+</mapper>

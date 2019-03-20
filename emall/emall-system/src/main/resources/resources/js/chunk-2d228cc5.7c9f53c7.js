@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d228cc5"],{db5f:function(n,c,t){"use strict";t.r(c);var e=function(){var n=this,c=n.$createElement,t=n._self._c||c;return t("div",[n._v("\n    热门分类\n")])},u=[],r={data:function(){return{}},created:function(){},computed:{}},a=r,o=t("17cc"),d=Object(o["a"])(a,e,u,!1,null,null,null);c["default"]=d.exports}}]);

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.yiliao.dao.VideoDao">
+
+    <resultMap id="BaseDoctorVideo" type="com.tangmo.yiliao.entity.DoctorVideo">
+        <id column="dv_id" property="dvId" jdbcType="VARCHAR"></id>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"></result>
+        <result column="dv_video" property="dvVideo" jdbcType="VARCHAR"></result>
+        <result column="dv_imgid" property="dvImgId" jdbcType="VARCHAR"></result>
+        <result column="dv_title" property="dvTitle" jdbcType="VARCHAR"></result>
+        <result column="dv_content" property="dvContent" jdbcType="VARCHAR"></result>
+        <result column="dv_integral" property="dvIntegral" jdbcType="INTEGER"></result>
+        <result column="visit_number" property="visitNumber" jdbcType="INTEGER"></result>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"></result>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR"></result>
+        <result column="create_userid" property="createUserId" jdbcType="VARCHAR"></result>
+        <result column="update_userid" property="updateUserId" jdbcType="VARCHAR"></result>
+        <result column="user_imgurl" property="userImgId" jdbcType="VARCHAR"></result>
+        <result column="dd_hospital" property="ddHospital" jdbcType="VARCHAR"></result>
+        <result column="dd_position" property="ddPosition" jdbcType="VARCHAR"></result>
+        <result column="dd_field" property="ddField" jdbcType="VARCHAR"></result>
+        <result column="name" property="name" jdbcType="VARCHAR"></result>
+        <result column="dt_id" property="dtId" jdbcType="VARCHAR"></result>
+        <result column="category" property="category" jdbcType="TINYINT"></result>
+        <result column="commCount" property="commCount" jdbcType="INTEGER" ></result>
+        <result column="sorting_id" property="sortingId" jdbcType="INTEGER" ></result>
+    </resultMap>
+
+    <select id="getShufflingVideo" resultMap="BaseDoctorVideo">
+        select top 5 dv_id,dv_imgid from doctor_video dv
+	    inner join tb_sys_user ts
+	    on dv.user_id = ts.user_id
+	    where ts.state = 0 and dv.dv_state = 0
+	    order by dv_integral desc
+    </select>
+
+    <select id="selectShufflingVideoByName" resultMap="BaseDoctorVideo">
+        select dv_id,dv_title,dv_content,dv_imgid,visit_number,dv_integral,(select COUNT(*) from comments where c_type = 1 and ArticlesOrVideoId = dv.dv_id and state = 0) as commCount,CONVERT(VARCHAR,create_time,120) as create_time
+        from doctor_video dv
+        where dv_state = 0 and dv_title like '%${title}%'
+    </select>
+
+    <select id="getKnowledgeVideo" resultMap="BaseDoctorVideo">
+        select top ${end} dv_id,dv_title,dv_imgid,visit_number,dv_integral,(select COUNT(*) from comments where c_type = 1 and ArticlesOrVideoId = dv.dv_id and state = 0) as commCount
+        from doctor_video dv
+        where dv_state = 0 and category = 1 and dv_id not in(select top ${start} dv_id
+        from doctor_video dv
+        where dv_state = 0 and category = 1 order by visit_number desc) order by visit_number desc
+    </select>
+
+    <select id="getShortVideo" resultMap="BaseDoctorVideo">
+        select top 6 dv_id,dv_title,dv_imgid,visit_number,dv_integral,(select COUNT(*) from comments where c_type = 1 and ArticlesOrVideoId = dv.dv_id and state = 0) as commCount
+        from doctor_video dv
+        where dv_state = 0 and category = 0 order by visit_number desc
+    </select>
+
+    <select id="getDepartmentVideoTop4ById"  resultMap="BaseDoctorVideo">
+        select top 4 dv_id,dv_imgid,dv_title,dv_integral,visit_number,(select COUNT(*) from comments where c_type = 1 and ArticlesOrVideoId = dv.dv_id and state = 0) as commCount
+        from doctor_video dv
+        inner join tb_sys_user ts
+	    on dv.user_id = ts.user_id
+	    where ts.state = 0 and dv.dv_state = 0 and dv.dt_id = #{dtId}
+	    order by dv_integral desc
+    </select>
+
+    <select id="getDepartmentByIdVideoAll" resultMap="BaseDoctorVideo">
+        select top ${end} dv_id,dv_imgid,dv_title,dv_integral,visit_number,(select COUNT(*) from comments where c_type = 1 and ArticlesOrVideoId = dv.dv_id and state = 0) as commCount
+        from doctor_video dv
+        inner join tb_sys_user ts
+	    on dv.user_id = ts.user_id
+	    where ts.state = 0 and dv.dv_state = 0 and dv.dt_id = #{dtId}
+	    and dv.dv_id not in (select top ${start} dv_id from doctor_video dv
+				inner join tb_sys_user ts
+				on dv.user_id = ts.user_id
+				where ts.state = 0 and dv.dv_state = 0 and dv.dt_id = #{dtId}
+				order by visit_number desc)
+	    order by visit_number desc
+    </select>
+
+    <select id="getDepartmentBySearch" parameterType="com.tangmo.yiliao.entity.SelectUser" resultMap="BaseDoctorVideo">
+        select top ${end} dv_id,dv_imgid,dv_title,dv_integral,visit_number,(select COUNT(*) from comments where c_type = 1 and ArticlesOrVideoId = dv.dv_id and state = 0) as commCount
+        from doctor_video dv
+        inner join tb_sys_user ts
+        on dv.user_id = ts.user_id
+        where ts.state = 0 and dv.dv_state = 0 and dv.dt_id in (select dt_id from department where dt_name like '%${condName}%' and dt_state = 0)
+        and dv.dv_id not in (select top ${start} dv_id from doctor_video dv
+        inner join tb_sys_user ts
+        on dv.user_id = ts.user_id
+        where ts.state = 0 and dv.dv_state = 0 and dv.dt_id in (select dt_id from department where dt_name like '%${condName}%' and dt_state = 0)
+        order by visit_number desc)
+        order by visit_number desc
+    </select>
+
+    <select id="getVideoList" resultMap="BaseDoctorVideo">
+        select top ${end} dv_id,dv_imgid,dv_title,dv_integral,visit_number,(select COUNT(*) from comments where c_type = 1 and ArticlesOrVideoId = dv.dv_id and state = 0) as commCount
+        from doctor_video dv
+        inner join tb_sys_user ts
+        on dv.user_id = ts.user_id
+        where ts.state = 0 and dv.dv_state = 0 and category = #{category}
+        and dv.dv_id not in (select top ${start} dv_id from doctor_video dv
+        inner join tb_sys_user ts
+        on dv.user_id = ts.user_id
+        where ts.state = 0 and dv.dv_state = 0 and category = #{category}
+        order by visit_number desc)
+        order by visit_number desc
+    </select>
+
+    <select id="getUserVideoFootprint" resultMap="BaseDoctorVideo">
+        select top ${end} dv.dv_id,dv.dv_imgid,dv.dv_title,dv.visit_number,CONVERT(VARCHAR,ft.create_time,120) as create_time from doctor_video dv
+        inner join tb_sys_user ts
+	    on dv.user_id = ts.user_id
+	    inner join footprint ft
+	    on dv.dv_id = ft.type_id
+	    where ts.state = 0 and dv.dv_state = 0 and ft.state = 0 and ft.user_id = #{userId} and ft.fp_type = 0
+	    and dv.dv_id not in (select top ${start} dv_id from doctor_video dv
+			inner join tb_sys_user ts
+			on dv.user_id = ts.user_id
+			inner join footprint ft
+			on dv.dv_id = ft.type_id
+			where ts.state = 0 and dv.dv_state = 0 and ft.state = 0 and ft.user_id = #{userId} and ft.fp_type = 0 order by ft.create_time desc)
+		order by ft.create_time desc
+    </select>
+
+    <select id="getUserDoctorVideoById" resultMap="BaseDoctorVideo">
+        select top ${end} dv.dv_id,dv.dv_imgid,dv.dv_title,dv.dv_integral from doctor_video dv
+        inner join tb_sys_user ts
+	    on dv.user_id = ts.user_id
+	    where ts.state = 0 and dv.dv_state = 0 and dv.user_id = #{userId}
+	    and dv.dv_id not in (select top ${start} dv.dv_id from doctor_video dv
+				inner join tb_sys_user ts
+				on dv.user_id = ts.user_id
+				where ts.state = 0 and dv.dv_state = 0 and dv.user_id = #{userId} order by dv.dv_integral desc)
+		order by dv.dv_integral desc
+    </select>
+
+    <select id="getVideoById" resultMap="BaseDoctorVideo">
+        SELECT top 1 dv.dv_id,ts.user_id,ts.user_imgurl,ts.name,dd.dd_hospital,dd.dd_position,
+        (select dt_name from department where dt_id = dd.dd_field) as dd_field,dv.dv_video,dv.dv_imgid,dv.dt_id,dv.category,dv.sorting_id,
+        dv.dv_title,dv.dv_content,dv.dv_integral,dv.visit_number,CONVERT(varchar,dv.create_time,120) as create_time
+        FROM doctor_video as dv
+        left JOIN tb_sys_user as ts
+        on dv.user_id = ts.user_id
+        left JOIN doctor_details as dd
+        on dv.user_id = dd.user_id
+        where dv.dv_id = #{dvId}
+    </select>
+
+    <select id="getDepartmentVideoTop2T" resultMap="BaseDoctorVideo">
+        select top 2 dv_id,dv_imgid,dv_title,dv_integral from doctor_video
+        where dv_state = 0 and dv_id not in (select type_id from footprint where fp_type = 1 and user_id = #{userId})
+    </select>
+
+    <update id="updVisitNumber">
+        UPDATE doctor_video SET visit_number = visit_number+1 WHERE dv_id = #{dvId}
+    </update>
+
+</mapper>

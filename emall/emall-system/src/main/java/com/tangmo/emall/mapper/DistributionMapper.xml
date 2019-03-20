@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.emall.dao.DistributionDao" >
+
+    <resultMap id="BaseShippingInfo" type="com.tangmo.emall.entity.ShippingInfo">
+        <id column="ship_id" property="shipId" jdbcType="INTEGER" />
+        <result column="descript" property="descript" jdbcType="VARCHAR" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_ShippingInfo_Column_List">
+        ship_id,descript,price,shop_id,created_time
+    </sql>
+
+    <select id="getStoreDistribution" parameterType="java.lang.Integer" resultMap="BaseShippingInfo">
+        select
+        <include refid="Base_ShippingInfo_Column_List" />
+        from t_shipping_info
+        where shop_id = #{shopId} and data_flag = 0
+        order by created_time desc
+    </select>
+
+    <update id="updateDistribution" parameterType="com.tangmo.emall.entity.ShippingInfo">
+        update t_shipping_info
+        <set>
+            <if test="descript != null">
+                descript = #{descript},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+        </set>
+        where ship_id = #{shipId}
+    </update>
+
+    <select id="getDistributionById"  parameterType="java.lang.Integer" resultMap="BaseShippingInfo">
+        select
+        <include refid="Base_ShippingInfo_Column_List" />
+        from t_shipping_info
+        where ship_id = #{shipId} and data_flag = 0
+    </select>
+
+    <insert id="addDistribution" parameterType="com.tangmo.emall.entity.ShippingInfo">
+        insert into t_shipping_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="descript != null">
+                descript,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+            <if test="shopId != null">
+                shop_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="descript != null">
+                #{descript},
+            </if>
+            <if test="price != null">
+                #{price},
+            </if>
+            <if test="shopId != null">
+                #{shopId},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="delDistribution" parameterType="java.lang.Integer">
+        update t_shipping_info set data_flag = 1 where ship_id = #{shipId}
+    </update>
+</mapper>

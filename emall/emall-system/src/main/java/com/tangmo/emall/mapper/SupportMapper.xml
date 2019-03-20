@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.emall.dao.SupportDao" >
+
+    <resultMap id="BaseMessage" type="com.tangmo.emall.entity.MessageUs">
+        <id column="m_id" property="messageId" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="m_topic" property="messageTopic" jdbcType="VARCHAR" />
+        <result column="m_email" property="messageEmail" jdbcType="VARCHAR" />
+        <result column="m_content" property="messageContent" jdbcType="VARCHAR" />
+        <result column="first_name" property="firstName" jdbcType="VARCHAR" />
+        <result column="last_name" property="lastName" jdbcType="VARCHAR" />
+        <result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
+        <result column="state" property="state" jdbcType="TINYINT" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <resultMap id="BaseCustomer" type="com.tangmo.emall.entity.CustomerService">
+        <id column="service_id" property="serviceId" jdbcType="VARCHAR" />
+        <result column="service_text" property="serviceText" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        m_id,user_id,m_topic,m_email,m_content,first_name,last_name,order_number,state,created_time
+    </sql>
+
+    <select id="getUsersMessageList" parameterType="java.lang.Integer" resultMap="BaseMessage">
+        select
+        <include refid="Base_Column_List" />
+        from t_message_us
+        <if test="state == 0"> order by created_time desc</if>
+        <if test="state == 1"> where state = 0 order by created_time desc</if>
+        <if test="state == 2"> where state = 1 order by created_time desc</if>
+    </select>
+
+    <select id="getUsersMessage" parameterType="java.lang.Integer" resultMap="BaseMessage">
+        select
+        <include refid="Base_Column_List" />
+        from t_message_us
+        where m_id = #{mId}
+    </select>
+
+    <update id="updMessageUsState" parameterType="java.lang.Integer">
+        update t_message_us set state = 1 where m_id = #{mId}
+    </update>
+
+    <select id="getCustomerService" resultMap="BaseCustomer">
+        select service_id,service_text from t_customer_service
+    </select>
+
+    <update id="updateCustomerService" parameterType="com.tangmo.emall.entity.CustomerService">
+        update t_customer_service
+        <set>
+            <if test="serviceText != null">
+                service_text = #{serviceText},
+            </if>
+        </set>
+        where service_id = #{serviceId}
+    </update>
+</mapper>

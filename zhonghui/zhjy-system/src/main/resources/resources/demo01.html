@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Insert title here</title>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet"
+	href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
+	integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+	crossorigin="anonymous">
+
+<!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+<link rel="stylesheet"
+	href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+	integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+	crossorigin="anonymous">
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script
+	src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"
+	integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+	crossorigin="anonymous"></script>
+<style type="text/css">
+.form-search {
+	margin-bottom: 1%;
+	margin-top: 1%;
+}
+
+.page {
+	text-align: center;
+}
+</style>
+</head>
+<body>
+	<div class="container-fluid content">
+		<div class="row-fluid">
+			<div class="span12">
+				<form class="form-search">
+					<input class="input-medium search-query" type="text" placeholder="请输入搜索内容" />
+					<button type="submit" class="btn btn-default">查找</button>
+					<button type="button" class="btn btn-primary">添加</button>
+				</form>
+				<table class="table table-hover table-bordered">
+					<thead>
+						<tr>
+							<th>编号</th>
+							<th>产品</th>
+							<th>交付时间</th>
+							<th>状态</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>1</td>
+							<td>TB - Monthly</td>
+							<td>01/04/2012</td>
+							<td>Default</td>
+							<td>
+								<button type="button" class="btn btn-warning">修改</button>	
+								<button type="button" class="btn btn-danger">删除</button>
+							</td>
+						</tr>
+						<tr>
+							<td>1</td>
+							<td>TB - Monthly</td>
+							<td>01/04/2012</td>
+							<td>Approved</td>
+							<td>
+								<button type="button" class="btn btn-warning">修改</button>	
+								<button type="button" class="btn btn-danger">删除</button>
+							</td>
+						</tr>
+						<tr>
+							<td>2</td>
+							<td>TB - Monthly</td>
+							<td>02/04/2012</td>
+							<td>Declined</td>
+							<td>
+								<button type="button" class="btn btn-warning">修改</button>	
+								<button type="button" class="btn btn-danger">删除</button>
+							</td>
+						</tr>
+						<tr>
+							<td>3</td>
+							<td>TB - Monthly</td>
+							<td>03/04/2012</td>
+							<td>Pending</td>
+							<td>
+								<button type="button" class="btn btn-warning">修改</button>	
+								<button type="button" class="btn btn-danger">删除</button>
+							</td>
+						</tr>
+						<tr>
+							<td>4</td>
+							<td>TB - Monthly</td>
+							<td>04/04/2012</td>
+							<td>Call in to confirm</td>
+							<td>
+								<button type="button" class="btn btn-warning">修改</button>	
+								<button type="button" class="btn btn-danger">删除</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="page">
+					<nav aria-label="Page navigation">
+						<ul class="pagination">
+							<li><a href="#" aria-label="Previous"> <span
+									aria-hidden="true">&laquo;</span>
+							</a></li>
+							<li class="active"><a href="#">1</a></li>
+							<li><a href="#">2</a></li>
+							<li><a href="#">3</a></li>
+							<li><a href="#">4</a></li>
+							<li><a href="#">5</a></li>
+							<li><a href="#" aria-label="Next"> <span
+									aria-hidden="true">&raquo;</span>
+							</a></li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

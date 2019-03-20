@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.emall.dao.AddressDao" >
+
+    <resultMap id="BaseAddress" type="com.tangmo.emall.entity.UserAddress">
+        <id column="address_id" property="addressId" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="user_name" property="userName" jdbcType="VARCHAR" />
+        <result column="address_line1" property="addressLine1" jdbcType="VARCHAR" />
+        <result column="address_line2" property="addressLine2" jdbcType="VARCHAR" />
+        <result column="city" property="city" jdbcType="VARCHAR" />
+        <result column="province" property="province" jdbcType="VARCHAR" />
+        <result column="zip_code" property="zipCode" jdbcType="VARCHAR" />
+        <result column="country" property="country" jdbcType="VARCHAR" />
+        <result column="user_phone" property="userPhone" jdbcType="VARCHAR" />
+        <result column="instructions" property="instructions" jdbcType="VARCHAR" />
+        <result column="security" property="security" jdbcType="VARCHAR" />
+        <result column="is_receive_package" property="isReceivePackage" jdbcType="TINYINT" />
+        <result column="is_default" property="isDefault" jdbcType="TINYINT" />
+        <result column="data_status" property="dataStatus" jdbcType="TINYINT" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    
+    <resultMap id="BaseShopDelivery" type="com.tangmo.emall.entity.ShopDelivery">
+        <id column="da_id" property="daId" jdbcType="INTEGER" />
+        <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+        <result column="sender_name" property="senderName" jdbcType="VARCHAR" />
+        <result column="sender_phone" property="senderPhone" jdbcType="VARCHAR" />
+        <result column="address_line1" property="addressLine1" jdbcType="VARCHAR" />
+        <result column="address_line2" property="addressLine2" jdbcType="VARCHAR" />
+        <result column="city" property="city" jdbcType="VARCHAR" />
+        <result column="province" property="province" jdbcType="VARCHAR" />
+        <result column="zip_code" property="zipCode" jdbcType="VARCHAR" />
+        <result column="country" property="country" jdbcType="VARCHAR" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        address_id,user_id,user_name,address_line1,address_line2,city,province,zip_code,country,
+        user_phone,instructions,security,is_receive_package,is_default,data_status,created_time
+    </sql>
+
+    <sql id="Base_ShopDelivery_Column_List">
+        da_id,shop_id,sender_name,sender_phone,address_line1,address_line2,city,province,zip_code,country,created_time
+    </sql>
+
+    <select id="getAddressListByUserId" parameterType="java.lang.Integer" resultMap="BaseAddress">
+        select
+        <include refid="Base_Column_List" />
+        from t_address where user_id = #{userId}
+        order by created_time desc
+    </select>
+
+    <insert id="insertAddress" parameterType="com.tangmo.emall.entity.UserAddress" useGeneratedKeys="true" keyColumn="address_id" keyProperty="addressId">
+        insert into t_address
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="addressLine1 != null">
+                address_line1,
+            </if>
+            <if test="addressLine2 != null">
+                address_line2,
+            </if>
+            <if test="city != null">
+                city,
+            </if>
+            <if test="province != null">
+                province,
+            </if>
+            <if test="zipCode != null">
+                zip_code,
+            </if>
+            <if test="country != null">
+                country,
+            </if>
+            <if test="userPhone != null">
+                user_phone,
+            </if>
+            <if test="instructions != null">
+                instructions,
+            </if>
+            <if test="security != null">
+                security,
+            </if>
+            <if test="isReceivePackage != null">
+                is_receive_package,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="userName != null">
+                #{userName},
+            </if>
+            <if test="addressLine1 != null">
+                #{addressLine1},
+            </if>
+            <if test="addressLine2 != null">
+                #{addressLine2},
+            </if>
+            <if test="city != null">
+                #{city},
+            </if>
+            <if test="province != null">
+                #{province},
+            </if>
+            <if test="zipCode != null">
+                #{zipCode},
+            </if>
+            <if test="country != null">
+                #{country},
+            </if>
+            <if test="userPhone != null">
+                #{userPhone},
+            </if>
+            <if test="instructions != null">
+                #{instructions},
+            </if>
+            <if test="security != null">
+                #{security},
+            </if>
+            <if test="isReceivePackage != null">
+                #{isReceivePackage},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getAddressById" parameterType="java.lang.Integer" resultMap="BaseAddress">
+        select
+        <include refid="Base_Column_List" />
+        from t_address where address_id = #{aId}
+    </select>
+
+    <update id="updAddress" parameterType="com.tangmo.emall.entity.UserAddress">
+        update t_address
+        <set>
+            <if test="userName != null">
+                user_name = #{userName},
+            </if>
+            <if test="addressLine1 != null">
+                address_line1 = #{addressLine1},
+            </if>
+            <if test="addressLine2 != null">
+                address_line2 = #{addressLine2},
+            </if>
+            <if test="city != null">
+                city = #{city},
+            </if>
+            <if test="province != null">
+                province = #{province},
+            </if>
+            <if test="zipCode != null">
+                zip_code = #{zipCode},
+            </if>
+            <if test="country != null">
+                country = #{country},
+            </if>
+            <if test="userPhone != null">
+                user_phone = #{userPhone},
+            </if>
+            <if test="instructions != null">
+                instructions = #{instructions},
+            </if>
+            <if test="security != null">
+                security = #{security},
+            </if>
+            <if test="isReceivePackage != null">
+                is_receive_package = #{isReceivePackage},
+            </if>
+            <if test="isDefault != null">
+                is_default = #{isDefault},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus},
+            </if>
+        </set>
+        where address_id = #{addressId}
+    </update>
+
+    <update id="updAddressIsDefaultByUserId" parameterType="java.lang.Integer">
+        update t_address set is_default = 0 where user_id = #{userId}
+    </update>
+
+    <delete id="delAddressById" parameterType="java.lang.Integer">
+        delete from t_address where address_id = #{aId}
+    </delete>
+
+    <select id="getDeliveryAddress" parameterType="java.lang.Integer" resultMap="BaseShopDelivery">
+        select
+        <include refid="Base_ShopDelivery_Column_List" />
+        from t_shop_delivery
+        where shop_id = #{shopId}
+    </select>
+</mapper>

@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhjy.app.modules.dao.CommodityDao" >
+    <resultMap id="BaseResultMap" type="com.tangmo.zhjy.app.modules.bean.Commodity">
+        <id column="cd_id" property="cdId" jdbcType="INTEGER"/>
+        <result column="vr_id" property="vrId" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="img_id" property="imgId" jdbcType="VARCHAR"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="nike_name" property="username" jdbcType="VARCHAR"/>
+        <result column="headImage" property="avatarId" jdbcType="VARCHAR"/>
+        <result column="condition" property="condition" jdbcType="VARCHAR"/>
+        <result column="cd_color" property="cdColor" jdbcType="VARCHAR"/>
+        <result column="cd_size" property="cdSize" jdbcType="VARCHAR"/>
+        <result column="price_pre" property="pricePre" jdbcType="DOUBLE"/>
+        <result column="price_now" property="priceNow" jdbcType="DOUBLE"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="district" property="district" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="star" property="star" jdbcType="INTEGER"/>
+        <result column="is_quality" property="isQuality" jdbcType="INTEGER"/>
+        <result column="cd_count" property="cdCount" jdbcType="INTEGER"/>
+        <result column="cd_type" property="cdType" jdbcType="TINYINT"/>
+        <result column="cd_class" property="cdClass" jdbcType="INTEGER"/>
+        <result column="createtime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
+        <result column="cd_state" property="cdState" jdbcType="TINYINT"/>
+        <result column="express_fee" property="expressFee" jdbcType="DOUBLE" />
+    </resultMap>
+
+    <resultMap id="CdManageResultMap" type="com.tangmo.zhjy.app.modules.vo.CdManageVO" >
+        <id column="cd_id" property="cdId" jdbcType="INTEGER"/>
+        <result column="img_id" property="imgId" jdbcType="VARCHAR"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="price_now" property="priceNow" jdbcType="DOUBLE"/>
+        <result column="sell_count" property="sellCount" jdbcType="INTEGER"/>
+        <result column="cd_count" property="cdCount" jdbcType="INTEGER"/>
+        <result column="state" property="state" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <resultMap id="CommentResultMap" type="com.tangmo.zhjy.app.modules.bean.GoodsComment" >
+        <id column="gc_id" property="gcId" jdbcType="INTEGER"/>
+        <result column="goods_id" property="goodsId" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="nike_name" property="username" jdbcType="VARCHAR"/>
+        <result column="headImage" property="avatarId" jdbcType="VARCHAR"/>
+        <result column="createtime" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="BaseAppClassType" type="com.tangmo.zhjy.app.modules.bean.AppClassType">
+        <id column="c_id" property="cId" jdbcType="INTEGER" />
+        <result column="c_name" property="cName" jdbcType="VARCHAR"/>
+        <result column="c_level" property="cLevel" jdbcType="INTEGER"/>
+        <result column="c_parent_id" property="cParentId" jdbcType="INTEGER"/>
+        <result column="c_img_id" property="imgId" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+
+    </sql>
+    <insert id="insertSelective" parameterType="com.tangmo.zhjy.app.modules.bean.Commodity">
+            insert into commodity
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="imgId != null">
+                    img_id,
+                </if>
+                <if test="userId != null">
+                    user_id,
+                </if>
+                <if test="title != null">
+                    title,
+                </if>
+                <if test="content != null">
+                    content,
+                </if>
+                <if test="pricePre != null">
+                    price_pre,
+                </if>
+                <if test="priceNow != null">
+                    price_now,
+                </if>
+                <if test="discountFee != null">
+                    discount_fee,
+                </if>
+                <if test="expressFee != null">
+                    express_fee,
+                </if>
+                <if test="cdType != null">
+                    cd_type,
+                </if>
+                <if test="cdCount != null">
+                    cd_count,
+                </if>
+                <if test="cdColor != null">
+                    cd_color,
+                </if>
+                <if test="cdClass != null">
+                    cd_class,
+                </if>
+                <if test="cdSize != null">
+                    cd_size,
+                </if>
+                <if test="province != null">
+                    province,
+                </if>
+                <if test="city != null">
+                    city,
+                </if>
+                <if test="district != null">
+                    district,
+                </if>
+                <if test="address != null">
+                    address,
+                </if>
+                <if test="condition != null">
+                    commodity.condition,
+                </if>
+                <if test="phone != null">
+                    commodity.phone,
+                </if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="imgId != null">
+                    #{imgIds,jdbcType=VARCHAR},
+                </if>
+                <if test="userId != null">
+                    #{userId,jdbcType=INTEGER},
+                </if>
+                <if test="title != null">
+                    #{title,jdbcType=VARCHAR},
+                </if>
+                <if test="content != null">
+                    #{content,jdbcType=VARCHAR},
+                </if>
+                <if test="pricePre != null">
+                    #{pricePre,jdbcType=DOUBLE},
+                </if>
+                <if test="priceNow != null">
+                    #{priceNow,jdbcType=DOUBLE},
+                </if>
+                <if test="discountFee != null">
+                    #{discountFee,jdbcType=DOUBLE},
+                </if>
+                <if test="expressFee != null">
+                    #{expressFee,jdbcType=DOUBLE},
+                </if>
+                <if test="cdType != null">
+                    #{cdType,jdbcType=TINYINT},
+                </if>
+                <if test="cdCount != null">
+                    #{cdCount,jdbcType=INTEGER},
+                </if>
+                <if test="cdColor != null">
+                    #{cdColor,jdbcType=TINYINT},
+                </if>
+                <if test="cdClass != null">
+                    #{cdClass,jdbcType=INTEGER},
+                </if>
+                <if test="cdSize != null">
+                    #{cdSize,jdbcType=INTEGER},
+                </if>
+                <if test="province != null">
+                    #{province,jdbcType=VARCHAR},
+                </if>
+                <if test="city != null">
+                    #{city,jdbcType=VARCHAR},
+                </if>
+                <if test="district != null">
+                    #{district,jdbcType=VARCHAR},
+                </if>
+                <if test="address != null">
+                    #{address,jdbcType=VARCHAR},
+                </if>
+                <if test="condition != null">
+                    #{condition,jdbcType=VARCHAR},
+                </if>
+                <if test="phone != null">
+                    #{phone,jdbcType=VARCHAR},
+                </if>
+            </trim>
+    </insert>
+
+    <update id="updateById">
+        UPDATE commodity
+        <set>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="content != null">
+                content = #{content},
+            </if>
+            <if test="pricePre != null">
+                price_pre = #{pricePre},
+            </if>
+            <if test="priceNow != null">
+                price_now = #{priceNow},
+            </if>
+            <if test="cdType == 1">
+                cd_state = 0,
+            </if>
+            <if test="cdCount != null">
+                cd_count = #{cdCount},
+            </if>
+            <if test="cdColor != null">
+                cd_color = #{cdColor},
+            </if>
+            <if test="cdSize != null">
+                cd_size = #{cdSize},
+            </if>
+            <if test="discountFee != null">
+                discount_fee = #{discountFee},
+            </if>
+            <if test="expressFee != null">
+                express_fee = #{expressFee},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            updatetime = now(),
+            state = 0
+        </set>
+        WHERE cd_id = #{cdId,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectList" resultMap="BaseResultMap">
+        SELECT cd_id,user_id,img_id,title,content,cd_type,price_pre,address,
+        price_now,createtime,province,city,district,commodity.condition
+        FROM commodity WHERE cd_type = 1 AND is_sell = 0 AND cd_state = 1 AND state = 1
+        order by createtime desc
+    </select>
+
+    <select id="cdCount" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM commodity WHERE cd_type = 1 AND is_sell = 0 AND cd_state = 1
+    </select>
+
+    <select id="cdTwoCount" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM commodity WHERE cd_type = 2 AND is_sell = 0 AND cd_state = 1
+    </select>
+
+    <select id="selectListTwo" resultMap="BaseResultMap">
+        SELECT cd_id,user_id,img_id,title,content,cd_type,price_pre,
+        price_now,createtime,province,city,district,commodity.condition,phone
+        FROM commodity WHERE cd_type = 2 AND is_sell = 0 AND cd_state = 1 AND state = 1
+        order by createtime desc
+    </select>
+
+    <select id="selectListByUserId" resultMap="BaseResultMap">
+        SELECT cd_id,user_id,img_id,title,content,cd_type,cd_class,cd_state,express_fee,
+        price_pre,price_now,createtime,province,city,district,address,commodity.condition,phone,state
+        FROM commodity WHERE user_id = #{userId} AND is_sell = 0 AND cd_state = 1 AND cd_type = 2
+        order by createtime desc
+    </select>
+
+    <delete id="deleteById">
+        DELETE FROM commodity WHERE cd_id = #{cdId}
+    </delete>
+
+    <select id="selectCommodityDetail" resultMap="BaseResultMap">
+        SELECT cd.cd_id,cd.img_id,cd.title,cd.content,cd.cd_type,cd.cd_class,cd.cd_count,cd.price_pre,cd.express_fee,
+        cd.price_now,cd.createtime,cd.province,cd.city,cd.district,cd.address,cd.user_id,cd.condition,cd.phone,
+        ui.nike_name,ui.headImage,cd.cd_color,cd.cd_size
+        FROM commodity cd LEFT JOIN user ui ON cd.user_id = ui.id
+        WHERE  cd.cd_id = #{cdId} AND is_sell = 0
+    </select>
+
+    <select id="selectQualityList" resultMap="BaseResultMap">
+        SELECT cd_id,img_id,title,content,cd_type,cd_count,price_pre,address,
+        price_now,createtime,province,city,district,user_id,commodity.condition
+        FROM commodity WHERE is_quality = 1  AND is_sell = 0 AND cd_state = 1
+        order by createtime desc
+        limit #{start},#{end}
+    </select>
+
+
+    <select id="selectCdByCondition" parameterType="com.tangmo.zhjy.app.modules.dto.CommodityDto" resultMap="BaseResultMap">
+        SELECT cd_id,img_id,title,content,cd_type,cd_count,cd_class,price_pre,price_now,createtime,province,city,district,commodity.condition,is_quality
+        FROM commodity WHERE is_sell = 0 AND cd_state = 1 AND state = 1 AND cd_type = #{cdType}
+        <if test="city != null"> AND city = #{city} </if>
+        <if test="district != null"> AND district = #{district} </if>
+        <if test="isQuality != null"> AND is_quality = #{isQuality} </if>
+        <if test="condition != null"> AND commodity.condition = #{condition} </if>
+        <if test="cdClass != null"> AND cd_class = #{cdClass} </if>
+        <if test="priceStart != null"> AND price_now &gt;= #{priceStart} </if>
+        <if test="priceEnd != null"> AND price_now &lt;= #{priceEnd} </if>
+        <if test="price == 0"> ORDER BY price_now</if>
+        <if test="price == 1">ORDER BY price_now DESC </if>
+        <if test="star == 0"> ORDER BY star</if>
+        <if test="star == 1">ORDER BY star DESC </if>
+        <if test="star == null and price == null">ORDER BY createtime desc</if>
+    </select>
+
+    <update id="updateCdStar">
+        UPDATE commodity SET star = star+1 WHERE cd_id = #{cdId}
+    </update>
+
+    <select id="selectQualityListByType" resultMap="BaseResultMap">
+        SELECT cd_id,img_id,title,content,cd_type,cd_count,price_pre,address,
+        price_now,createtime,province,city,district,user_id,commodity.condition
+        FROM commodity WHERE is_quality = 1 AND is_sell = 0 AND cd_state = 1
+        ORDER BY updatetime DESC  limit #{start},#{end}
+    </select>
+
+    <update id="updateCdState">
+        UPDATE commodity SET cd_state = #{state} WHERE cd_id = #{cdId}
+    </update>
+
+    <select id="selectCdManageRecord" resultMap="CdManageResultMap">
+        SELECT cd.cd_id,cd.price_now,cd.title,cd.img_id,
+        cd.cd_count,ifnull(sell.sell_count,0) sell_count,cd.state
+        FROM commodity cd
+        LEFT JOIN
+        (SELECT goods_id,COUNT(goods_id) sell_count FROM sell_record WHERE user_id = #{userId}
+          GROUP BY goods_id) sell
+        ON cd.cd_id = sell.goods_id
+        WHERE cd.cd_state = #{state} AND cd.cd_type != 2 AND cd.user_id = #{userId}
+        order by createtime desc
+    </select>
+
+    <insert id="insertComment">
+        insert into goods_comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="goodsId != null">
+                goods_id,
+            </if>
+            <if test="star != null">
+                star,
+            </if>
+            <if test="isAnonymous != null">
+                is_anonymous,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="goodsId != null">
+                #{goodsId,jdbcType=INTEGER},
+            </if>
+            <if test="star != null">
+                #{star,jdbcType=TINYINT},
+            </if>
+            <if test="isAnonymous != null">
+                #{isAnonymous,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectCommentByGoodsId" resultMap="CommentResultMap">
+        SELECT gc.gc_id,gc.user_id,ui.nike_name,ui.headImage,gc.createtime FROM goods_comment gc
+        LEFT JOIN user ui ON gc.user_id = ui.id
+        WHERE gc.goods_id = #{goodsId} AND belong_type = 0
+        ORDER BY gc.createtime DESC
+        limit #{start},#{end}
+    </select>
+
+    <update id="updateCdCount">
+        UPDATE commodity SET cd_count = cd_count-#{count} WHERE cd_id = #{cdId}
+    </update>
+
+    <select id="getCommentClassType" resultMap="BaseAppClassType">
+        SELECT c_id,c_name,c_img_id from app_class_type
+        WHERE c_level = 2 AND c_parent_id = #{id}
+    </select>
+
+    <select id="getCommentListByCId" resultMap="BaseResultMap">
+        SELECT cd_id,user_id,img_id,title,content,cd_type,cd_class,price_pre,
+        price_now,createtime,province,city,district,address
+        FROM commodity WHERE cd_state = 1 AND cd_type = #{type} <if test="cId != null"> AND cd_class = #{cId} </if><if test="district != null"> AND district = #{district} </if> AND state = 1
+        order by createtime desc
+    </select>
+
+    <select id="getCommentClassTypeById" resultMap="BaseAppClassType">
+        SELECT c_id,c_name from app_class_type WHERE c_id = #{cId}
+    </select>
+
+    <select id="getCommentRECByShop" resultMap="BaseResultMap">
+        SELECT cd_id,user_id,img_id,title,content,cd_type,cd_class,price_pre,
+        price_now,createtime,province,city,district,address
+        FROM commodity WHERE cd_state = 1 AND cd_type = #{type} AND cd_class = (select cd_class from commodity where cd_id = #{cId}) AND state = 1 AND cd_id not in (#{cId})
+        order by createtime desc
+    </select>
+
+    <select id="getCommentSellCount" resultType="java.lang.Integer">
+        select SUM(sr_count) from sell_record where goods_id = #{cdId}
+    </select>
+
+    <select id="getDisByCity" resultType="java.lang.String">
+        SELECT district FROM commodity
+        WHERE city = #{city} AND cd_type = #{type} AND cd_state = 1 AND state = 1
+        GROUP BY district
+    </select>
+</mapper>

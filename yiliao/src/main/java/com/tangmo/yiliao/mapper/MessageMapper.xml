@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.yiliao.dao.MessageDao" >
+
+    <resultMap id="BaseRead" type="com.tangmo.yiliao.entity.Read">
+        <id column="user_id" property="userId" jdbcType="VARCHAR"></id>
+        <result column="exceptional_state" property="exceptionalState" jdbcType="TINYINT" ></result>
+        <result column="system_message_state" property="systemMessageState" jdbcType="TINYINT" ></result>
+        <result column="reply_message_state" property="replyMessageState" jdbcType="TINYINT" ></result>
+        <result column="remind_message_state" property="remindMessageState" jdbcType="TINYINT"></result>
+        <result column="advisory_message_state" property="advisoryMessagesState" jdbcType="TINYINT" ></result>
+    </resultMap>
+
+    <resultMap id="BaseMessage" type="com.tangmo.yiliao.entity.Message">
+        <id column="mi_id" property="miId" jdbcType="VARCHAR" ></id>
+        <result column="title" property="title" jdbcType="VARCHAR" ></result>
+        <result column="mi_content" property="miContent" jdbcType="VARCHAR" ></result>
+        <result column="mi_category" property="miCategory" jdbcType="TINYINT" ></result>
+        <result column="comm_id" property="commId" jdbcType="VARCHAR" ></result>
+        <result column="state" property="state" jdbcType="TINYINT" ></result>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR" ></result>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR" ></result>
+        <result column="create_userid" property="createUserId" jdbcType="VARCHAR" ></result>
+        <result column="update_userid" property="updateUserId" jdbcType="VARCHAR" ></result>
+    </resultMap>
+
+    <resultMap id="BaseDic" type="com.tangmo.yiliao.entity.Dialogue">
+        <id column="dl_id" property="dlId" jdbcType="VARCHAR" ></id>
+        <result column="originator_id" property="originatorId" jdbcType="VARCHAR" ></result>
+        <result column="people_id" property="peopleId" jdbcType="VARCHAR" ></result>
+        <result column="d_type" property="dType" jdbcType="TINYINT" ></result>
+        <result column="d_content" property="dContent" jdbcType="VARCHAR" ></result>
+        <result column="d_state" property="dState" jdbcType="TINYINT" ></result>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR" ></result>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR" ></result>
+        <result column="create_userid" property="createUserId" jdbcType="VARCHAR" ></result>
+        <result column="update_userid" property="updateUserId" jdbcType="VARCHAR" ></result>
+        <result column="user_imgurl" property="userImgUrl" jdbcType="VARCHAR"></result>
+        <result column="name" property="name" jdbcType="VARCHAR" ></result>
+    </resultMap>
+
+
+    <select id="getMessageTitle" resultType="java.lang.String">
+        select top 1 title from message_info
+        where mi_category = #{type} <if test="type != 0">and user_id = #{userId}</if> and state = 0 order by create_time desc
+    </select>
+
+    <select id="getMessageState" resultMap="BaseRead">
+        select user_id,exceptional_state,system_message_state,reply_message_state,remind_message_state,advisory_message_state
+        from [read] where [user_id] = #{userId}
+    </select>
+
+    <update id="updMessageState">
+        UPDATE [read] SET
+        <if test="type == 0">system_message_state = #{state}</if>
+        <if test="type == 1">reply_message_state = #{state}</if>
+        <if test="type == 2">exceptional_state = #{state}</if>
+        <if test="type == 3">remind_message_state = #{state}</if>
+        <if test="type == 4">advisory_message_state = #{state}</if>
+        where [user_id] = #{userId}
+    </update>
+
+    <select id="getMessageAll" resultMap="BaseMessage">
+        SELECT TOP ${end} [mi_id],title,[mi_content],[comm_id],CONVERT(VARCHAR(19),[create_time],120) as create_time
+        FROM [message_info] WHERE [state] = 0 AND [mi_category] = #{type} <if test="type != 0">AND [user_id] = #{userId}</if>  AND [mi_id] NOT IN (SELECT TOP ${start} [mi_id]
+        FROM [message_info] WHERE [state] = 0 AND [mi_category] = #{type} <if test="type != 0">AND [user_id] = #{userId}</if> ORDER BY [create_time] DESC)
+        ORDER BY [create_time] DESC
+    </select>
+
+    <update id="updDoctorCount">
+        UPDATE doctor_details SET integral = integral + #{count} where user_id = #{userId}
+    </update>
+
+    <update id="updUserCountJ">
+        UPDATE tb_sys_user SET user_integral = user_integral - #{count},user_cons = user_cons + #{count} where user_id = #{userId}
+    </update>
+
+    <select id="getUserName" resultType="java.lang.String">
+        select user_name from tb_sys_user where user_id = #{userId}
+    </select>
+
+    <select id="getName" resultType="java.lang.String">
+        select name from tb_sys_user where user_id = #{userId}
+    </select>
+
+    <select id="getDoctorId" resultType="java.lang.String">
+        select user_id from doctor_video where dv_id = #{sId}
+    </select>
+
+    <select id="getUserId" resultType="java.lang.String">
+        select user_id from system_the_article where sa_id = #{sId}
+    </select>
+
+    <update id="updDoctorVideoCount">
+        update doctor_video set dv_integral = dv_integral + #{count} where dv_id = #{dvId}
+    </update>
+
+    <insert id="addMessage" parameterType="com.tangmo.yiliao.entity.Message">
+        INSERT INTO [message_info]
+        ([mi_id]
+        ,[title]
+        ,[mi_content]
+        ,[mi_category]
+        <if test="commId != null">,[comm_id]</if>
+        ,[user_id]
+        ,[create_time]
+        ,[update_time]
+        ,[create_userid]
+        ,[update_userid])
+        VALUES
+        (#{miId,jdbcType=VARCHAR}
+        ,#{title,jdbcType=VARCHAR}
+        ,#{miContent,jdbcType=TINYINT}
+        ,#{miCategory,jdbcType=VARCHAR}
+        <if test="commId != null">,#{commId,jdbcType=VARCHAR}</if>
+        ,#{userId,jdbcType=VARCHAR}
+        ,CONVERT(varchar,GETDATE(),120)
+        ,CONVERT(varchar,GETDATE(),120)
+        ,#{userId,jdbcType=VARCHAR}
+        ,#{userId,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="addDic" parameterType="com.tangmo.yiliao.entity.Dialogue">
+        INSERT INTO [dialogue]
+        ([dl_id]
+        ,[originator_id]
+        ,[people_id]
+        ,[d_type]
+        ,[d_content]
+        ,[create_time]
+        ,[update_time]
+        ,[create_userid]
+        ,[update_userid])
+        VALUES
+        (#{dlId,jdbcType=VARCHAR}
+        ,#{originatorId,jdbcType=VARCHAR}
+        ,#{peopleId,jdbcType=TINYINT}
+        ,#{dType,jdbcType=VARCHAR}
+        ,#{dContent,jdbcType=VARCHAR}
+        ,CONVERT(varchar,GETDATE(),120)
+        ,CONVERT(varchar,GETDATE(),120)
+        ,#{createUserId,jdbcType=VARCHAR}
+        ,#{createUserId,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="getDic" parameterType="com.tangmo.yiliao.entity.SelectUser" resultMap="BaseDic">
+        select top ${end} dl_id,originator_id,people_id,d_type,d_content,CONVERT(varchar,create_time,120) as create_time,create_userid,
+        (select user_imgurl from tb_sys_user where user_id = dg.create_userid) as user_imgurl from dialogue dg
+        where originator_id = #{originatorId} and people_id = #{peopleId} and d_state = 0 and dl_id not in (select top ${start} dl_id
+        where originator_id = #{originatorId} and people_id = #{peopleId} and d_state = 0 order by create_time desc)
+        order by create_time desc
+    </select>
+
+    <select id="getUserConsultingAll" parameterType="com.tangmo.yiliao.entity.SelectUser" resultType="java.lang.String">
+        <if test="type == 0">
+            select people_id from dialogue where originator_id = #{originatorId} GROUP BY people_id
+        </if>
+        <if test="type == 1">
+            select originator_id from dialogue where people_id = #{originatorId} GROUP BY originator_id
+        </if>
+    </select>
+
+    <select id="getUserConsAll" resultMap="BaseDic">
+        select top 1 dg.people_id,dg.d_content,dg.d_type,(select user_imgurl from tb_sys_user where user_id = dg.people_id) as user_imgurl,(select name from tb_sys_user where user_id = dg.people_id) as name
+        from dialogue dg where dg.people_id = #{peopleId} and dg.originator_id = #{originatorId} and dg.d_state = 0 ORDER BY dg.create_time desc
+    </select>
+
+    <select id="getUserByIdConsAll" resultMap="BaseDic">
+        select top 1 dg.originator_id as people_id,dg.d_content,dg.d_type,(select user_imgurl from tb_sys_user where user_id = dg.originator_id) as user_imgurl,(select user_name from tb_sys_user where user_id = dg.originator_id) as name
+        from dialogue dg where dg.people_id = #{peopleId} and dg.originator_id = #{originatorId} and dg.d_state = 0 ORDER BY dg.create_time desc
+    </select>
+</mapper>

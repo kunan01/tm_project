@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhjy.app.modules.dao.ShopVerifyDao" >
+    <resultMap id="BaseResultMap" type="com.tangmo.zhjy.app.modules.bean.ShopVerify" >
+        <id column="sv_id" property="svId" jdbcType="INTEGER"/>
+        <result column="id_number" property="idNumber" jdbcType="VARCHAR"/>
+        <result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="id_front_img" property="idFrontImg" jdbcType="VARCHAR"/>
+        <result column="id_rear_img" property="idRearImg" jdbcType="VARCHAR"/>
+        <result column="logo_img" property="logoImg" jdbcType="VARCHAR"/>
+        <result column="shop_intro" property="shopIntro" jdbcType="VARCHAR"/>
+        <result column="shop_name" property="shopName" jdbcType="VARCHAR"/>
+        <result column="shop_address" property="shopAddress" jdbcType="VARCHAR"/>
+        <result column="license_img" property="licenseImg" jdbcType="VARCHAR"/>
+        <result column="createtime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="shop_state" property="shopState" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+      sv_id,id_number,mobile,user_id,user_name,id_front_img,id_rear_img,
+        logo_img,shop_intro,shop_name,license_img,shop_state,createtime
+    </sql>
+    <insert id="insertShopVerify" parameterType="com.tangmo.zhjy.app.modules.bean.ShopVerify">
+        INSERT INTO shop_verify (id_number,mobile,user_id,user_name,id_front_img,id_rear_img,
+        logo_img,shop_intro,shop_name,license_img,shop_state,shop_address)
+        VALUES (#{idNumber},#{mobile},#{userId},#{userName},#{idFrontImg},#{idRearImg},#{logoImg},
+        #{shopIntro},#{shopName},#{licenseImg},#{shopState},#{shopAddress})
+    </insert>
+
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        SELECT sv_id,id_number,mobile,user_id,user_name,id_front_img,id_rear_img,
+        logo_img,shop_intro,shop_name,license_img,shop_state,shop_address
+         FROM shop_verify WHERE user_id = #{userId} and shop_state = 1 order by createtime desc
+    </select>
+
+    <select id="selectListByUserId" resultMap="BaseResultMap">
+        SELECT sv_id,id_number,mobile,user_id,user_name,id_front_img,id_rear_img,
+        logo_img,shop_intro,shop_name,license_img,shop_state,shop_address
+        FROM shop_verify WHERE user_id = #{userId} order by createtime desc
+    </select>
+
+    <select id="selectByState" resultMap="BaseResultMap">
+        SELECT sv_id,id_number,mobile,user_id,user_name,id_front_img,id_rear_img,
+        logo_img,shop_intro,shop_name,license_img,shop_state,createtime
+        FROM shop_verify WHERE shop_state = #{state}
+        limit #{start},#{end}
+    </select>
+
+    <select id="selectPageByState" resultMap="BaseResultMap">
+        SELECT sv_id,id_number,mobile,user_id,user_name,id_front_img,id_rear_img,
+        logo_img,shop_intro,shop_name,license_img,shop_state,createtime
+        FROM shop_verify WHERE shop_state = #{state}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT sv_id,id_number,mobile,user_id,user_name,id_front_img,id_rear_img,
+        logo_img,shop_intro,shop_name,license_img,shop_state,createtime
+        FROM shop_verify limit #{start},#{end}
+    </select>
+
+    <update id="updateSvInfo" parameterType="com.tangmo.zhjy.app.modules.bean.ShopVerify">
+        UPDATE shop_verify
+        <set>
+            <if test="shopName != null">
+                shop_name = #{shopName},
+            </if>
+            <if test="shopIntro != null">
+                shop_intro = #{shopIntro},
+            </if>
+            <if test="shopAddress != null">
+                shop_address = #{shopAddress},
+            </if>
+            <if test="idFrontImg != null">
+                id_front_img = #{idFrontImg},
+            </if>
+            <if test="idRearImg != null">
+                id_rear_img = #{idRearImg},
+            </if>
+            <if test="logoImg != null">
+                logo_img = #{logoImg},
+            </if>
+            <if test="licenseImg != null">
+                license_img = #{licenseImg},
+            </if>
+        </set>
+        WHERE sv_id = #{svId,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateSvState">
+        UPDATE shop_verify SET shop_state = #{state} WHERE sv_id = #{svId}
+    </update>
+</mapper>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhjy.app.modules.dao.GoodsRecordDao" >
+    <resultMap id="BuyReCordResultMap" type="com.tangmo.zhjy.app.modules.bean.BuyRecord" >
+        <id column="br_id" property="brId" jdbcType="INTEGER"/>
+        <result column="goods_id" property="goodsId" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="img_id" property="imgId" jdbcType="VARCHAR"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="brColor" property="brColor" jdbcType="VARCHAR"/>
+        <result column="brSize" property="brSize" jdbcType="VARCHAR"/>
+        <result column="price" property="price" jdbcType="DOUBLE"/>
+        <result column="br_count" property="brCount" jdbcType="INTEGER"/>
+        <result column="amount" property="amount" jdbcType="DOUBLE"/>
+        <result column="createtime" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="SellReCordResultMap" type="com.tangmo.zhjy.app.modules.bean.SellRecord" >
+        <id column="sr_id" property="srId" jdbcType="INTEGER"/>
+        <result column="goods_id" property="goodsId" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="img_id" property="imgId" jdbcType="VARCHAR"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="srColor" property="srColor" jdbcType="VARCHAR"/>
+        <result column="srSize" property="srSize" jdbcType="VARCHAR"/>
+        <result column="price" property="price" jdbcType="DOUBLE"/>
+        <result column="sr_count" property="srCount" jdbcType="INTEGER"/>
+        <result column="amount" property="amount" jdbcType="DOUBLE"/>
+        <result column="createtime" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+
+    </sql>
+
+    <insert id="insertBuyRecord" parameterType="com.tangmo.zhjy.app.modules.bean.BuyRecord">
+        insert into buy_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="amount != null">
+                amount,
+            </if>
+            <if test="goodsId != null">
+                goods_id,
+            </if>
+            <if test="brCount != null">
+                br_count,
+            </if>
+            <if test="brColor != null">
+                br_color,
+            </if>
+            <if test="brSize != null">
+                br_size,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="amount != null">
+                #{amount,jdbcType=DOUBLE},
+            </if>
+            <if test="goodsId != null">
+                #{goodsId,jdbcType=INTEGER},
+            </if>
+            <if test="brCount != null">
+                #{brCount,jdbcType=INTEGER},
+            </if>
+            <if test="brColor != null">
+                #{brColor,jdbcType=VARCHAR},
+            </if>
+            <if test="brSize != null">
+                #{brSize,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null">
+                #{price,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertSellRecord" parameterType="com.tangmo.zhjy.app.modules.bean.SellRecord">
+        insert into sell_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="amount != null">
+                amount,
+            </if>
+            <if test="goodsId != null">
+                goods_id,
+            </if>
+            <if test="srCount != null">
+                sr_count,
+            </if>
+            <if test="srColor != null">
+                sr_color,
+            </if>
+            <if test="srSize != null">
+                sr_size,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="amount != null">
+                #{amount,jdbcType=DOUBLE},
+            </if>
+            <if test="goodsId != null">
+                #{goodsId,jdbcType=INTEGER},
+            </if>
+            <if test="srCount != null">
+                #{srCount,jdbcType=INTEGER},
+            </if>
+            <if test="srColor != null">
+                #{srColor,jdbcType=VARCHAR},
+            </if>
+            <if test="srSize != null">
+                #{srSize,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null">
+                #{price,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectUserBuyRecord" resultMap="BuyReCordResultMap">
+        SELECT  br.br_id ,br.user_id ,br.goods_id ,br.amount ,br.br_count ,br.price ,
+        br.br_size ,br.br_color,br.createtime,cd.img_id,cd.content,cd.title
+        FROM buy_record br LEFT JOIN commodity cd ON br.goods_id = cd.cd_id
+        WHERE br.user_id = #{userId} AND is_show = TRUE ORDER BY br.createtime
+        limit #{start},#{end}
+    </select>
+
+    <select id="selectUserSellRecord" resultMap="SellReCordResultMap">
+        SELECT  sr.sr_id ,sr.user_id ,sr.goods_id ,sr.amount ,sr.sr_count ,sr.price ,
+        sr.sr_size ,sr.sr_color,sr.createtime,cd.img_id,cd.content,cd.title
+        FROM sell_record sr LEFT JOIN commodity cd ON sr.goods_id = cd.cd_id
+        WHERE sr.user_id = #{userId} AND is_show = TRUE ORDER BY sr.createtime
+        limit #{start},#{end}
+    </select>
+
+    <update id="deleteMultiBuyRecord" parameterType="Integer[]">
+        UPDATE buy_record SET is_show = 0  WHERE br_id IN
+        <foreach collection="array" item="item" index="index"
+                 open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="deleteMultiSellRecord" parameterType="Integer[]">
+        UPDATE sell_record SET is_show = 0  WHERE sr_id IN
+        <foreach collection="array" item="item" index="index"
+                 open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+</mapper>

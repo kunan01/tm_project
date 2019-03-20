@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.yiliao.dao.PayDao">
+
+    <resultMap id="BasePay" type="com.tangmo.yiliao.entity.Pay">
+        <id column="out_trade_no" property="out_trade_no" jdbcType="VARCHAR" />
+        <result column="user_id" property="userId" jdbcType="VARCHAR" />
+        <result column="trade_type" property="trade_type" jdbcType="VARCHAR" />
+        <result column="result_meg" property="return_msg" jdbcType="VARCHAR" />
+        <result column="result_code" property="result_code" jdbcType="VARCHAR" />
+        <result column="total_fee" property="total_fee1" jdbcType="DOUBLE" />
+        <result column="pay_target" property="payTarget" jdbcType="VARCHAR" />
+        <result column="pay_type" property="payType" jdbcType="TINYINT" />
+    </resultMap>
+
+    <select id="getPayById" parameterType="java.lang.String" resultMap="BasePay">
+        select out_trade_no,user_id,trade_type,result_meg,result_code,total_fee,pay_target,pay_type
+        from pay_info
+        where out_trade_no = #{tradeNo}
+    </select>
+
+    <insert id="insertPay" parameterType="com.tangmo.yiliao.entity.Pay" >
+        insert into pay_info(out_trade_no,user_id,trade_type,total_fee,pay_target,pay_type)
+        values (#{out_trade_no},#{userId},#{trade_type},#{total_fee1},#{payTarget},#{payType})
+    </insert>
+
+    <update id="updateByTradeNo" parameterType="com.tangmo.yiliao.entity.Pay" >
+        UPDATE pay_info SET result_code = #{result_code},result_meg = #{return_msg}
+        WHERE out_trade_no = #{out_trade_no}
+    </update>
+
+</mapper>

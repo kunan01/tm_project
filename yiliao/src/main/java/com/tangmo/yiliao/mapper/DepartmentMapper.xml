@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.yiliao.dao.DepartmentDao">
+
+    <resultMap id="BaseDepartment" type="com.tangmo.yiliao.entity.Department">
+        <id column="dt_id" property="dtId" jdbcType="VARCHAR"></id>
+        <result column="dt_name" property="dtName" jdbcType="VARCHAR"></result>
+        <result column="dt_imgid" property="dtImgId" jdbcType="VARCHAR"></result>
+        <result column="sorting_id" property="sortingId" jdbcType="INTEGER"></result>
+        <result column="dt_state" property="dtState" jdbcType="TINYINT"></result>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"></result>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR"></result>
+        <result column="create_userid" property="createUserId" jdbcType="VARCHAR"></result>
+        <result column="update_userid" property="updateUserId" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <select id="getPartOfDepartment" resultMap="BaseDepartment">
+        select top 7 dt_id,dt_name,dt_imgid,sorting_id from department
+        where dt_state = 0 order by sorting_id
+    </select>
+
+    <select id="getDepartmentAll" resultMap="BaseDepartment">
+        select dt_id,dt_name,dt_imgid,sorting_id,CONVERT(varchar,create_time,120) as create_time from department
+        where dt_state = 0 order by sorting_id
+    </select>
+
+</mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhjy.system.modules.dao.SysShopMapper" >
+    <resultMap id="BaseResultMap" type="com.tangmo.zhjy.system.modules.bean.ShopVerify" >
+        <id column="sv_id" property="svId" jdbcType="INTEGER"/>
+        <result column="id_number" property="idNumber" jdbcType="VARCHAR"/>
+        <result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="id_front_img" property="idFrontImg" jdbcType="VARCHAR"/>
+        <result column="id_rear_img" property="idRearImg" jdbcType="VARCHAR"/>
+        <result column="logo_img" property="logoImg" jdbcType="VARCHAR"/>
+        <result column="shop_intro" property="shopIntro" jdbcType="VARCHAR"/>
+        <result column="shop_name" property="shopName" jdbcType="VARCHAR"/>
+        <result column="shop_address" property="shopAddress" jdbcType="VARCHAR"/>
+        <result column="license_img" property="licenseImg" jdbcType="VARCHAR"/>
+        <result column="createtime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="shop_state" property="shopState" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+      sv_id,id_number,mobile,user_id,user_name,id_front_img,id_rear_img,
+        logo_img,shop_intro,shop_name,license_img,shop_state,createtime
+    </sql>
+
+    <select id="selectPageByState" resultMap="BaseResultMap">
+    SELECT sv_id,id_number,mobile,user_id,user_name,id_front_img,id_rear_img,
+    logo_img,shop_intro,shop_name,shop_address,license_img,shop_state,createtime
+    FROM shop_verify WHERE shop_state = #{state} order by createtime desc
+    </select>
+
+    <select id="verifyByUserId" resultMap="BaseResultMap">
+        SELECT sv_id,id_number,mobile,user_id,user_name,id_front_img,id_rear_img,
+        logo_img,shop_intro,shop_name,shop_address,license_img,shop_state,createtime
+        FROM shop_verify WHERE user_id = #{userId}
+    </select>
+
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        SELECT sv_id,id_number,mobile,user_id,user_name,id_front_img,id_rear_img,
+        logo_img,shop_intro,shop_name,shop_address,license_img,shop_state,createtime
+        FROM shop_verify WHERE user_id = #{userId} AND shop_state = 1 order by createtime desc
+    </select>
+
+    <update id="updateSvState">
+        UPDATE shop_verify SET shop_state = #{state} WHERE sv_id = #{svId}
+    </update>
+
+    <select id="selectUserId" resultType="java.lang.Integer">
+        SELECT user_id  FROM shop_verify WHERE sv_id = #{svId}
+    </select>
+</mapper>

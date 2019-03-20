@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.emall.dao.ShopCartDao" >
+    
+    <resultMap id="BaseCart" type="com.tangmo.emall.entity.ShopCart">
+        <id column="cart_id" property="cartId" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="product_id" property="productId" jdbcType="INTEGER" />
+        <result column="spec_id" property="specId" jdbcType="INTEGER" />
+        <result column="product_num" property="productNum" jdbcType="INTEGER" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="data_failure" property="dataFailure" jdbcType="TINYINT" />
+        <result column="prescription_id" property="prescriptionId" jdbcType="INTEGER" />
+        <result column="prescription_image" property="prescriptionImage" jdbcType="VARCHAR" />
+        <result column="prescription_price" property="prescriptionPrice" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <sql id="Base_Cart_Column_List">
+        cart_id,user_id,product_id,spec_id,product_num,created_time,data_failure,
+        prescription_id,prescription_image,prescription_price
+    </sql>
+
+    <insert id="addShopCart" parameterType="com.tangmo.emall.entity.ShopCart">
+        insert into t_shopcart
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="productId != null">
+                product_id,
+            </if>
+            <if test="specId != null">
+                spec_id,
+            </if>
+            <if test="productNum != null">
+                product_num,
+            </if>
+            <if test="prescriptionId != null">
+                prescription_id,
+            </if>
+            <if test="prescriptionImage != null">
+                prescription_image,
+            </if>
+            <if test="prescriptionPrice != null">
+                prescription_price
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="productId != null">
+                #{productId},
+            </if>
+            <if test="specId != null">
+                #{specId},
+            </if>
+            <if test="productNum != null">
+                #{productNum},
+            </if>
+            <if test="prescriptionId != null">
+                #{prescriptionId},
+            </if>
+            <if test="prescriptionImage != null">
+                #{prescriptionImage},
+            </if>
+            <if test="prescriptionPrice != null">
+                #{prescriptionPrice},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getCartByProduct" parameterType="com.tangmo.emall.entity.ShopCart" resultMap="BaseCart">
+        select
+        <include refid="Base_Cart_Column_List"/>
+        from t_shopcart
+        where user_id = #{userId} and product_id = #{productId} and spec_id = #{specId}
+    </select>
+
+    <select id="getCartById" parameterType="java.lang.Integer" resultMap="BaseCart">
+        select
+        <include refid="Base_Cart_Column_List"/>
+        from t_shopcart
+        where cart_id = #{cId}
+    </select>
+
+    <delete id="delShopCart" parameterType="java.lang.Integer">
+        delete from t_shopcart where cart_id = #{cId}
+    </delete>
+
+    <delete id="emptyShopCart" parameterType="java.lang.Integer">
+        delete from t_shopcart where user_id = #{userId}
+    </delete>
+
+    <select id="getCartListByUserId" parameterType="java.lang.Integer" resultMap="BaseCart">
+        select
+        <include refid="Base_Cart_Column_List"/>
+        from t_shopcart
+        where user_id = #{userId}
+        order by created_time desc
+    </select>
+
+    <update id="updShopCart" parameterType="com.tangmo.emall.entity.ShopCart">
+        update t_shopcart set product_num = #{productNum}
+        <if test="prescriptionId != null">
+            ,prescription_id = #{prescriptionId}
+        </if>
+        <if test="prescriptionImage != null">
+            ,prescription_image = #{prescriptionImage}
+        </if>
+        <if test="prescriptionPrice != null">
+            ,prescription_price = #{prescriptionPrice}
+        </if>
+        where cart_id = #{cartId}
+    </update>
+
+</mapper>

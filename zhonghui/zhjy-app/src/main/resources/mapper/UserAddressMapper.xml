@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhjy.app.modules.dao.UserAddressDao" >
+    <resultMap id="BaseResultMap" type="com.tangmo.zhjy.app.modules.bean.UserAddress" >
+        <id column="ua_id" property="uaId" jdbcType="INTEGER"/>
+        <result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+        <result column="recipient" property="recipient" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="district" property="district" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="is_default" property="isDefault" jdbcType="TINYINT"/>
+        <result column="createtime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+
+    </sql>
+
+    <!--增加用户地址Selective-->
+    <insert id="insertSelective" parameterType="com.tangmo.zhjy.app.modules.bean.UserAddress">
+            insert into user_address
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="recipient != null">
+                    recipient,
+                </if>
+                <if test="mobile != null">
+                    mobile,
+                </if>
+                <if test="address != null">
+                    address,
+                </if>
+                <if test="city != null">
+                    city,
+                </if>
+                <if test="district != null">
+                    district,
+                </if>
+                <if test="userId != null">
+                    user_id,
+                </if>
+                <if test="isDefault != null">
+                    is_default,
+                </if>
+                <if test="province != null">
+                    province,
+                </if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="recipient != null">
+                    #{recipient,jdbcType=VARCHAR},
+                </if>
+                <if test="mobile != null">
+                    #{mobile,jdbcType=VARCHAR},
+                </if>
+                <if test="address != null">
+                    #{address,jdbcType=VARCHAR},
+                </if>
+                <if test="city != null">
+                    #{city,jdbcType=VARCHAR},
+                </if>
+                <if test="district != null">
+                    #{district,jdbcType=VARCHAR},
+                </if>
+                <if test="userId != null">
+                    #{userId,jdbcType=INTEGER},
+                </if>
+                <if test="isDefault != null">
+                    #{isDefault,jdbcType=INTEGER},
+                </if>
+                <if test="province != null">
+                    #{province,jdbcType=VARCHAR},
+                </if>
+            </trim>
+    </insert>
+
+    <!--通过主键修改用户地址信息-->
+    <update id="updateById" parameterType="com.tangmo.zhjy.app.modules.bean.UserAddress">
+        UPDATE user_address
+        <set>
+            <if test="mobile != null">
+                mobile = #{mobile},
+            </if>
+            <if test="address != null">
+                address = #{address},
+            </if>
+            <if test="recipient != null">
+                recipient = #{recipient},
+            </if>
+            <if test="city != null">
+                city = #{city},
+            </if>
+            <if test="district != null">
+                district = #{district},
+            </if>
+            <if test="isDefault != null">
+                is_default = #{isDefault},
+            </if>
+            <if test="province != null">
+                province = #{province},
+            </if>
+            updatetime = now()
+        </set>
+        WHERE ua_id = #{uaId,jdbcType=INTEGER}
+    </update>
+
+    <!--通过用户Id查询用户信息-->
+    <select id="selectListByUserId" resultMap="BaseResultMap">
+        SELECT ua_id,mobile,recipient,is_default,address,createtime,city,district,province  FROM user_address WHERE user_id = #{userId}
+    </select>
+
+    <!--通过主键删除用户地址信息-->
+    <delete id="deleteById">
+        DELETE FROM user_address WHERE ua_id = #{uaId}
+    </delete>
+
+    <!-- 通过主键更改为默认地址-->
+    <update id="updateDefaultById">
+        UPDATE user_address SET is_default = 1 WHERE ua_id = #{uaId}
+    </update>
+
+    <!--通过主键查询地址信息-->
+    <select id="selectListById" resultMap="BaseResultMap">
+        SELECT ua_id,user_id,address,city,district,recipient,mobile,is_default,createtime,province FROM user_address WHERE ua_id = #{uaId}
+    </select>
+
+    <!--查询默认地址信息-->
+    <select id="selectDefaultAddress" resultMap="BaseResultMap">
+        SELECT ua_id,mobile,recipient,is_default,address,createtime,city,district,province
+        FROM user_address WHERE user_id = #{userId} AND is_default = 1
+    </select>
+
+    <!--设置用户的所有地址信息为非默认-->
+    <update id="updateUnDefaultByUserId">
+        UPDATE user_address SET is_default = 0 WHERE user_id = #{userId}
+    </update>
+</mapper>

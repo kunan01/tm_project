@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.yiliao.dao.UserDao">
+
+    <resultMap id="BaseUser" type="com.tangmo.yiliao.entity.User">
+        <id column="user_id" property="userId" jdbcType="VARCHAR"></id>
+        <result column="role_id" property="roleId" jdbcType="VARCHAR"></result>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"></result>
+        <result column="name" property="name" jdbcType="VARCHAR"></result>
+        <result column="password" property="password" jdbcType="VARCHAR"></result>
+        <result column="user_phone" property="userPhone" jdbcType="VARCHAR"></result>
+        <result column="user_gender" property="userGender" jdbcType="TINYINT"></result>
+        <result column="user_age" property="userAge" jdbcType="INTEGER"></result>
+        <result column="user_imgurl" property="userImgUrl" jdbcType="VARCHAR"></result>
+        <result column="user_card" property="userCard" jdbcType="VARCHAR"></result>
+        <result column="user_integral" property="userIntegral" jdbcType="INTEGER"></result>
+        <result column="user_total" property="userTotal" jdbcType="INTEGER"></result>
+        <result column="user_cons" property="userCons" jdbcType="INTEGER"></result>
+        <result column="city" property="city" jdbcType="VARCHAR"></result>
+        <result column="county" property="county" jdbcType="VARCHAR"></result>
+        <result column="token" property="token" jdbcType="VARCHAR"></result>
+        <result column="state" property="state" jdbcType="TINYINT"></result>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"></result>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR"></result>
+        <result column="create_userid" property="createUserId" jdbcType="VARCHAR"></result>
+        <result column="update_userid" property="updateUserId" jdbcType="VARCHAR"></result>
+        <result column="role_name" property="roleName" jdbcType="VARCHAR" ></result>
+        <result column="inviter" property="inviter" jdbcType="VARCHAR" ></result>
+        <result column="wx_open_type" property="wxOpenType" jdbcType="TINYINT" ></result>
+        <result column="wx_open_id" property="wxOpenId" jdbcType="VARCHAR" ></result>
+    </resultMap>
+
+    <resultMap id="BaseRole" type="com.tangmo.yiliao.entity.Role">
+        <id column="role_id" property="roleId" jdbcType="VARCHAR" ></id>
+        <result column="role_name" property="roleName" jdbcType="VARCHAR" ></result>
+        <result column="permissions_id" property="permissionsId" jdbcType="VARCHAR" ></result>
+        <result column="state" property="state" jdbcType="TINYINT" ></result>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR" ></result>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR" ></result>
+        <result column="create_userid" property="createUserId" jdbcType="VARCHAR" ></result>
+        <result column="update_userid" property="updateUserId" jdbcType="VARCHAR" ></result>
+    </resultMap>
+
+    <resultMap id="BaseModule" type="com.tangmo.yiliao.entity.Module">
+        <id column="module_id" property="moduleId" jdbcType="VARCHAR"></id>
+        <result column ="module_name" property="moduleName" jdbcType="VARCHAR"></result>
+        <result column ="module_level" property="moduleLevel" jdbcType="INTEGER"></result>
+        <result column ="father_id" property="fatherId" jdbcType="VARCHAR"></result>
+        <result column ="path" property="path" jdbcType="VARCHAR"></result>
+        <result column ="state" property="state" jdbcType="TINYINT"></result>
+        <result column ="create_time" property="createTime" jdbcType="VARCHAR"></result>
+        <result column ="update_time" property="updateTime" jdbcType="VARCHAR"></result>
+        <result column ="create_userid" property="createUserId" jdbcType="VARCHAR"></result>
+        <result column ="update_userid" property="updateUserId" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <resultMap id="BaseModuleAll" type="com.tangmo.yiliao.entity.Module">
+        <id column="module_id" property="moduleId" jdbcType="VARCHAR"></id>
+        <result column ="module_name" property="moduleName" jdbcType="VARCHAR"></result>
+        <result column ="module_level" property="moduleLevel" jdbcType="INTEGER"></result>
+        <result column ="father_id" property="fatherId" jdbcType="VARCHAR"></result>
+        <result column ="path" property="path" jdbcType="VARCHAR"></result>
+        <result column ="state" property="state" jdbcType="TINYINT"></result>
+        <result column ="create_time" property="createTime" jdbcType="VARCHAR"></result>
+        <result column ="update_time" property="updateTime" jdbcType="VARCHAR"></result>
+        <result column ="create_userid" property="createUserId" jdbcType="VARCHAR"></result>
+        <result column ="update_userid" property="updateUserId" jdbcType="VARCHAR"></result>
+        <collection property="ModuleList" column="module_id" select="selectModuleList"/>
+    </resultMap>
+
+    <resultMap id="BaseBet" type="com.tangmo.yiliao.entity.RelationShip">
+        <id column="user_id" property="userId" jdbcType="VARCHAR"></id>
+        <result column ="on_user" property="onUser" jdbcType="VARCHAR"></result>
+        <result column ="below_user" property="belowUser" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <select id="getcode" resultType="com.tangmo.yiliao.entity.VerificationCode">
+        select phone,state from verificationCode where phone = #{mobile}
+    </select>
+
+    <insert id="insertcode">
+        insert into verificationCode(phone)
+	    values (#{mobile,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updatecode">
+        update verificationCode set state = #{type}
+        where phone = #{mobile}
+    </update>
+
+    <insert id="insertcodeConsulting">
+        insert into consulting(phone,codeTime,codeCount)
+        values (#{mobile,jdbcType=VARCHAR},CONVERT(varchar(10),GETDATE(),120),1)
+    </insert>
+
+    <select id="getcodeConsulting" resultType="java.lang.Integer">
+        select count(*) from consulting
+        where phone = #{mobile} and codeTime = CONVERT(varchar(10),GETDATE(),120)
+    </select>
+
+    <update id="updatecodeConsultinge">
+        update consulting set codeCount = codeCount + 1
+        where phone = #{mobile} and codeTime = CONVERT(varchar(10),GETDATE(),120)
+    </update>
+
+    <select id="selectByMobile" resultMap="BaseUser">
+        select user_id,user_name,name,password,user_phone,token,state,role_id,(select role_name from tb_sys_role where role_id = ts.role_id) as role_name from tb_sys_user ts
+	    where user_phone = #{mobile} and state = 0
+    </select>
+
+    <select id="selectByCard" resultMap="BaseUser">
+        select user_id,user_name,name,password,user_phone,token,state,role_id,(select role_name from tb_sys_role where role_id = ts.role_id) as role_name from tb_sys_user ts
+	    where user_card = #{userCard} and state = 0
+    </select>
+
+    <select id="getBasicInformationById" resultMap="BaseUser">
+        select user_id,name,user_name,role_id,user_imgurl,user_age,user_gender,wx_open_type,wx_open_id from tb_sys_user ts
+        where user_id = #{userId} and state = 0
+    </select>
+
+    <select id="getUserPhoneById" resultType="java.lang.String">
+        select user_phone from tb_sys_user ts
+        where user_id = #{userId} and state = 0
+    </select>
+
+    <insert id="insertUser" parameterType="com.tangmo.yiliao.entity.User">
+        INSERT INTO tb_sys_user
+           (<if test="userId != null">user_id,</if>
+            <if test="roleId != null">role_id,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="name != null">name,</if>
+            <if test="password != null">password,</if>
+            <if test="userPhone != null">user_phone,</if>
+            <if test="userCard != null">user_card,</if>
+            <if test="userImgUrl != null">user_imgurl,</if>
+            <if test="userIntegral != null">user_integral,</if>
+            <if test="userTotal != null">user_total,</if>
+            <if test="token != null">token,</if>
+            <if test="userGender != null">user_gender,</if>
+            <if test="userAge != null">user_age,</if>
+            <if test="updateUserId != null">inviter,</if>
+             create_time,
+             update_time,
+             create_userid,
+             update_userid)
+        VALUES (<if test="userId != null">#{userId,jdbcType=VARCHAR},</if>
+                <if test="roleId != null">#{roleId,jdbcType=VARCHAR},</if>
+                <if test="userName != null">#{userName,jdbcType=VARCHAR},</if>
+                <if test="name != null">#{name,jdbcType=VARCHAR},</if>
+                <if test="password != null">#{password,jdbcType=VARCHAR},</if>
+                <if test="userPhone != null">#{userPhone,jdbcType=VARCHAR},</if>
+                <if test="userCard != null">#{userCard,jdbcType=VARCHAR},</if>
+                <if test="userImgUrl != null">#{userImgUrl,jdbcType=VARCHAR},</if>
+                <if test="userIntegral != null">#{userIntegral,jdbcType=INTEGER},</if>
+                <if test="userTotal != null">#{userTotal,jdbcType=INTEGER},</if>
+                <if test="token != null">#{token,jdbcType=VARCHAR},</if>
+                <if test="userGender != null">#{userGender,jdbcType=TINYINT},</if>
+                <if test="userAge != null">#{userAge,jdbcType=INTEGER},</if>
+                <if test="updateUserId != null">#{updateUserId,jdbcType=VARCHAR},</if>
+                CONVERT(varchar,GETDATE(),120),
+                CONVERT(varchar,GETDATE(),120),
+                #{createUserId,jdbcType=VARCHAR},
+                #{createUserId,jdbcType=VARCHAR});
+    </insert>
+
+    <insert id="insertUserMessage">
+        INSERT INTO [read](user_id)VALUES(#{userId,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="insertUserBet">
+        INSERT INTO [relationship](user_id,on_user,below_user)VALUES(#{userId,jdbcType=VARCHAR},'1','1')
+    </insert>
+
+    <update id="insertOnUserBet">
+        UPDATE [relationship] SET on_user = #{onUserId}  WHERE user_id = #{userId}
+    </update>
+
+    <update id="insertBelowUserBet">
+        UPDATE [relationship] SET below_user = #{belowUserId} WHERE user_id = #{userId}
+    </update>
+    
+    <select id="getUserBet" resultMap="BaseBet">
+        select user_id,on_user,below_user from relationship where user_id = #{userId}
+    </select>
+
+    <select id="selectIntegralRules" resultType="java.lang.Integer">
+        select bean from Integral_rules
+        where <if test="type == 0">lr_id = 'USER_REGISTRATION'</if>
+               <if test="type == 1">lr_id = 'INVITED_USERS'</if>
+                <if test="type == 2">lr_id = 'INTEGRAL_CONVERSION'</if>
+                <if test="type == 3">lr_id = 'CASH_CONVERSION'</if>
+                <if test="type == 4">lr_id = 'MINIMUM_WITHDRAWAL_AMOUNT'</if>
+                <if test="type == 5">lr_id = 'ACCUMULATED_USER_POINTS'</if>
+                <if test="type == 6">lr_id = 'MINIMUM_RESERVE'</if>
+                <if test="type == 7">lr_id = 'MAXIMUM_NUMBER_OF_DAYS'</if>
+    </select>
+
+    <update id="updateUserPwd">
+        update tb_sys_user set password = #{pwd},update_time = CONVERT(varchar,GETDATE(),120),update_userid = #{userId} where user_id = #{userId} and state = 0
+    </update>
+
+    <select id="getPwdById" resultType="java.lang.String">
+        select password from tb_sys_user where user_id = #{userId} and state = 0
+    </select>
+
+    <select id="getPersonalInformation" resultMap="BaseUser">
+        select user_id,name,user_name,user_imgurl,user_gender,user_age,user_phone,city from tb_sys_user ts
+        where user_id = #{userId} and state = 0
+    </select>
+
+    <update id="updUser" parameterType="com.tangmo.yiliao.entity.User">
+        UPDATE [tb_sys_user]
+        <set> <if test="userName != null">[user_name] = #{userName},</if>
+            <if test="name != null">[name] = #{name},</if>
+            <if test="roleId != null">[role_id] = #{roleId},</if>
+            <if test="userGender != null">[user_gender] = #{userGender},</if>
+            <if test="userAge != null">[user_age] = #{userAge},</if>
+            <if test="userImgUrl != null">[user_imgurl] = #{userImgUrl},</if>
+            <if test="city != null">[city] = #{city},</if>
+            <if test="county != null">[county] = #{county},</if>
+            [update_time] = CONVERT(varchar,GETDATE(),120),
+            [update_userid] = #{userId}
+        </set>
+        WHERE [user_id] = #{userId} and [state] = 0
+    </update>
+
+    <select id="getUserIntegral" resultType="java.lang.Integer">
+        select user_integral from tb_sys_user where user_id = #{userId} and state = 0
+    </select>
+
+    <select id="getUserIntegralAll" resultType="java.lang.Integer">
+        select user_total from tb_sys_user where user_id = #{userId} and state = 0
+    </select>
+
+    <update id="clearUserFootprint">
+        update footprint set state = 1 where user_id = #{userId} and state = 0
+    </update>
+
+    <insert id="addUserFootprint" parameterType="com.tangmo.yiliao.entity.Footprint">
+        INSERT INTO [footprint]
+        ([fp_id]
+        ,[user_id]
+        ,[fp_type]
+        ,[type_id]
+        ,[create_time]
+        ,[update_time]
+        ,[create_userid]
+        ,[update_userid])
+        VALUES
+        (#{fpId,jdbcType=VARCHAR}
+        ,#{userId,jdbcType=VARCHAR}
+        ,#{fpType,jdbcType=TINYINT}
+        ,#{typeId,jdbcType=VARCHAR}
+        ,CONVERT(varchar,GETDATE(),120)
+        ,CONVERT(varchar,GETDATE(),120)
+        ,#{userId,jdbcType=VARCHAR}
+        ,#{userId,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="getUserFootprintBytype" resultType="java.lang.Integer">
+        select count(*) from footprint
+        where user_id = #{userId} and fp_type = #{fType} and type_id = #{typeId} and state = 0
+    </select>
+
+    <select id="selectByUserName" resultMap="BaseUser">
+        select user_id,role_id,name,password from tb_sys_user ts  where user_name = #{userName}
+    </select>
+
+    <select id="selectByRoleId" resultType="java.lang.String">
+        select role_name from tb_sys_role where role_id = #{roleId} and state = 0
+    </select>
+
+    <select id="selectPermissionsByRoleId" resultType="java.lang.String">
+        select permissions_id from tb_sys_role where role_id = #{roleId} and state = 0
+    </select>
+
+    <select id="selectModuleByPresId" resultType="java.lang.String">
+        select module_id from tb_sys_permissions where permissions_id = #{PresId} and state = 0
+    </select>
+
+    <select id="selectModuleByModuleId" resultMap="BaseModule">
+        select module_id,module_name,father_id,path from tb_sys_module
+        where module_id = #{mouId} and state = 0
+    </select>
+
+    <select id="selectModuleAll" resultMap="BaseModuleAll">
+        select module_id,module_name,father_id,path,CONVERT(varchar,create_time,120) as create_time from tb_sys_module
+        where state = 0 and father_id = '0'
+    </select>
+
+    <select id="selectModuleList" resultMap="BaseModule">
+        select module_id,module_name,father_id,path,CONVERT(varchar,create_time,120) as create_time from tb_sys_module
+        where state = 0 and father_id = #{module_id}
+    </select>
+
+    <update id="delModule">
+        update tb_sys_module set state = 1,update_userid = #{userId},update_time = GETDATE() where module_id = #{moduleId}
+    </update>
+
+    <select id="getPermCountByMoId" resultType="java.lang.Integer">
+        select COUNT(*) from tb_sys_permissions where module_id LIKE '%'+#{moduleId}+'%' and state = 0
+    </select>
+
+    <update id="updModuleById">
+        update tb_sys_module set module_name = #{mName},path = #{mPath},update_userid = #{userId},update_time = GETDATE() where module_id = #{mId}
+    </update>
+
+    <insert id="addModule" parameterType="com.tangmo.yiliao.entity.Module">
+        INSERT INTO [tb_sys_module]
+           ([module_id]
+           ,[module_name]
+           ,[module_level]
+           ,[father_id]
+           <if test="path != null">,[path]</if>
+           ,[create_time]
+           ,[update_time]
+           ,[create_userid]
+           ,[update_userid])
+         VALUES
+               (#{moduleId,jdbcType=VARCHAR}
+               ,#{moduleName,jdbcType=VARCHAR}
+               ,#{moduleLevel,jdbcType=INTEGER}
+               ,#{fatherId,jdbcType=VARCHAR}
+               <if test="path != null">,#{path,jdbcType=VARCHAR}</if>
+               ,CONVERT(varchar,GETDATE(),120)
+               ,CONVERT(varchar,GETDATE(),120)
+               ,#{createUserId,jdbcType=VARCHAR}
+               ,#{createUserId,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="getModuleTwoAll" resultMap="BaseModule">
+        select module_id,module_name,father_id,path,CONVERT(varchar,create_time,120) as create_time from tb_sys_module
+        where state = 0 and father_id != '0'
+    </select>
+
+    <select id="getUserAll" parameterType="com.tangmo.yiliao.entity.SelectUser" resultMap="BaseUser">
+        select top ${end} user_id,role_id,(select role_name from tb_sys_role where role_id = ts.role_id) as role_name,user_name,name,user_phone,
+		user_gender,user_age,user_imgurl,city,county,CONVERT(varchar,create_time,120) as create_time
+        from tb_sys_user ts where
+        <if test="type == 0">role_id != 'DOCTOR' and role_id != 'MEMBER' </if>
+        <if test="type == 1">role_id = 'DOCTOR' </if>
+        <if test="type == 2">role_id = 'MEMBER' </if>
+        and state = 0 and (name like '%${condName}%' or user_phone like '%${condName}%')
+        and user_id not in (select top ${start} user_id from tb_sys_user where
+            <if test="type == 0">role_id != 'DOCTOR' and role_id != 'MEMBER' </if>
+            <if test="type == 1">role_id = 'DOCTOR' </if>
+            <if test="type == 2">role_id = 'MEMBER' </if>
+            and state = 0 and (name like '%${condName}%' or user_phone like '%${condName}%' ) order by create_time desc)order by create_time desc
+    </select>
+
+    <select id="getUserAllCount" parameterType="com.tangmo.yiliao.entity.SelectUser" resultType="java.lang.Integer">
+        select COUNT(*) from tb_sys_user where
+        <if test="type == 0">role_id != 'DOCTOR' and role_id != 'MEMBER' </if>
+        <if test="type == 1">role_id = 'DOCTOR' </if>
+        <if test="type == 2">role_id = 'MEMBER' </if>
+        and state = 0 and (name like '%${condName}%' or user_phone like '%${condName}%')
+    </select>
+
+    <select id="getRoleAll" resultMap="BaseRole">
+        select role_id,role_name,permissions_id,CONVERT(varchar,create_time,120) as create_time from tb_sys_role
+        where state = 0 and role_id != 'MEMBER' and role_id != 'DOCTOR'
+    </select>
+
+    <update id="updBackGroundUserById" parameterType="com.tangmo.yiliao.entity.User">
+        UPDATE [tb_sys_user]
+        SET [update_userid] = #{userId,jdbcType=VARCHAR}
+        <if test="roleId != null">,[role_id] = #{roleId,jdbcType=VARCHAR}</if>
+        <if test="name != null">,[name] = #{name,jdbcType=VARCHAR}</if>
+        <if test="password != null">,[password] = #{password,jdbcType=VARCHAR}</if>
+        <if test="userPhone != null">,[user_phone] = #{userPhone,jdbcType=VARCHAR}</if>
+        <if test="userName != null">,[user_name] = #{userName,jdbcType=VARCHAR}</if>
+        <if test="userImgUrl != null">,[user_imgurl] = #{userImgUrl,jdbcType=VARCHAR}</if>
+        ,[user_age] = #{userAge,jdbcType=VARCHAR}
+        <if test="userGender != null">,[user_gender] = #{userGender,jdbcType=VARCHAR}</if>
+        ,[update_time] = CONVERT(varchar,GETDATE(),120)
+        WHERE [user_id] = #{userId,jdbcType=VARCHAR}
+    </update>
+
+    <update id="delUserById">
+        UPDATE [tb_sys_user]
+        SET [state] = 1
+        ,[update_time] = CONVERT(varchar,GETDATE(),120)
+        ,[update_userid] = #{userId,jdbcType=VARCHAR}
+        WHERE [user_id] = #{uId,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updUserIntegralById">
+        update tb_sys_user set user_integral = user_integral + #{count},user_total = user_total + #{count}
+        where user_id = #{userId}
+    </update>
+
+    <update id="delUserIntegralById">
+        update tb_sys_user set user_integral = user_integral - #{count},user_cons = user_cons + #{count}
+        where user_id = #{userId}
+    </update>
+
+    <update id="delVideoByUserId">
+        update doctor_video set dv_state = 1 where user_id = #{userId}
+    </update>
+
+    <update id="delDovtorByUserId">
+        update doctor_details set dd_state = 1 where user_id = #{userId}
+    </update>
+
+    <select id="getUserTypeOpenId" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select wx_open_type from tb_sys_user where user_id = #{userId}
+    </select>
+
+    <update id="addUserOpenId">
+        update tb_sys_user set wx_open_type = 1,wx_open_id = #{openId}
+        where user_id = #{userId}
+    </update>
+
+    <select id="getWithdrawalCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM withdrawal_record
+        WHERE user_id = #{userId} and CONVERT(varchar(10),create_time,120) = CONVERT(varchar(10),GETDATE(),120)
+    </select>
+
+    <insert id="addWithdrawalRecord" parameterType="com.tangmo.yiliao.entity.WithdrawalRecord">
+        INSERT INTO [withdrawal_record]
+        ([withdrawal_id]
+        ,[user_id]
+        ,[account]
+        ,[Integral_number]
+        ,[Integral_money]
+        ,[create_time])
+        VALUES
+        (#{withdrawalId,jdbcType=VARCHAR}
+        ,#{userId,jdbcType=VARCHAR}
+        ,#{account,jdbcType=VARCHAR}
+        ,#{IntegralNumber,jdbcType=INTEGER}
+        ,#{IntegralMoney,jdbcType=DECIMAL}
+        ,CONVERT(varchar,GETDATE(),120))
+    </insert>
+</mapper>

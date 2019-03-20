@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.emall.dao.ProductDao" >
+    
+    <resultMap id="BaseProduct" type="com.tangmo.emall.entity.Product">
+        <id column="product_id" property="productId" jdbcType="INTEGER" />
+        <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+        <result column="product_name" property="productName" jdbcType="VARCHAR" />
+        <result column="brand_id" property="brandId" jdbcType="INTEGER" />
+        <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="publish_status" property="publishStatus" jdbcType="TINYINT" />
+        <result column="audit_status" property="auditStatus" jdbcType="TINYINT" />
+        <result column="pulish_date" property="publishDate" jdbcType="TIMESTAMP" />
+        <result column="descript" property="descript" jdbcType="VARCHAR" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="subtitle" property="subtitle" jdbcType="VARCHAR" />
+        <result column="is_good" property="isGood" jdbcType="TINYINT" />
+        <result column="is_new" property="isNew" jdbcType="TINYINT" />
+        <result column="is_popular" property="isPopular" jdbcType="TINYINT" />
+        <result column="seo_text" property="seoText" jdbcType="VARCHAR" />
+        <result column="base_prop" property="baseProp" jdbcType="VARCHAR" />
+        <result column="sell_prop" property="sellProp" jdbcType="VARCHAR" />
+        <result column="product_image" property="productImage" jdbcType="VARCHAR" />
+        <result column="sell_count" property="sellCount" jdbcType="INTEGER" />
+        <result column="view_count" property="viewCount" jdbcType="INTEGER" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+        <result column="data_flag" property="dataFlag" jdbcType="TINYINT"/>
+        <result column="dis_proportion" property="disProportion" jdbcType="INTEGER" />
+    </resultMap>
+
+    <resultMap id="BaseProductSpec" type="com.tangmo.emall.entity.ProductSpec">
+        <id column="spec_id" property="specId" jdbcType="INTEGER" />
+        <result column="product_id" property="productId" jdbcType="INTEGER" />
+        <result column="product_specs" property="productSpecs" jdbcType="VARCHAR" />
+        <result column="stock" property="stock" jdbcType="INTEGER" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+        <result column="created_time" property="createdTime" jdbcType="VARCHAR" />
+        <result column="updated_time" property="updatedTime" jdbcType="VARCHAR" />
+        <result column="data_flag" property="dataFlag" jdbcType="TINYINT" />
+    </resultMap>
+
+    <resultMap id="BaseProductImage" type="com.tangmo.emall.entity.ProductImage">
+        <id column="image_id " property="imageId " jdbcType="INTEGER" />
+        <result column="image_desc" property="imageDesc" jdbcType="VARCHAR" />
+        <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+        <result column="is_master" property="isMaster" jdbcType="TINYINT" />
+        <result column="image_order" property="imageOrder" jdbcType="INTEGER" />
+        <result column="image_status" property="imageStatus" jdbcType="TINYINT" />
+        <result column="created_time" property="createdTime" jdbcType="VARCHAR" />
+        <result column="updated_time" property="updatedTime" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="BaseParamType" type="com.tangmo.emall.entity.ParamType">
+        <id column="type_id" property="typeId" jdbcType="INTEGER" />
+        <result column="type_name" property="typeName" jdbcType="VARCHAR" />
+        <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="state" property="state" jdbcType="TINYINT" />
+        <result column="data_flag" property="dataFlag" jdbcType="TINYINT" />
+    </resultMap>
+
+    <resultMap id="BaseParamValue" type="com.tangmo.emall.entity.ParamValue">
+        <id column="value_id" property="valueId" jdbcType="INTEGER" />
+        <result column="param_value" property="paramValue" jdbcType="VARCHAR" />
+        <result column="type_id" property="typeId" jdbcType="INTEGER" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="param_image" property="paramImage" jdbcType="VARCHAR" />
+        <result column="state" property="state" jdbcType="TINYINT" />
+        <result column="data_flag" property="dataFlag" jdbcType="TINYINT" />
+        <result column="prop_count" property="propCount" jdbcType="INTEGER" />
+    </resultMap>
+
+    <resultMap id="BaseCateGory" type="com.tangmo.emall.entity.CateGory">
+        <id column="category_id" property="categoryId" jdbcType="INTEGER" />
+        <result column="category_name" property="categoryName" jdbcType="VARCHAR" />
+        <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+        <result column="category_level" property="categoryLevel" jdbcType="INTEGER" />
+        <result column="created_time" property="createdTime" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <resultMap id="BaseShippingInfo" type="com.tangmo.emall.entity.ShippingInfo">
+        <id column="ship_id" property="shipId" jdbcType="INTEGER" />
+        <result column="descript" property="descript" jdbcType="VARCHAR" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <resultMap id="BaseSorting" type="com.tangmo.emall.entity.SortingWay">
+        <id column="sorting_id" property="sortingId" jdbcType="INTEGER" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="sorting_rules" property="sortingRules" jdbcType="VARCHAR" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_Product_Column_List">
+        p.product_id,p.shop_id,p.product_name,p.brand_id,p.category_id,p.price,p.publish_status,p.audit_status,
+        p.pulish_date,p.descript,p.title,p.subtitle,p.is_good,p.is_new,p.is_popular,p.seo_text,p.base_prop,p.sell_prop,
+        p.sell_count,p.view_count,p.created_time,p.updated_time,p.data_flag,p.dis_proportion
+    </sql>
+
+    <sql id="Base_Spec_Column_List">
+        s.spec_id,s.product_id,s.product_specs,s.stock,s.price,s.status,s.created_time,s.data_flag
+    </sql>
+
+    <sql id="Base_Image_Column_List">
+        i.image_id,i.image_desc,i.is_master,i.image_order,i.image_status,i.created_time,i.updated_time
+    </sql>
+
+    <sql id="Base_Type_Column_List">
+        type_id,type_name,shop_id,created_time,state,data_flag
+    </sql>
+
+    <sql id="Base_Value_Column_List">
+        t_param_value.value_id,t_param_value.param_value,t_param_value.type_id,t_param_value.created_time,
+        t_param_value.state,t_param_value.data_flag
+    </sql>
+
+    <sql id="Base_Column_List">
+        category_id,category_name,parent_id,category_level,created_time
+    </sql>
+
+    <sql id="Base_ShippingInfo_Column_List">
+        ship_id,descript,price,shop_id,created_time
+    </sql>
+
+    <select id="getProductById" parameterType="java.lang.Integer" resultMap="BaseProduct">
+        select
+        <include refid="Base_Product_Column_List" />
+        ,p.product_image
+        from t_product p
+        where product_id = #{pId}
+    </select>
+
+    <select id="getProductSpecById" parameterType="java.lang.Integer" resultMap="BaseProductSpec">
+        select
+        <include refid="Base_Spec_Column_List" />
+        from t_product_spec s
+        where s.spec_id = #{sId} and data_flag = 0
+    </select>
+
+    <select id="getProductImageListBySId" parameterType="java.lang.Integer" resultMap="BaseProductImage">
+        select
+        <include refid="Base_Image_Column_List" />
+        <!--,t.f_base as image_url-->
+        ,i.image_url
+        from t_product_image i
+        <!--left join t_file t-->
+        <!--on i.image_url = t.f_id-->
+        where i.spec_id = #{sId} and i.image_status = 1
+    </select>
+
+    <select id="getProductSpecListByPId" parameterType="java.lang.Integer" resultMap="BaseProductSpec">
+        select
+        <include refid="Base_Spec_Column_List" />
+        from t_product_spec s
+        where s.product_id = #{pId} and data_flag = 0
+    </select>
+
+    <select id="getProductListByDto" parameterType="com.tangmo.emall.entity.dto.ProductDto" resultMap="BaseProduct">
+        select
+        <include refid="Base_Product_Column_List" />
+        ,p.product_image
+        from t_product p
+        where p.data_flag = 0 and p.publish_status = 1
+        <if test="productName != null"> and p.product_name like '%${productName}%'</if>
+        <if test="categoryId != null"> and p.category_id = #{categoryId}</if>
+        <if test="lIdList != null">
+            and p.product_id in (
+                select product_id from t_product_param where value_id in
+                <foreach collection="lIdList" index="index" item="item" open="(" separator="," close=")">
+                     #{item}
+                </foreach>
+            )
+        </if>
+        <if test="disType == 0">
+            and p.dis_proportion != 100
+        </if>
+        <if test="taId != null">
+            and p.product_id in (select product_id from t_trend where ta_id = #{taId})
+        </if>
+        <if test="raId != null">
+            and p.product_id in (select product_id from t_recommend where ra_id = #{raId})
+        </if>
+        <if test="startPrice != null">
+            and p.product_id in (
+                select product_id from t_product_spec where data_flag = 0 and price <![CDATA[>= ]]> #{startPrice} group by product_id
+            )
+        </if>
+        <if test="endPrice != null">
+            and p.product_id in (
+            select product_id from t_product_spec where data_flag = 0 and price <![CDATA[<= ]]> #{endPrice} group by product_id
+            )
+        </if>
+        <if test="sortingRules != null"> ${sortingRules}</if>
+    </select>
+
+    <select id="getParamTypeListByShopId" parameterType="java.lang.Integer" resultMap="BaseParamType">
+        select
+        <include refid="Base_Type_Column_List" />
+        from t_param_type
+        where shop_id = #{shopId} and data_flag = 0
+    </select>
+
+    <select id="getParamValueListByTypeId" parameterType="java.lang.Integer" resultMap="BaseParamValue">
+        select
+        <include refid="Base_Value_Column_List" />
+        ,t_param_value.param_image
+        from t_param_value
+        where t_param_value.type_id = #{typeId} and t_param_value.data_flag = 0
+    </select>
+
+    <update id="updProductViewCount" parameterType="java.lang.Integer">
+        update t_product set view_count = view_count + 1 where product_id = #{productId}
+    </update>
+
+    <select id="getProductCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(*) from t_product_param where value_id = #{valueId}
+    </select>
+
+    <update id="destocking">
+        update t_product_spec set stock = stock - #{count} where spec_id = #{specId}
+    </update>
+
+    <update id="increaseInventory">
+        update t_product_spec set stock = stock + #{count} where spec_id = #{specId}
+    </update>
+
+    <select id="getCateGoryListByPId" parameterType="java.lang.Integer" resultMap="BaseCateGory">
+        select
+        <include refid="Base_Column_List" />
+        from
+        t_category where parent_id = #{cId} and data_flag = 0
+    </select>
+
+    <select id="getCateGoryList" parameterType="java.lang.Integer" resultMap="BaseCateGory">
+        select
+        <include refid="Base_Column_List" />
+        from
+        t_category where category_level = #{level}  and data_flag = 0
+    </select>
+
+    <select id="getNewGoods" resultMap="BaseProduct">
+        select
+        <include refid="Base_Product_Column_List" />
+        <!--,f.f_base as product_image-->
+        ,p.product_image
+        from t_product p
+        <!--left join t_file f-->
+        <!--on p.product_image = f.f_id-->
+        where p.data_flag = 0 and p.is_new = 1 and p.publish_status = 1
+        order by p.sell_count desc
+    </select>
+
+    <select id="getHotProduct" parameterType="java.lang.Integer" resultMap="BaseProduct">
+        select
+        <include refid="Base_Product_Column_List" />
+        ,p.product_image
+        from t_product p
+        where p.data_flag = 0 and p.publish_status = 1 and p.product_id != #{pId}
+        and p.product_id in (select product_id from t_recommend where ra_id in (select ra_id from recommend_advertising where start_date &lt; NOW() and end_date > NOW()))
+        order by p.sell_count desc
+        Limit 0,3
+    </select>
+
+    <select id="getStyleProduct" resultMap="BaseProduct">
+        select
+        <include refid="Base_Product_Column_List" />
+        ,p.product_image
+        from t_product p
+        where p.data_flag = 0 and p.publish_status = 1 and p.product_id != #{pId}
+        and p.category_id = #{typeId}
+        order by p.sell_count desc
+        Limit 0,3
+    </select>
+
+    <select id="getCategoryProduct" parameterType="java.lang.Integer" resultMap="BaseProduct">
+        select
+        <include refid="Base_Product_Column_List" />
+        ,p.product_image
+        from t_product p
+        where p.data_flag = 0 and p.publish_status = 1
+        and p.category_id = #{typeId}
+        order by p.sell_count desc
+    </select>
+
+    <select id="getProductByActivity" parameterType="java.lang.Integer" resultMap="BaseProduct">
+        select
+        <include refid="Base_Product_Column_List" />
+        ,p.product_image
+        from t_product p
+        where p.data_flag = 0 and p.publish_status = 1
+        and product_id in (select target_id from t_discount_product where dis_id = #{disId})
+        order by p.sell_count desc
+    </select>
+
+    <select id="getProductByRaId" parameterType="java.lang.Integer" resultMap="BaseProduct">
+        select
+        <include refid="Base_Product_Column_List" />
+        ,p.product_image
+        from t_product p
+        where p.data_flag = 0 and p.publish_status = 1
+        and product_id in (select product_id from t_recommend where ra_id = #{raId})
+        order by p.sell_count desc
+    </select>
+
+    <select id="getProductByTaId" parameterType="java.lang.Integer" resultMap="BaseProduct">
+        select
+        <include refid="Base_Product_Column_List" />
+        ,p.product_image
+        from t_product p
+        where p.data_flag = 0 and p.publish_status = 1
+        and product_id in (select product_id from t_trend where ta_id = #{taId})
+        order by p.sell_count desc
+        limit 0,4
+    </select>
+
+    <select id="getCommodityPriceRange" resultType="java.lang.Double">
+        select price from t_product_spec
+        where data_flag = 0
+        <if test="typeId == 0"> order by price</if>
+        <if test="typeId == 1"> order by price desc</if>
+        limit 0,1
+    </select>
+
+    <select id="getStoreDistribution" parameterType="java.lang.Integer" resultMap="BaseShippingInfo">
+        select
+        <include refid="Base_ShippingInfo_Column_List" />
+        from t_shipping_info
+        where shop_id = #{shopId} and data_flag = 0
+    </select>
+
+    <select id="getStoreDistributionById"  parameterType="java.lang.Integer" resultMap="BaseShippingInfo">
+        select
+        <include refid="Base_ShippingInfo_Column_List" />
+        from t_shipping_info
+        where ship_id = #{shipId} and data_flag = 0
+    </select>
+
+    <select id="getSortingWay" parameterType="java.lang.Integer" resultMap="BaseSorting">
+        select sorting_id,title,created_time from t_sorting_way
+        where sorting_type = #{sortingType}
+        order by sorting_id
+    </select>
+    
+    <select id="getSortingWayById" parameterType="java.lang.Integer" resultMap="BaseSorting">
+        select sorting_id,title,sorting_rules,created_time from t_sorting_way
+        where sorting_id = #{sortingId}
+    </select>
+</mapper>

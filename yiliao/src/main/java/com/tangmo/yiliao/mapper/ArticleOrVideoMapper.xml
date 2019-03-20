@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.yiliao.dao.ArticleOrVideoDao" >
+
+    <resultMap id="BaseArticle" type="com.tangmo.yiliao.entity.SystemTheArticle">
+        <id column="sa_id" property="saId" jdbcType="VARCHAR"></id>
+        <result column="dt_id" property="dtId" jdbcType="VARCHAR"></result>
+        <result column="dt_name" property="dtName" jdbcType="VARCHAR"></result>
+        <result column="sa_title" property="saTitle" jdbcType="VARCHAR"></result>
+        <result column="sa_content" property="saContent" jdbcType="VARCHAR"></result>
+        <result column="visit_number" property="visitNumber" jdbcType="INTEGER"></result>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"></result>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR"></result>
+        <result column="create_userid" property="createUserId" jdbcType="VARCHAR"></result>
+        <result column="update_userid" property="updateUserId" jdbcType="VARCHAR"></result>
+        <result column="sa_imgid" property="saImgId" jdbcType="VARCHAR"></result>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"></result>
+        <result column="sa_integral" property="saIntegral" jdbcType="INTEGER"></result>
+        <result column="commCount" property="commCount" jdbcType="INTEGER"></result>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <resultMap id="BaseDoctorVideo" type="com.tangmo.yiliao.entity.DoctorVideo">
+        <id column="dv_id" property="dvId" jdbcType="VARCHAR"></id>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"></result>
+        <result column="dv_video" property="dvVideo" jdbcType="VARCHAR"></result>
+        <result column="dv_imgid" property="dvImgId" jdbcType="VARCHAR"></result>
+        <result column="dv_title" property="dvTitle" jdbcType="VARCHAR"></result>
+        <result column="dv_content" property="dvContent" jdbcType="VARCHAR"></result>
+        <result column="dv_integral" property="dvIntegral" jdbcType="INTEGER"></result>
+        <result column="visit_number" property="visitNumber" jdbcType="INTEGER"></result>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"></result>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR"></result>
+        <result column="create_userid" property="createUserId" jdbcType="VARCHAR"></result>
+        <result column="update_userid" property="updateUserId" jdbcType="VARCHAR"></result>
+        <result column="user_imgurl" property="userImgId" jdbcType="VARCHAR"></result>
+        <result column="dd_hospital" property="ddHospital" jdbcType="VARCHAR"></result>
+        <result column="dd_position" property="ddPosition" jdbcType="VARCHAR"></result>
+        <result column="dd_field" property="ddField" jdbcType="VARCHAR"></result>
+        <result column="name" property="name" jdbcType="VARCHAR"></result>
+        <result column="dt_id" property="dtId" jdbcType="VARCHAR"></result>
+        <result column="category" property="category" jdbcType="TINYINT"></result>
+        <result column="commCount" property="commCount" jdbcType="INTEGER" ></result>
+        <result column="sorting_id" property="sortingId" jdbcType="INTEGER" ></result>
+    </resultMap>
+
+    <select id="getArticleAllByApp" resultMap="BaseArticle">
+		select top ${end} sa.sa_id,sa.dt_id,(select dt_name from department where dt_id = sa.dt_id) as dt_name,(select COUNT(*) from comments where ArticlesOrVideoId = sa.sa_id and state = 0) as commCount,
+        sa.sa_title,sa.sa_content,sa.visit_number,sa.user_id,ts.user_name,sa.sa_integral,sa.sa_imgid,CONVERT(varchar,sa.create_time,120) as create_time
+		from system_the_article sa
+        inner join tb_sys_user ts
+        on sa.user_id = ts.user_id
+        where sa.state = 0 and sa_id not in(select top ${start} sa_id from system_the_article sa
+        inner join tb_sys_user ts
+        on sa.user_id = ts.user_id
+        where sa.state = 0 order by sa.visit_number desc)
+        order by sa.visit_number desc
+    </select>
+
+    <select id="getArticleAll" parameterType="com.tangmo.yiliao.entity.SelectUser" resultMap="BaseArticle">
+        select top ${end} sa.sa_id,sa.dt_id,(select dt_name from department where dt_id = sa.dt_id) as dt_name,(select COUNT(*) from comments where ArticlesOrVideoId = sa.sa_id and state = 0) as commCount,
+        sa.sa_title,sa.sa_content,sa.visit_number,sa.user_id,ts.user_name,sa.sa_integral,sa.sa_imgid,CONVERT(varchar,sa.create_time,120) as create_time
+        from system_the_article sa
+        left join tb_sys_user ts
+        on sa.user_id = ts.user_id
+        where sa.state = 0 and sa.sa_title like '%${condName}%' and sa_id not in(select top ${start} sa_id from system_the_article sa
+        left join tb_sys_user ts
+        on sa.user_id = ts.user_id
+        where sa.state = 0 and sa.sa_title like '%${condName}%' order by sa.create_time desc)
+        order by sa.create_time desc
+    </select>
+
+    <update id="delArticleById">
+         update system_the_article set state = 1,update_time = CONVERT(varchar,GETDATE(),120),update_userid = #{userId}
+         where sa_id = #{saId}
+    </update>
+    
+    <update id="upArticleById" parameterType="com.tangmo.yiliao.entity.SystemTheArticle">
+        update system_the_article set dt_id = #{dtId},sa_imgid = #{saImgId},sa_title = #{saTitle},sa_content = #{saContent},update_time = CONVERT(varchar,GETDATE(),120),update_userid = #{updateUserId}
+		where sa_id = #{saId}
+    </update>
+
+    <insert id="addArticle" parameterType="com.tangmo.yiliao.entity.SystemTheArticle">
+        INSERT INTO [system_the_article]
+            ([sa_id]
+            ,[dt_id]
+            ,[sa_title]
+            ,[sa_content]
+            ,[user_id]
+            ,[sa_imgid]
+            ,[create_time]
+            ,[update_time]
+            ,[create_userid]
+            ,[update_userid])
+            VALUES
+            (#{saId,jdbcType=VARCHAR}
+            ,#{dtId,jdbcType=VARCHAR}
+            ,#{saTitle,jdbcType=VARCHAR}
+            ,#{saContent,jdbcType=VARCHAR}
+            ,#{userId,jdbcType=VARCHAR}
+            ,#{saImgId,jdbcType=VARCHAR}
+            ,CONVERT(varchar,GETDATE(),120)
+            ,CONVERT(varchar,GETDATE(),120)
+            ,#{createUserId,jdbcType=VARCHAR}
+            ,#{createUserId,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="getArticleCount" parameterType="com.tangmo.yiliao.entity.SelectUser" resultType="java.lang.Integer">
+        select COUNT(*) from system_the_article sa
+        left join tb_sys_user ts
+        on sa.user_id = ts.user_id
+        where sa.state = 0 and sa.sa_title like '%${condName}%'
+    </select>
+
+    <select id="getVideoAll" parameterType="com.tangmo.yiliao.entity.SelectUser" resultMap="BaseDoctorVideo">
+        select top ${end} dv_id,user_id,(select name from tb_sys_user where user_id = dv.user_id) as name,dv_video,dv_imgid,dv_title,dv_content,dv_integral,visit_number,sorting_id,(select COUNT(*) from comments where c_type = 1 and ArticlesOrVideoId = dv.dv_id and state = 0) as commCount,
+        CONVERT(VARCHAR,create_time,120) as create_time,dt_id,category,(select dt_name from department where dt_id = dv.dt_id) as dd_field
+        from doctor_video dv where <if test="type == 1">user_id = #{condName} and</if> (dv_title like '%${condPhone}%' or dv.user_id in (select user_id from tb_sys_user where name like '%${condPhone}%')) <if test="originatorId != null">and create_time &gt; #{originatorId}</if> <if test="peopleId != null">and create_time &lt; #{peopleId}</if> and dv_state = 0 and dv_id not in (select top ${start} dv_id
+                from doctor_video where <if test="type == 1">user_id = #{condName} and </if> (dv_title like '%${condPhone}%' or dv.user_id in (select user_id from tb_sys_user where name like '%${condPhone}%')) <if test="originatorId != null">and create_time &gt; #{originatorId}</if> <if test="peopleId != null">and create_time &lt; #{peopleId}</if> and dv_state = 0 order by sorting_id desc)
+        order by sorting_id desc
+    </select>
+
+    <select id="getVideoCountAll" parameterType="com.tangmo.yiliao.entity.SelectUser" resultType="java.lang.Integer">
+        select count(*)
+        from doctor_video dv where 1=1<if test="condPhone != ''">and (dv_title like '%${condPhone}%' or dv.user_id in (select user_id from tb_sys_user where name like '%${condPhone}%'))</if> <if test="originatorId != ''">and create_time &gt; #{originatorId}</if> <if test="peopleId != ''">and create_time &lt; #{peopleId}</if> and dv_state = 0
+
+    </select>
+
+    <update id="delVideoById">
+        update doctor_video set dv_state = 1,update_userid = #{userId},update_time = CONVERT(VARCHAR,GETDATE(),120)
+        where dv_id = #{dvId}
+    </update>
+
+    <insert id="addVideo" parameterType="com.tangmo.yiliao.entity.DoctorVideo">
+        INSERT INTO [doctor_video]
+        ([dv_id]
+        ,[user_id]
+        ,[dv_video]
+        ,[dv_imgid]
+        ,[dv_title]
+        ,[dv_content]
+        ,[dt_id]
+        ,[category]
+        ,[create_time]
+        ,[update_time]
+        ,[create_userid]
+        ,[update_userid]
+        ,[sorting_id])
+        VALUES
+        (#{dvId,jdbcType=VARCHAR}
+        ,#{userId,jdbcType=VARCHAR}
+        ,#{dvVideo,jdbcType=INTEGER}
+        ,#{dvImgId,jdbcType=VARCHAR}
+        ,#{dvTitle,jdbcType=VARCHAR}
+        ,#{dvContent,jdbcType=VARCHAR}
+        ,#{dtId,jdbcType=VARCHAR}
+        ,#{category,jdbcType=TINYINT}
+        ,CONVERT(varchar,GETDATE(),120)
+        ,CONVERT(varchar,GETDATE(),120)
+        ,#{userId,jdbcType=VARCHAR}
+        ,#{userId,jdbcType=VARCHAR}
+        ,#{sortingId,jdbcType=INTEGER})
+    </insert>
+
+    <update id="updVideo" parameterType="com.tangmo.yiliao.entity.DoctorVideo">
+        update doctor_video set dv_video = #{dvVideo},dv_imgid = #{dvImgId},dv_title = #{dvTitle},dv_content = #{dvContent},dt_id = #{dtId},category = #{category},sorting_id = #{sortingId},
+        update_time = CONVERT(varchar,GETDATE(),120),update_userid = #{updateUserId} where dv_id = #{dvId}
+    </update>
+
+    <select id="getVideoSoId" resultType="java.lang.Integer">
+        select sorting_id from doctor_video where dv_id = #{dvId}
+    </select>
+
+    <update id="updVideoSoIdJia">
+        update doctor_video set sorting_id = sorting_id + 1
+        where sorting_id &lt; #{soId} and sorting_id &gt;= #{newSoId} and dv_state = 0
+    </update>
+
+    <update id="updVideoSoIdJian">
+        update doctor_video set sorting_id = sorting_id - 1
+        where sorting_id &gt; #{soId} and sorting_id &lt;= #{newSoId} and dv_state = 0
+    </update>
+
+    <select id="getVideoCount" resultType="java.lang.Integer">
+        select count(*) from doctor_video where dv_state = 0
+    </select>
+
+    <update id="addVideoOrderBy">
+        update doctor_video set sorting_id = sorting_id + 1
+        where sorting_id >= #{soId} and dv_state = 0
+    </update>
+
+    <update id="delVideoOrderBy">
+        update doctor_video set sorting_id = sorting_id - 1
+        where sorting_id >= (select sorting_id from doctor_video where dv_id = #{dvId}) and dv_state = 0
+    </update>
+
+</mapper>

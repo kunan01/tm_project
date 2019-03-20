@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.yiliao.dao.IntegralDao" >
+
+    <resultMap id="BaseIntegral" type="com.tangmo.yiliao.entity.Integral">
+        <id column="lr_id" property="lrId" jdbcType="VARCHAR" ></id>
+        <result column="lr_name" property="lrName" jdbcType="VARCHAR" ></result>
+        <result column="bean" property="bean" jdbcType="INTEGER" ></result>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR" ></result>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR" ></result>
+        <result column="create_userid" property="createUserId" jdbcType="VARCHAR" ></result>
+        <result column="update_userid" property="updateUserId" jdbcType="VARCHAR" ></result>
+        <result column="state" property="state" jdbcType="TINYINT" ></result>
+    </resultMap>
+
+    <resultMap id="BaseMessage" type="com.tangmo.yiliao.entity.Message">
+        <id column="mi_id" property="miId" jdbcType="VARCHAR" ></id>
+        <result column="title" property="title" jdbcType="VARCHAR" ></result>
+        <result column="mi_content" property="miContent" jdbcType="VARCHAR" ></result>
+        <result column="mi_category" property="miCategory" jdbcType="TINYINT" ></result>
+        <result column="comm_id" property="commId" jdbcType="VARCHAR" ></result>
+        <result column="state" property="state" jdbcType="TINYINT" ></result>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR" ></result>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR" ></result>
+        <result column="create_userid" property="createUserId" jdbcType="VARCHAR" ></result>
+        <result column="update_userid" property="updateUserId" jdbcType="VARCHAR" ></result>
+    </resultMap>
+
+    <resultMap id="BaseFile" type="com.tangmo.yiliao.entity.RsFile">
+        <id column="address" property="address" jdbcType="VARCHAR" ></id>
+        <result column="account" property="account" jdbcType="VARCHAR" ></result>
+        <result column="userid" property="userId" jdbcType="VARCHAR" ></result>
+        <result column="password" property="password" jdbcType="VARCHAR" ></result>
+        <result column="content" property="content" jdbcType="VARCHAR" ></result>
+        <result column="action" property="action" jdbcType="VARCHAR" ></result>
+        <result column="checkcontent" property="checkContent" jdbcType="TINYINT" ></result>
+    </resultMap>
+
+    <resultMap id="BaseUser" type="com.tangmo.yiliao.entity.User">
+        <id column="user_id" property="userId" jdbcType="VARCHAR"></id>
+        <result column="role_id" property="roleId" jdbcType="VARCHAR"></result>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"></result>
+        <result column="name" property="name" jdbcType="VARCHAR"></result>
+        <result column="password" property="password" jdbcType="VARCHAR"></result>
+        <result column="user_phone" property="userPhone" jdbcType="VARCHAR"></result>
+        <result column="user_gender" property="userGender" jdbcType="TINYINT"></result>
+        <result column="user_age" property="userAge" jdbcType="INTEGER"></result>
+        <result column="user_imgurl" property="userImgUrl" jdbcType="VARCHAR"></result>
+        <result column="user_card" property="userCard" jdbcType="VARCHAR"></result>
+        <result column="user_integral" property="userIntegral" jdbcType="INTEGER"></result>
+        <result column="user_total" property="userTotal" jdbcType="INTEGER"></result>
+        <result column="user_cons" property="userCons" jdbcType="INTEGER"></result>
+        <result column="city" property="city" jdbcType="VARCHAR"></result>
+        <result column="county" property="county" jdbcType="VARCHAR"></result>
+        <result column="token" property="token" jdbcType="VARCHAR"></result>
+        <result column="state" property="state" jdbcType="TINYINT"></result>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"></result>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR"></result>
+        <result column="create_userid" property="createUserId" jdbcType="VARCHAR"></result>
+        <result column="update_userid" property="updateUserId" jdbcType="VARCHAR"></result>
+        <result column="role_name" property="roleName" jdbcType="VARCHAR" ></result>
+    </resultMap>
+
+    <select id="getUserIntegralAllCount" parameterType="com.tangmo.yiliao.entity.SelectUser" resultType="java.lang.Integer">
+        select count(*) from tb_sys_user
+        where state = 0 and (user_phone like '%${condName}%' or user_name like '%${condName}%' or name like '%${condName}%') and (role_id = 'MEMBER' or role_id = 'DOCTOR')
+    </select>
+
+    <select id="getUserIntegralAll" parameterType="com.tangmo.yiliao.entity.SelectUser" resultMap="BaseUser">
+        select top ${end} user_id,role_id,name,user_name,user_phone,user_integral,user_total,city,CONVERT(VARCHAR(19),create_time,120) as create_time from tb_sys_user
+        where state = 0 and (user_phone like '%${condName}%' or user_name like '%${condName}%' or name like '%${condName}%') and (role_id = 'MEMBER' or role_id = 'DOCTOR') <if test="originatorId != null">and create_time &gt; #{originatorId}</if> <if test="peopleId != null">and create_time &lt; #{peopleId}</if> and user_id not in (select top ${start} user_id from tb_sys_user
+        where state = 0 and (user_phone like '%${condName}%' or user_name like '%${condName}%' or name like '%${condName}%') and (role_id = 'MEMBER' or role_id = 'DOCTOR') <if test="originatorId != null">and create_time &gt; #{originatorId}</if> <if test="peopleId != null">and create_time &lt; #{peopleId}</if> ORDER BY user_total desc)  ORDER BY user_total desc
+    </select>
+
+    <select id="getIntegralAll" resultMap="BaseIntegral">
+        select lr_id,lr_name,bean,CONVERT(VARCHAR(19),create_time,120) as create_time from Integral_rules where state = 0
+    </select>
+
+    <update id="delIntegralById">
+        update Integral_rules set lr_id = #{newLrId},state = 1,update_time = CONVERT(varchar,GETDATE(),120),update_userid = #{userId}
+			where lr_id = #{lrId}
+    </update>
+
+    <update id="updIntegralById">
+        update Integral_rules set lr_name = #{lrName},bean = #{bean},update_time = CONVERT(varchar,GETDATE(),120),update_userid = #{userId}
+			where lr_id = #{lrId}
+    </update>
+
+    <insert id="addIntegralById" parameterType="com.tangmo.yiliao.entity.Integral">
+        INSERT INTO [Integral_rules]
+            ([lr_id]
+            ,[lr_name]
+            ,[bean]
+            ,[create_time]
+            ,[update_time]
+            ,[create_userid]
+            ,[update_userid])
+            VALUES
+            (#{lrId,jdbcType=VARCHAR}
+            ,#{lrName,jdbcType=VARCHAR}
+            ,#{bean,jdbcType=INTEGER}
+            ,CONVERT(varchar,GETDATE(),120)
+            ,CONVERT(varchar,GETDATE(),120)
+            ,#{createUserId,jdbcType=VARCHAR}
+            ,#{createUserId,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="getSystemMessage" parameterType="com.tangmo.yiliao.entity.SelectUser" resultMap="BaseMessage">
+        select top ${end} mi_id,title,mi_content,CONVERT(VARCHAR(19),create_time,120) as create_time from message_info where title like '%${condName}%' and state = 0 and mi_category = 0 and mi_id not in (select top ${start} mi_id from message_info
+        where title like '%${condName}%' and state = 0 and mi_category = 0 order by create_time desc)
+        order by create_time desc
+    </select>
+
+    <select id="getSystemMessageCount" parameterType="com.tangmo.yiliao.entity.SelectUser" resultType="java.lang.Integer">
+        select count(*) from message_info
+        where title like '%${condName}%' and state = 0 and mi_category = 0
+    </select>
+
+    <update id="updMessageStateO">
+        UPDATE [read] SET system_message_state = 0
+    </update>
+
+    <insert id="addMessage" parameterType="com.tangmo.yiliao.entity.Message">
+        INSERT INTO [message_info]
+        ([mi_id]
+        ,[title]
+        ,[mi_content]
+        ,[mi_category]
+        ,[create_time]
+        ,[update_time]
+        ,[create_userid]
+        ,[update_userid])
+        VALUES
+        (#{miId,jdbcType=VARCHAR}
+        ,#{title,jdbcType=VARCHAR}
+        ,#{miContent,jdbcType=TINYINT}
+        ,#{miCategory,jdbcType=VARCHAR}
+        ,CONVERT(varchar,GETDATE(),120)
+        ,CONVERT(varchar,GETDATE(),120)
+        ,#{userId,jdbcType=VARCHAR}
+        ,#{userId,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="delSystemMessageById">
+        update message_info set state = 1 where mi_id = #{msId}
+    </update>
+
+    <update id="updSystemMessage" parameterType="com.tangmo.yiliao.entity.Message">
+        update message_info set title = #{title},mi_content = #{miContent},update_time = CONVERT(VARCHAR(19),GETDATE(),120),update_userid = #{userId}
+        where mi_id = #{miId}
+    </update>
+
+    <select id="getcode" resultMap="BaseFile">
+        select address,account,userid,password,content,action,checkcontent from rs_file
+    </select>
+
+    <update id="updCode" parameterType="com.tangmo.yiliao.entity.RsFile">
+        update rs_file set address = #{address},account = #{account},userid = #{userId},password = #{password},
+        content = #{content},checkcontent = #{checkContent}
+    </update>
+</mapper>

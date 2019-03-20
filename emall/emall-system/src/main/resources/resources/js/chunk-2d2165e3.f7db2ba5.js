@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d2165e3"],{c1ba:function(n,e,t){"use strict";t.r(e);var c=function(){var n=this,e=n.$createElement,t=n._self._c||e;return t("div",[n._v("\n    趋势\n")])},u=[],a={data:function(){return{}},created:function(){},computed:{}},r=a,o=t("17cc"),i=Object(o["a"])(r,c,u,!1,null,null,null);e["default"]=i.exports}}]);

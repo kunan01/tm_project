@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.yiliao.dao.ArticleDao">
+
+    <resultMap id="BaseSystemTheArticle" type="com.tangmo.yiliao.entity.SystemTheArticle">
+    <id column="sa_id" property="saId" jdbcType="VARCHAR"></id>
+    <result column="dt_id" property="dtId" jdbcType="VARCHAR"></result>
+    <result column="sa_title" property="saTitle" jdbcType="VARCHAR"></result>
+    <result column="sa_content" property="saContent" jdbcType="VARCHAR"></result>
+    <result column="visit_number" property="visitNumber" jdbcType="INTEGER"></result>
+    <result column="create_time" property="createTime" jdbcType="VARCHAR"></result>
+    <result column="update_time" property="updateTime" jdbcType="VARCHAR"></result>
+    <result column="create_userid" property="createUserId" jdbcType="VARCHAR"></result>
+    <result column="update_userid" property="updateUserId" jdbcType="VARCHAR"></result>
+    <result column="sa_imgid" property="saImgId" jdbcType="VARCHAR"></result>
+    <result column="user_id" property="userId" jdbcType="VARCHAR"></result>
+    <result column="sa_integral" property="saIntegral" jdbcType="VARCHAR"></result>
+    <result column="commCount" property="commCount" jdbcType="VARCHAR"></result>
+</resultMap>
+
+    <select id="getPartOfArticleByUserId" resultMap="BaseSystemTheArticle">
+        select sa_id,dt_id,sa_title,sa_content,visit_number,sa_imgid,CONVERT(VARCHAR(19),create_time,120) as create_time from system_the_article
+        where state = 0 and sa_title like '%${saTitle}%'
+    </select>
+
+    <select id="getPartOfArticle" resultMap="BaseSystemTheArticle">
+        select top ${end} sa_id,sa_title,sa_content,visit_number,sa_imgid,user_id,sa_integral,(select COUNT(*) from comments where c_type = 0 and ArticlesOrVideoId = sa.sa_id and state = 0) as commCount
+        ,CONVERT(VARCHAR(19),create_time,120) as create_time from system_the_article sa
+        where state = 0 and sa_id not in(select top ${start} sa_id from system_the_article
+        where state = 0 order by visit_number desc) order by visit_number desc
+    </select>
+
+    <select id="getArticleById" resultMap="BaseSystemTheArticle">
+        select top ${end} sa_id,sa_title,sa_content,visit_number,sa_imgid,user_id,sa_integral,(select COUNT(*) from comments where c_type = 0 and ArticlesOrVideoId = sa.sa_id and state = 0) as commCount
+        ,CONVERT(VARCHAR(19),create_time,120) as create_time from system_the_article sa
+        where state = 0 and user_id = #{userId} and sa_id not in(select top ${start} sa_id from system_the_article
+        where state = 0 and user_id = #{userId} order by visit_number desc) order by visit_number desc
+    </select>
+
+    <select id="getDepartmentArticleTop4ById" resultMap="BaseSystemTheArticle">
+        select top 4 sa_id,sa_title,sa_content,visit_number,sa_source,sa_imgid,CONVERT(VARCHAR(19),create_time,120) as create_time from system_the_article
+        where state = 0 and dt_id = #{dtId}
+        order by visit_number desc
+    </select>
+
+    <select id="getUserArticleFootprint" resultMap="BaseSystemTheArticle">
+        select top ${end} sa.sa_id,sa.sa_title,sa.visit_number,sa.sa_imgid,CONVERT(VARCHAR(19),ft.create_time,120) as create_time from system_the_article sa
+		inner join footprint ft
+		on sa.sa_id = ft.type_id
+        where sa.state = 0 and ft.state = 0 and ft.user_id = #{userId}
+        and sa.sa_id not in (select top ${start} sa.sa_id from system_the_article sa
+			inner join footprint ft
+			on sa.sa_id = ft.type_id
+			where sa.state = 0 and ft.state = 0 and ft.user_id = #{userId})
+		order by ft.create_time desc
+    </select>
+
+    <select id="getDepartmentArticlById" resultMap="BaseSystemTheArticle">
+        select sa_id,dt_id,sa_title,sa_content,visit_number,sa_imgid,CONVERT(VARCHAR(19),create_time,120) as create_time from system_the_article
+        where state = 0 and sa_id = #{aId}
+    </select>
+
+    <select id="getDepartmentArticleTop2T" resultMap="BaseSystemTheArticle">
+        select top 2 sa_id,sa_title,visit_number,sa_imgid,CONVERT(VARCHAR(19),create_time,120) as create_time from system_the_article
+        where state = 0 and dt_id = #{dtId} and sa_id not in (select type_id from footprint where fp_type = 0 and user_id = #{userId})
+        order by visit_number desc
+    </select>
+
+    <update id="updVisitNumber">
+        update system_the_article set visit_number = visit_number + 1 where sa_id = #{aId}
+    </update>
+
+    <update id="updaucodeByDay">
+        update verificationCode set dayCount = 0 where dayCount &lt; 5 and monthCount &lt; 50
+    </update>
+
+    <update id="updaucodeByMonth">
+        update verificationCode set dayCount = 0,monthCount = 0 where dayCount &lt; 5 and monthCount &lt; 50
+    </update>
+
+    <select id="getMesCode" resultType="java.lang.String">
+        select top ${end} cg.phone from consulting cg
+            INNER JOIN verificationCode vg
+            on cg.phone = vg.phone
+        where cg.codeCount > 3 and cg.phone like '%${phone}%' and vg.state = 0
+        <if test="type == 0">and cg.codeTime = CONVERT(varchar(10),GETDATE(),120)</if>
+        <if test="type == 1">and cg.codeTime like CONVERT(varchar(7),GETDATE(),120)+'%'</if>
+        and cg.phone not in (select top ${start} cg.phone from consulting cg
+                INNER JOIN verificationCode vg
+                on cg.phone = vg.phone
+                where cg.codeCount > 3 and cg.phone like '%${phone}%' and vg.state = 0
+                <if test="type == 0">and cg.codeTime = CONVERT(varchar(10),GETDATE(),120)</if>
+                <if test="type == 1">and cg.codeTime like CONVERT(varchar(7),GETDATE(),120)+'%'</if>)
+        GROUP BY cg.phone
+    </select>
+
+    <select id="getMesCodecount" resultType="java.lang.Integer">
+        select SUM(codeCount) as count from consulting where phone = #{phone}
+        <if test="type == 0">and codeTime = CONVERT(varchar(10),GETDATE(),120)</if>
+        <if test="type == 1">and codeTime like CONVERT(varchar(7),GETDATE(),120)+'%'</if>
+    </select>
+
+    <select id="getMesCodeBan" resultType="java.lang.String">
+        select top ${end} phone from verificationCode where state = 1 and phone like '%${phone}%' and phone not in(
+            select top ${start} phone from verificationCode where state = 1 and phone like '%${phone}%')
+    </select>
+
+</mapper>

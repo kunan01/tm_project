@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.emall.dao.OrderDao" >
+
+    <resultMap id="BaseOrder" type="com.tangmo.emall.entity.Order">
+        <id column="order_id" property="orderId" jdbcType="INTEGER" />
+        <result column="order_sn" property="orderSn" jdbcType="VARCHAR" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="consignee" property="consignee" jdbcType="VARCHAR" />
+        <result column="address_line1" property="addressLine1" jdbcType="VARCHAR" />
+        <result column="address_line2" property="addressLine2" jdbcType="VARCHAR" />
+        <result column="city" property="city" jdbcType="VARCHAR" />
+        <result column="province" property="province" jdbcType="VARCHAR" />
+        <result column="zip_code" property="zipCode" jdbcType="VARCHAR" />
+        <result column="country" property="country" jdbcType="VARCHAR" />
+        <result column="user_phone" property="userPhone" jdbcType="VARCHAR" />
+        <result column="pay_type" property="payType" jdbcType="TINYINT" />
+        <result column="order_money" property="orderMoney" jdbcType="DECIMAL" />
+        <result column="discount_money" property="discountMoney" jdbcType="DECIMAL" />
+        <result column="express_money" property="expressMoney" jdbcType="DECIMAL" />
+        <result column="pay_money" property="payMoney" jdbcType="DECIMAL" />
+        <result column="express_name" property="expressName" jdbcType="VARCHAR" />
+        <result column="express_no" property="expressNo" jdbcType="VARCHAR" />
+        <result column="deliver_time" property="deliverTime" jdbcType="TIMESTAMP" />
+        <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+        <result column="pay_no" property="payNo" jdbcType="VARCHAR" />
+        <result column="receive_time" property="receiveTime" jdbcType="TIMESTAMP" />
+        <result column="order_status" property="orderStatus" jdbcType="TINYINT" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <resultMap id="BaseOrderDetail" type="com.tangmo.emall.entity.OrderDetail">
+        <id column="detail_id" property="detailId" jdbcType="INTEGER" />
+        <result column="order_id" property="orderId" jdbcType="INTEGER" />
+        <result column="product_id" property="productId" jdbcType="INTEGER" />
+        <result column="spec_id" property="specId" jdbcType="INTEGER" />
+        <result column="product_count" property="productCount" jdbcType="INTEGER" />
+        <result column="product_price" property="productPrice" jdbcType="DECIMAL" />
+        <result column="product_name" property="productName" jdbcType="VARCHAR" />
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+        <result column="prescription_id" property="prescriptionId" jdbcType="INTEGER" />
+        <result column="prescription_image" property="prescriptionImage" jdbcType="VARCHAR" />
+        <result column="prescription_price" property="prescriptionPrice" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <resultMap id="BaseOrderAll" type="com.tangmo.emall.entity.OrderDetail">
+        <id column="detail_id" property="detailId" jdbcType="INTEGER" />
+        <result column="order_id" property="orderId" jdbcType="INTEGER" />
+        <result column="product_id" property="productId" jdbcType="INTEGER" />
+        <result column="spec_id" property="specId" jdbcType="INTEGER" />
+        <result column="product_count" property="productCount" jdbcType="INTEGER" />
+        <result column="product_price" property="productPrice" jdbcType="DECIMAL" />
+        <result column="product_name" property="productName" jdbcType="VARCHAR" />
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+        <result column="prescription_id" property="prescriptionId" jdbcType="INTEGER" />
+        <result column="prescription_image" property="prescriptionImage" jdbcType="VARCHAR" />
+        <result column="prescription_price" property="prescriptionPrice" jdbcType="DECIMAL" />
+        <collection property="order" ofType="com.tangmo.emall.entity.Order">
+            <id column="toOrder_id" property="orderId" jdbcType="INTEGER" />
+            <result column="order_sn" property="orderSn" jdbcType="VARCHAR" />
+            <result column="user_id" property="userId" jdbcType="INTEGER" />
+            <result column="consignee" property="consignee" jdbcType="VARCHAR" />
+            <result column="address_line1" property="addressLine1" jdbcType="VARCHAR" />
+            <result column="address_line2" property="addressLine2" jdbcType="VARCHAR" />
+            <result column="city" property="city" jdbcType="VARCHAR" />
+            <result column="province" property="province" jdbcType="VARCHAR" />
+            <result column="zip_code" property="zipCode" jdbcType="VARCHAR" />
+            <result column="country" property="country" jdbcType="VARCHAR" />
+            <result column="user_phone" property="userPhone" jdbcType="VARCHAR" />
+            <result column="pay_type" property="payType" jdbcType="TINYINT" />
+            <result column="order_money" property="orderMoney" jdbcType="DECIMAL" />
+            <result column="discount_money" property="discountMoney" jdbcType="DECIMAL" />
+            <result column="express_money" property="expressMoney" jdbcType="DECIMAL" />
+            <result column="pay_money" property="payMoney" jdbcType="DECIMAL" />
+            <result column="express_name" property="expressName" jdbcType="VARCHAR" />
+            <result column="express_no" property="expressNo" jdbcType="VARCHAR" />
+            <result column="deliver_time" property="deliverTime" jdbcType="TIMESTAMP" />
+            <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+            <result column="pay_no" property="payNo" jdbcType="VARCHAR" />
+            <result column="receive_time" property="receiveTime" jdbcType="TIMESTAMP" />
+            <result column="order_status" property="orderStatus" jdbcType="TINYINT" />
+            <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        </collection>
+        <collection property="product" ofType="com.tangmo.emall.entity.Product">
+            <id column="pProduct_id" property="productId" jdbcType="INTEGER" />
+            <result column="pShop_id" property="shopId" jdbcType="INTEGER" />
+            <result column="pProduct_name" property="productName" jdbcType="VARCHAR" />
+            <result column="brand_id" property="brandId" jdbcType="INTEGER" />
+            <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+            <result column="price" property="price" jdbcType="DECIMAL" />
+            <result column="publish_status" property="publishStatus" jdbcType="TINYINT" />
+            <result column="audit_status" property="auditStatus" jdbcType="TINYINT" />
+            <result column="pulish_date" property="publishDate" jdbcType="TIMESTAMP" />
+            <result column="descript" property="descript" jdbcType="VARCHAR" />
+            <result column="title" property="title" jdbcType="VARCHAR" />
+            <result column="subtitle" property="subtitle" jdbcType="VARCHAR" />
+            <result column="is_good" property="isGood" jdbcType="TINYINT" />
+            <result column="is_new" property="isNew" jdbcType="TINYINT" />
+            <result column="is_popular" property="isPopular" jdbcType="TINYINT" />
+            <result column="seo_text" property="seoText" jdbcType="VARCHAR" />
+            <result column="base_prop" property="baseProp" jdbcType="VARCHAR" />
+            <result column="sell_prop" property="sellProp" jdbcType="VARCHAR" />
+            <result column="product_image" property="productImage" jdbcType="VARCHAR" />
+            <result column="sell_count" property="sellCount" jdbcType="INTEGER" />
+            <result column="view_count" property="viewCount" jdbcType="INTEGER" />
+            <result column="data_flag" property="dataFlag" jdbcType="TINYINT"/>
+            <result column="dis_proportion" property="disProportion" jdbcType="INTEGER" />
+        </collection>
+        <collection property="productSpec" ofType="com.tangmo.emall.entity.ProductSpec">
+            <id column="pSpec_id" property="specId" jdbcType="INTEGER" />
+            <result column="psProduct_id" property="productId" jdbcType="INTEGER" />
+            <result column="product_specs" property="productSpecs" jdbcType="VARCHAR" />
+            <result column="stock" property="stock" jdbcType="INTEGER" />
+            <result column="pPrice" property="price" jdbcType="DECIMAL" />
+            <result column="status" property="status" jdbcType="VARCHAR" />
+            <result column="pData_flag" property="dataFlag" jdbcType="TINYINT" />
+        </collection>
+    </resultMap>
+
+    <sql id="Base_Order_Column_List">
+        order_id,order_sn,user_id,consignee,address_line1,address_line2,city,province,zip_code,country,
+        user_phone,pay_type,order_money,discount_money,express_money,pay_money,express_name,express_no,deliver_time,
+        pay_time,pay_no,receive_time,order_status,created_time,updated_time
+    </sql>
+
+    <sql id="Base_OrderDetail_Column_List">
+        detail_id,order_id,product_id,spec_id,product_count,product_price,product_name,updated_time,
+        prescription_id,prescription_image,prescription_price
+    </sql>
+
+    <insert id="addOrder" parameterType="com.tangmo.emall.entity.Order" useGeneratedKeys="true" keyColumn="order_id" keyProperty="orderId">
+        insert into t_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderSn != null">
+                order_sn,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="consignee != null">
+                consignee,
+            </if>
+            <if test="addressLine1 != null">
+                address_line1,
+            </if>
+            <if test="addressLine2 != null">
+                address_line2,
+            </if>
+            <if test="city != null">
+                city,
+            </if>
+            <if test="province != null">
+                province,
+            </if>
+            <if test="zipCode != null">
+                zip_code,
+            </if>
+            <if test="country != null">
+                country,
+            </if>
+            <if test="userPhone != null">
+                user_phone,
+            </if>
+            <if test="orderMoney != null">
+                order_money,
+            </if>
+            <if test="discountMoney != null">
+                discount_money,
+            </if>
+            <if test="expressMoney != null">
+                express_money,
+            </if>
+            <if test="payMoney != null">
+                pay_money,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderSn != null">
+                #{orderSn},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="consignee != null">
+                #{consignee},
+            </if>
+            <if test="addressLine1 != null">
+                #{addressLine1},
+            </if>
+            <if test="addressLine2 != null">
+                #{addressLine2},
+            </if>
+            <if test="city != null">
+                #{city},
+            </if>
+            <if test="province != null">
+                #{province},
+            </if>
+            <if test="zipCode != null">
+                #{zipCode},
+            </if>
+            <if test="country != null">
+                #{country},
+            </if>
+            <if test="userPhone != null">
+                #{userPhone},
+            </if>
+            <if test="orderMoney != null">
+                #{orderMoney},
+            </if>
+            <if test="discountMoney != null">
+                #{discountMoney},
+            </if>
+            <if test="expressMoney != null">
+                #{expressMoney},
+            </if>
+            <if test="payMoney != null">
+                #{payMoney},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="addOrderDetail" parameterType="com.tangmo.emall.entity.OrderDetail" useGeneratedKeys="true" keyColumn="detail_id" keyProperty="detailId">
+        insert into t_order_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">
+                order_id,
+            </if>
+            <if test="productId != null">
+                product_id,
+            </if>
+            <if test="specId != null">
+                spec_id,
+            </if>
+            <if test="productCount != null">
+                product_count,
+            </if>
+            <if test="productPrice != null">
+                product_price,
+            </if>
+            <if test="productName != null">
+                product_name,
+            </if>
+            <if test="prescriptionId != null">
+                prescription_id,
+            </if>
+            <if test="prescriptionImage != null">
+                prescription_image,
+            </if>
+            <if test="prescriptionPrice != null">
+                prescription_price
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">
+                #{orderId},
+            </if>
+            <if test="productId != null">
+                #{productId},
+            </if>
+            <if test="specId != null">
+                #{specId},
+            </if>
+            <if test="productCount != null">
+                #{productCount},
+            </if>
+            <if test="productPrice != null">
+                #{productPrice},
+            </if>
+            <if test="productName != null">
+                #{productName},
+            </if>
+            <if test="prescriptionId != null">
+                #{prescriptionId},
+            </if>
+            <if test="prescriptionImage != null">
+                #{prescriptionImage},
+            </if>
+            <if test="prescriptionPrice != null">
+                #{prescriptionPrice},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getOrderDetailById" parameterType="java.lang.Integer" resultMap="BaseOrderDetail">
+        select
+        <include refid="Base_OrderDetail_Column_List" />
+        from t_order_detail
+        where detail_id = #{detailId}
+    </select>
+
+    <select id="getOrderById" parameterType="java.lang.Integer" resultMap="BaseOrder">
+        select
+        <include refid="Base_Order_Column_List" />
+        from t_order
+        where order_id = #{orderId}
+    </select>
+
+    <update id="cancelOrder" parameterType="java.lang.Integer">
+        update t_order set order_status = -3,updated_time = now() where order_id = #{orderId}
+    </update>
+
+    <update id="deleteOrder" parameterType="java.lang.Integer">
+        update t_order set order_status = 4,updated_time = now() where order_id = #{orderId}
+    </update>
+
+    <update id="ConfirmOrder" parameterType="java.lang.Integer">
+        update t_order set order_status = 3,updated_time = now(),receive_time = now() where order_id = #{orderId}
+    </update>
+
+    <update id="updPaypalNo" >
+        update t_order set pay_no = #{payNo} where order_id = #{orderId}
+    </update>
+
+    <update id="updateOrderInformation" parameterType="java.lang.String">
+        update t_order set order_status = 1,updated_time = now(),pay_time = now(),pay_type = 1
+        where pay_no = #{payNo}
+    </update>
+
+    <select id="getOrderListByUserId" resultMap="BaseOrderAll">
+        select
+        td.detail_id,td.order_id,td.product_id,td.spec_id,td.product_count,td.product_price,td.product_name,td.updated_time,td.prescription_id,td.prescription_image,td.prescription_price,
+        tod.order_id as toOrder_id,tod.order_sn,tod.user_id,tod.consignee,tod.address_line1,tod.address_line2,tod.city,tod.province,
+        tod.zip_code,tod.country,tod.user_phone,tod.pay_type,tod.order_money,tod.discount_money,tod.express_money,tod.pay_money,
+        tod.express_name,tod.express_no,tod.deliver_time,tod.pay_time,tod.pay_no,tod.receive_time,tod.order_status,tod.created_time,
+        p.product_id as pProduct_id,p.shop_id as pShop_id,p.product_name as pProduct_name,p.brand_id,p.category_id,p.price,p.publish_status,p.audit_status,
+        p.pulish_date,p.descript,p.title,p.subtitle,p.is_good,p.is_new,p.is_popular,p.seo_text,p.base_prop,p.sell_prop,
+        p.sell_count,p.view_count,p.data_flag,p.product_image,p.dis_proportion,
+        s.spec_id as pSpec_id,s.product_id as psProduct_id,s.product_specs,s.stock,s.price as pPrice,s.status,s.data_flag as pData_flag
+        from t_order_detail td
+        inner join t_order tod
+        on td.order_id = tod.order_id
+        left join t_product p
+        on td.product_id = p.product_id
+        left join t_product_spec s
+        on td.spec_id = s.spec_id
+        where tod.user_id = #{userId} and
+        <if test="state == 0"> tod.order_status != 4</if>
+        <if test="state == 1"> tod.order_status = 0</if>
+        <if test="state == 2"> tod.order_status = 1</if>
+        <if test="state == 3"> tod.order_status = 2</if>
+        <if test="state == 4"> tod.order_status = 3</if>
+        <if test="state == 5"> (tod.order_status = -2 or tod.order_status = -1)</if>
+    </select>
+
+    <select id="getOrderDetailAllById" parameterType="java.lang.Integer" resultMap="BaseOrderAll">
+        select
+        td.detail_id,td.order_id,td.product_id,td.spec_id,td.product_count,td.product_price,td.product_name,td.updated_time,td.prescription_id,td.prescription_image,td.prescription_price,
+        tod.order_id as toOrder_id,tod.order_sn,tod.user_id,tod.consignee,tod.address_line1,tod.address_line2,tod.city,tod.province,
+        tod.zip_code,tod.country,tod.user_phone,tod.pay_type,tod.order_money,tod.discount_money,tod.express_money,tod.pay_money,
+        tod.express_name,tod.express_no,tod.deliver_time,tod.pay_time,tod.pay_no,tod.receive_time,tod.order_status,tod.created_time,
+        p.product_id as pProduct_id,p.shop_id as pShop_id,p.product_name as pProduct_name,p.brand_id,p.category_id,p.price,p.publish_status,p.audit_status,
+        p.pulish_date,p.descript,p.title,p.subtitle,p.is_good,p.is_new,p.is_popular,p.seo_text,p.base_prop,p.sell_prop,
+        p.sell_count,p.view_count,p.data_flag,p.product_image,
+        s.spec_id as pSpec_id,s.product_id as psProduct_id,s.product_specs,s.stock,s.price as pPrice,s.status,s.data_flag as pData_flag
+        from t_order_detail td
+        inner join t_order tod
+        on td.order_id = tod.order_id
+        left join t_product p
+        on td.product_id = p.product_id
+        left join t_product_spec s
+        on td.spec_id = s.spec_id
+        where td.detail_id = #{detailId}
+    </select>
+
+    <select id="getBackOrder" resultMap="BaseOrderDetail">
+        select
+        td.detail_id,td.order_id,td.product_id,td.spec_id,td.product_count,td.product_price,td.product_name,td.updated_time,td.prescription_id,td.prescription_image,td.prescription_price
+        from t_order_detail td
+        inner join t_order tod
+        on td.order_id = tod.order_id
+        where tod.order_status = 0 and round((UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(tod.created_time))/60) > 10
+    </select>
+
+    <update id="updateFailure" parameterType="java.lang.Integer">
+        update t_order set order_status = -4 where order_id = #{orderId}
+    </update>
+</mapper>

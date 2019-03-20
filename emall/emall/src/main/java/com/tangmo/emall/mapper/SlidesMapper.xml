@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.emall.dao.SlidesDao" >
+
+    <resultMap id="BaseSlides" type="com.tangmo.emall.entity.Slides">
+        <id column="slides_id" property="slidesId" jdbcType="INTEGER" />
+        <result column="slide_image" property="slideImage" jdbcType="VARCHAR" />
+        <result column="slide_sort" property="slideSort" jdbcType="TINYINT" />
+        <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+        <result column="is_effect" property="isEffect" jdbcType="TINYINT" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="object_type" property="objectType" jdbcType="TINYINT" />
+        <result column="object_id" property="objectId" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t_home_slides.slides_id,t_home_slides.slide_sort,t_home_slides.image_url,t_home_slides.is_effect,
+        t_home_slides.create_time,t_home_slides.slide_image,t_home_slides.object_type,t_home_slides.object_id
+    </sql>
+
+    <select id="getSlidesList" resultMap="BaseSlides">
+        select
+        <include refid="Base_Column_List" />
+        from t_home_slides
+        where t_home_slides.is_effect = 1
+        order by t_home_slides.slide_sort
+    </select>
+
+</mapper>

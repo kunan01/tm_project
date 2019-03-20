@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.emall.dao.ProductDao" >
+    
+    <resultMap id="BaseProduct" type="com.tangmo.emall.entity.Product">
+        <id column="product_id" property="productId" jdbcType="INTEGER" />
+        <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+        <result column="product_name" property="productName" jdbcType="VARCHAR" />
+        <result column="brand_id" property="brandId" jdbcType="INTEGER" />
+        <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+        <result column="price" property="price" jdbcType="VARCHAR" />
+        <result column="publish_status" property="publishStatus" jdbcType="TINYINT" />
+        <result column="audit_status" property="auditStatus" jdbcType="TINYINT" />
+        <result column="pulish_date" property="publishDate" jdbcType="TIMESTAMP" />
+        <result column="descript" property="descript" jdbcType="VARCHAR" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="subtitle" property="subtitle" jdbcType="VARCHAR" />
+        <result column="is_good" property="isGood" jdbcType="TINYINT" />
+        <result column="is_new" property="isNew" jdbcType="TINYINT" />
+        <result column="is_popular" property="isPopular" jdbcType="TINYINT" />
+        <result column="seo_text" property="seoText" jdbcType="VARCHAR" />
+        <result column="base_prop" property="baseProp" jdbcType="VARCHAR" />
+        <result column="sell_prop" property="sellProp" jdbcType="VARCHAR" />
+        <result column="product_image" property="productImage" jdbcType="VARCHAR" />
+        <result column="sell_count" property="sellCount" jdbcType="INTEGER" />
+        <result column="view_count" property="viewCount" jdbcType="INTEGER" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+        <result column="dis_proportion" property="disProportion" jdbcType="INTEGER" />
+        <result column="data_flag" property="dataFlag" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <resultMap id="BaseProductSpec" type="com.tangmo.emall.entity.ProductSpec">
+        <id column="spec_id" property="specId" jdbcType="INTEGER" />
+        <result column="product_id" property="productId" jdbcType="INTEGER" />
+        <result column="product_specs" property="productSpecs" jdbcType="VARCHAR" />
+        <result column="stock" property="stock" jdbcType="INTEGER" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+        <result column="created_time" property="createdTime" jdbcType="VARCHAR" />
+        <result column="updated_time" property="updatedTime" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="BaseProductImage" type="com.tangmo.emall.entity.ProductImage">
+        <id column="image_id " property="imageId " jdbcType="INTEGER" />
+        <result column="image_desc" property="imageDesc" jdbcType="VARCHAR" />
+        <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+        <result column="is_master" property="isMaster" jdbcType="TINYINT" />
+        <result column="image_order" property="imageOrder" jdbcType="INTEGER" />
+        <result column="image_status" property="imageStatus" jdbcType="TINYINT" />
+        <result column="created_time" property="createdTime" jdbcType="VARCHAR" />
+        <result column="updated_time" property="updatedTime" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="BaseProductParam" type="com.tangmo.emall.entity.ProductParam">
+        <id column="l_id " property="lId" jdbcType="INTEGER" />
+        <result column="product_id" property="productId" jdbcType="INTEGER" />
+        <result column="value_id" property="valueId" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Product_Column_List">
+        p.product_id,p.shop_id,p.product_name,p.brand_id,p.category_id,p.price,p.publish_status,p.audit_status,
+        p.pulish_date,p.descript,p.title,p.subtitle,p.is_good,p.is_new,p.is_popular,p.seo_text,p.base_prop,p.sell_prop,
+        p.sell_count,p.view_count,p.created_time,p.updated_time,p.dis_proportion,p.data_flag
+    </sql>
+
+    <sql id="Base_Spec_Column_List">
+        s.spec_id,s.product_id,s.product_specs,s.stock,s.price,s.status,s.created_time
+    </sql>
+
+    <sql id="Base_Image_Column_List">
+        i.image_id,i.image_desc,i.is_master,i.image_order,i.image_status,i.created_time,i.updated_time
+    </sql>
+
+    <sql id="Base_Param_Column_List">
+        l_id,product_id,value_id
+    </sql>
+
+    <insert id="addProduct" parameterType="com.tangmo.emall.entity.Product">
+        insert into t_product
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="shopId != null">
+                shop_id,
+            </if>
+            <if test="productName != null">
+                product_name,
+            </if>
+            <if test="brandId != null">
+                brand_id,
+            </if>
+            <if test="categoryId != null">
+                category_id,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+            <if test="descript != null">
+                descript,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="subtitle != null">
+                subtitle,
+            </if>
+            <if test="seoText != null">
+                seo_text,
+            </if>
+            <if test="baseProp != null">
+                base_prop,
+            </if>
+            <if test="sellProp != null">
+                sell_prop,
+            </if>
+            <if test="productImage != null">
+                product_image,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="shopId != null">
+                #{shopId},
+            </if>
+            <if test="productName != null">
+                #{productName},
+            </if>
+            <if test="brandId != null">
+                #{brandId},
+            </if>
+            <if test="categoryId != null">
+                #{categoryId},
+            </if>
+            <if test="price != null">
+                #{price},
+            </if>
+            <if test="descript != null">
+                #{descript},
+            </if>
+            <if test="title != null">
+                #{title},
+            </if>
+            <if test="subtitle != null">
+                #{subtitle},
+            </if>
+            <if test="seoText != null">
+                #{seoText},
+            </if>
+            <if test="baseProp != null">
+                #{baseProp},
+            </if>
+            <if test="sellProp != null">
+                #{sellProp},
+            </if>
+            <if test="productImage != null">
+                #{productImage},
+            </if>
+        </trim>
+    </insert>
+    
+    <update id="updProduct" parameterType="com.tangmo.emall.entity.Product">
+        update t_product
+        <set>
+            <if test="shopId != null">
+                shop_id = #{shopId},
+            </if>
+            <if test="productName != null">
+                product_name = #{productName},
+            </if>
+            <if test="brandId != null">
+                brand_id = #{brandId},
+            </if>
+            <if test="categoryId != null">
+                category_id = #{categoryId},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="descript != null">
+                descript = #{descript},
+            </if>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="subtitle != null">
+                subtitle = #{subtitle},
+            </if>
+            <if test="seoText != null">
+                seo_text = #{seoText},
+            </if>
+            <if test="baseProp != null">
+                base_prop = #{baseProp},
+            </if>
+            <if test="sellProp != null">
+                sell_prop = #{sellProp},
+            </if>
+            <if test="productImage != null">
+                product_image = #{productImage},
+            </if>
+            <if test="isGood != null">
+                is_good = #{isGood},
+            </if>
+            <if test="isNew != null">
+                is_new = #{isNew},
+            </if>
+            <if test="isPopular != null">
+                is_popular = #{isPopular},
+            </if>
+            <if test="publishStatus != null">
+                publish_status = #{publishStatus},
+            </if>
+            <if test="auditStatus != null">
+                audit_status = #{auditStatus},
+            </if>
+            <if test="pulishDate != null">
+                pulish_date = #{pulishDate},
+            </if>
+            updated_time = NOW()
+        </set>
+        where product_id = #{productId}
+    </update>
+
+    <select id="getProductById" parameterType="java.lang.Integer" resultMap="BaseProduct">
+        select
+        <include refid="Base_Product_Column_List" />
+        ,p.product_image
+        from t_product p
+        where product_id = #{pId} and data_flag = 0
+    </select>
+
+    <insert id="addProductProp" parameterType="com.tangmo.emall.entity.ProductSpec"  useGeneratedKeys="true" keyColumn="spec_id" keyProperty="specId">
+        insert into t_product_spec
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productId != null">
+                product_id,
+            </if>
+            <if test="productSpecs != null">
+                product_specs,
+            </if>
+            <if test="stock != null">
+                stock,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="productId != null">
+                #{productId},
+            </if>
+            <if test="productSpecs != null">
+                #{productSpecs},
+            </if>
+            <if test="stock != null">
+                #{stock},
+            </if>
+            <if test="price != null">
+                #{price},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="addProductPropImage" parameterType="com.tangmo.emall.entity.ProductImage">
+        insert into t_product_image
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productId != null">
+                product_id,
+            </if>
+            <if test="specId != null">
+                spec_id,
+            </if>
+            <if test="imageDesc != null">
+                image_desc,
+            </if>
+            <if test="imageUrl != null">
+                image_url,
+            </if>
+            <if test="isMaster != null">
+                is_master,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="productId != null">
+                #{productId},
+            </if>
+            <if test="specId != null">
+                #{specId},
+            </if>
+            <if test="imageDesc != null">
+                #{imageDesc},
+            </if>
+            <if test="imageUrl != null">
+                #{imageUrl},
+            </if>
+            <if test="isMaster != null">
+                #{isMaster},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getProductSpecById" parameterType="java.lang.Integer" resultMap="BaseProductSpec">
+        select
+        <include refid="Base_Spec_Column_List" />
+        from t_product_spec s
+        where s.spec_id = #{sId} and data_flag = 0
+    </select>
+
+    <select id="getProductImageById" parameterType="java.lang.Integer" resultMap="BaseProductImage">
+        select
+        <include refid="Base_Image_Column_List" />
+        ,i.image_url
+        from t_product_image i
+        where i.image_id = #{imgId}  and i.image_status = 1
+    </select>
+
+    <update id="updProductImage" parameterType="com.tangmo.emall.entity.ProductImage">
+        update t_product_image
+        <set>
+            <if test="imageDesc != null">
+                image_desc = #{imageDesc},
+            </if>
+            <if test="imageUrl != null">
+                image_url = #{imageUrl},
+            </if>
+            <if test="isMaster != null">
+                is_master = #{isMaster},
+            </if>
+            <if test="imageOrder != null">
+                image_order = #{imageOrder},
+            </if>
+            <if test="imageStatus != null">
+                image_status = #{imageStatus},
+            </if>
+            updated_time = NOW()
+        </set>
+        where image_id = #{imageId}
+    </update>
+
+    <update id="updProductProp" parameterType="com.tangmo.emall.entity.ProductSpec">
+        update t_product_spec
+        <set>
+            <if test="productSpecs != null">
+                product_specs = #{productSpecs},
+            </if>
+            <if test="stock != null">
+                stock = #{stock},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            updated_time = NOW()
+        </set>
+        where spec_id = #{specId}
+    </update>
+
+    <update id="delProductSpecById" parameterType="java.lang.Integer">
+        update t_product_spec set data_flag = 1,updated_time = NOW() where spec_id = #{sId}
+    </update>
+
+    <update id="delProductSpecByPId" parameterType="java.lang.Integer">
+        update t_product_spec set data_flag = 1,updated_time = NOW() where product_id = #{pId}
+    </update>
+
+    <update id="delProductImageById" parameterType="java.lang.Integer">
+        update t_product_image set image_status = 0,updated_time = NOW() where spec_id = #{sId}
+    </update>
+
+    <update id="delProductImageByPId" parameterType="java.lang.Integer">
+        update t_product_image set image_status = 0,updated_time = NOW() where product_id = #{pId}
+    </update>
+
+    <update id="delProduct" parameterType="java.lang.Integer">
+        update t_product set data_flag = 1,updated_time = NOW() where product_id = #{pId}
+    </update>
+
+    <select id="getProductSpecListByPId" parameterType="java.lang.Integer" resultMap="BaseProductSpec">
+        select
+        <include refid="Base_Spec_Column_List" />
+        from t_product_spec s
+        where s.product_id = #{pId} and data_flag = 0
+    </select>
+
+    <select id="getProductImageListBySId" parameterType="java.lang.Integer" resultMap="BaseProductImage">
+        select
+        <include refid="Base_Image_Column_List" />
+        ,i.image_url
+        from t_product_image i
+        where i.spec_id = #{sId} and i.image_status = 1
+    </select>
+
+    <update id="updShopCartByPId" parameterType="java.lang.Integer">
+        update t_shopcart set data_failure = 1 where product_id = #{pId}
+    </update>
+
+    <update id="updCollectByPId" parameterType="java.lang.Integer">
+        update t_collect set data_failure = 1 where product_id = #{pId}
+    </update>
+
+    <update id="updShopCartBySId" parameterType="java.lang.Integer">
+        update t_shopcart set data_failure = 1 where spec_id = #{sId}
+    </update>
+
+    <update id="updOrderByPId" parameterType="java.lang.Integer">
+        update t_order set order_status = -4,updated_time = NOW() where order_id in (select order_id from t_order_detail where product_id = #{pId}) and order_status = 0
+    </update>
+
+    <update id="updOrderBySId" parameterType="java.lang.Integer">
+        update t_order set order_status = -4,updated_time = NOW() where order_id in (select order_id from t_order_detail where spec_id = #{sId}) and order_status = 0
+    </update>
+
+    <select id="getProductListByDto" parameterType="com.tangmo.emall.entity.dto.ProductDto" resultMap="BaseProduct">
+        select
+        <include refid="Base_Product_Column_List" />
+        ,p.product_image
+        from t_product p
+        where data_flag = 0
+        <if test="shopId != null"> and p.shop_id = #{shopId}</if>
+        <if test="productName != null"> and p.product_name like '%${productName}%'</if>
+        <if test="brandId != null"> and p.brand_id = #{brandId}</if>
+        <if test="publishStatus != null"> and p.publish_status = #{publishStatus}</if>
+        <if test="auditStatus != null"> and p.audit_status = #{auditStatus}</if>
+        <if test="isGood != null"> and p.is_good = #{isGood}</if>
+        <if test="isNew != null"> and p.is_new = #{isNew}</if>
+        <if test="isPopular != null"> and p.is_popular = #{isPopular}</if>
+        <if test="sorting == 0"> order by p.created_time</if>
+        <if test="sorting == 1"> order by p.created_time desc</if>
+        <if test="sorting == 2"> order by p.sell_count</if>
+        <if test="sorting == 3"> order by p.sell_count desc</if>
+        <if test="sorting == 4"> order by p.view_count</if>
+        <if test="sorting == 5"> order by p.view_count desc</if>
+    </select>
+
+    <select id="getProductParamByName" parameterType="com.tangmo.emall.entity.ProductParam" resultMap="BaseProductParam">
+        select
+        <include refid="Base_Param_Column_List" />
+        from t_product_param
+        where product_id = #{productId} and value_id = #{valueId}
+    </select>
+
+    <insert id="addProductParam" parameterType="com.tangmo.emall.entity.ProductParam">
+        insert into t_product_param
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productId != null">
+                product_id,
+            </if>
+            <if test="valueId != null">
+                value_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="productId != null">
+                #{productId},
+            </if>
+            <if test="valueId != null">
+                #{valueId},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getProductParamByById" parameterType="com.tangmo.emall.entity.ProductParam" resultMap="BaseProductParam">
+        select
+        <include refid="Base_Param_Column_List" />
+        from t_product_param
+        where l_id = #{lId}
+    </select>
+
+    <select id="getProductParamByProductId" parameterType="java.lang.Integer" resultMap="BaseProductParam">
+        select
+        <include refid="Base_Param_Column_List" />
+        from t_product_param
+        where product_id = #{productId}
+    </select>
+
+    <delete id="delProductParam" parameterType="java.lang.Integer">
+        delete from t_product_param where l_id = #{lId}
+    </delete>
+
+    <delete id="delProductParamByPId" parameterType="java.lang.Integer">
+        delete from t_product_param where product_id = #{pId}
+    </delete>
+
+    <select id="getProductByRaId" parameterType="java.lang.Integer" resultMap="BaseProduct">
+        select
+        <include refid="Base_Product_Column_List" />
+        ,p.product_image
+        from t_product p
+        where p.data_flag = 0
+        and product_id in (select product_id from t_recommend where ra_id = #{raId})
+        order by p.sell_count desc
+    </select>
+
+    <select id="getProductByTaId" parameterType="java.lang.Integer" resultMap="BaseProduct">
+        select
+        <include refid="Base_Product_Column_List" />
+        ,p.product_image
+        from t_product p
+        where p.data_flag = 0
+        and product_id in (select product_id from t_trend where ta_id = #{taId})
+        order by p.sell_count desc
+    </select>
+
+    <update id="setOrCancelNewProduct">
+        update t_product set is_new = #{isNew},updated_time = NOW() where product_id = #{productId}
+    </update>
+
+    <select id="getProductSpecTotal" resultType="java.lang.Integer">
+        select SUM(stock) from t_product_spec
+        where data_flag = 0 and product_id = #{productId}
+    </select>
+</mapper>

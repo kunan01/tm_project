@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhjy.app.modules.dao.AppTwoClassifyMapper" >
+  <resultMap id="BaseResultMap" type="com.tangmo.zhjy.app.modules.bean.AppTwoClassify" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="freeze" property="freeze" jdbcType="INTEGER" />
+	<result column="is_show" property="isShow" jdbcType="INTEGER" />
+    <result column="app_classifyId" property="appClassifyid" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, icon, url, app_classifyId,freeze,is_show
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from app_two_classify
+    where id = #{id,jdbcType=INTEGER} AND is_show = 0 AND freeze = 0
+  </select>
+  <select id="findByPage" resultMap="BaseResultMap">
+  	 select 
+    <include refid="Base_Column_List" />
+    from app_two_classify
+    where name like #{name,jdbcType=VARCHAR} AND is_show = 0 AND freeze = 0
+  </select>
+  <select id="findByAppClassifyId" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from app_two_classify
+    where app_classifyId = #{classifyId,jdbcType=INTEGER} AND is_show = 0 AND freeze = 0
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from app_two_classify
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tangmo.zhjy.app.modules.bean.AppTwoClassify" >
+    insert into app_two_classify ( name, icon, 
+      url, app_classifyId,freeze)
+    values (#{name,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, 
+      #{url,jdbcType=VARCHAR}, #{appClassifyid,jdbcType=INTEGER},#{freeze,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tangmo.zhjy.app.modules.bean.AppTwoClassify" >
+    insert into app_two_classify
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="icon != null" >
+        icon,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="freeze !=null">
+      	freeze,
+      </if>
+      <if test="appClassifyid != null" >
+        app_classifyId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="appClassifyid != null" >
+        #{appClassifyid,jdbcType=INTEGER},
+      </if>
+      <if test="freeze!=null">
+      	#{freeze,jdbcType=INTEGER}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tangmo.zhjy.app.modules.bean.AppTwoClassify" >
+    update app_two_classify
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="appClassifyid != null" >
+        app_classifyId = #{appClassifyid,jdbcType=INTEGER},
+      </if>
+      <if test="freeze != null">
+      	freeze = #{freeze,jdbcType=INTEGER},
+      </if>
+      <if test="isShow != null">
+      	is_show = #{isShow,jdbcType=INTEGER}
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tangmo.zhjy.app.modules.bean.AppTwoClassify" >
+    update app_two_classify
+    set name = #{name,jdbcType=VARCHAR},
+      icon = #{icon,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR},
+      app_classifyId = #{appClassifyid,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <select id="findByAppClassById"  resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from app_two_classify
+        where app_classifyId in ('2','3','4') AND freeze = 0 AND is_show = 0
+    </select>
+</mapper>

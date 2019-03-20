@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.emall.dao.UserDao" >
+
+    <resultMap id="BaseUser" type="com.tangmo.emall.entity.User">
+        <id column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="user_email" property="userEmail" jdbcType="VARCHAR" />
+        <result column="password" property="password" jdbcType="VARCHAR" />
+        <result column="user_type" property="userType" jdbcType="TINYINT" />
+        <result column="user_sex" property="userSex" jdbcType="TINYINT" />
+        <result column="first_name" property="firstName" jdbcType="VARCHAR" />
+        <result column="last_name" property="lastName" jdbcType="VARCHAR" />
+        <result column="nick_name" property="nickName" jdbcType="VARCHAR" />
+        <result column="real_name" property="realName" jdbcType="VARCHAR" />
+        <result column="birthday" property="birthday" jdbcType="TIMESTAMP" />
+        <result column="user_photo" property="userPhoto" jdbcType="VARCHAR" />
+        <result column="user_phone" property="userPhone" jdbcType="VARCHAR" />
+        <result column="user_from" property="userFrom" jdbcType="TINYINT" />
+        <result column="user_status" property="userStatus" jdbcType="TINYINT" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="facebook_id" property="facebookId" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="BaseCustomer" type="com.tangmo.emall.entity.CustomerService">
+        <id column="service_id" property="serviceId" jdbcType="VARCHAR" />
+        <result column="service_text" property="serviceText" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="BaseHelp" type="com.tangmo.emall.entity.Help">
+        <id column="help_id" property="helpId" jdbcType="INTEGER" />
+        <result column="help_title" property="helpTitle" jdbcType="VARCHAR" />
+        <result column="help_instructions" property="helpInstructions" jdbcType="VARCHAR" />
+        <result column="level" property="level" jdbcType="INTEGER" />
+        <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        user_id,user_email,password,user_type,user_sex,first_name,last_name,nick_name,
+        real_name,birthday,user_photo,user_from,user_status,created_time,facebook_id
+    </sql>
+
+    <sql id="Base_Help_Column_List">
+        help_id,help_title,help_instructions,level,parent_id,created_time
+    </sql>
+
+    <insert id="addUser" parameterType="com.tangmo.emall.entity.User" useGeneratedKeys="true" keyColumn="user_id" keyProperty="userId">
+        insert into t_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userEmail != null">
+                user_email,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="userType != null">
+                user_type,
+            </if>
+            <if test="userSex != null">
+                user_sex,
+            </if>
+            <if test="firstName != null">
+                first_name,
+            </if>
+            <if test="lastName != null">
+                last_name,
+            </if>
+            <if test="nickName != null">
+                nick_name,
+            </if>
+            <if test="realName != null">
+                real_name,
+            </if>
+            <if test="birthday != null">
+                birthday,
+            </if>
+            <if test="userPhoto != null">
+                user_photo,
+            </if>
+            <if test="userPhone != null">
+                user_phone,
+            </if>
+            <if test="userFrom != null">
+                user_from,
+            </if>
+            <if test="userStatus != null">
+                user_status,
+            </if>
+            <if test="facebookId != null">
+                facebook_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userEmail != null">
+                #{userEmail},
+            </if>
+            <if test="password != null">
+                #{password},
+            </if>
+            <if test="userType != null">
+                #{userType},
+            </if>
+            <if test="userSex != null">
+                #{userSex},
+            </if>
+            <if test="firstName != null">
+                #{firstName},
+            </if>
+            <if test="lastName != null">
+                #{lastName},
+            </if>
+            <if test="nickName != null">
+                #{nickName},
+            </if>
+            <if test="realName != null">
+                #{realName},
+            </if>
+            <if test="birthday != null">
+                #{birthday},
+            </if>
+            <if test="userPhoto != null">
+                #{userPhoto},
+            </if>
+            <if test="userPhone != null">
+                #{userPhone},
+            </if>
+            <if test="userFrom != null">
+                #{userFrom},
+            </if>
+            <if test="userStatus != null">
+                #{userStatus},
+            </if>
+            <if test="facebookId != null">
+                #{facebookId},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updUser" parameterType="com.tangmo.emall.entity.User">
+        update t_user
+        <set>
+            <if test="userEmail != null">
+                user_email = #{userEmail},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+            <if test="userType != null">
+                user_type = #{userType},
+            </if>
+            <if test="userSex != null">
+                user_sex = #{userSex},
+            </if>
+            <if test="firstName != null">
+                first_name = #{firstName},
+            </if>
+            <if test="lastName != null">
+                last_name = #{lastName},
+            </if>
+            <if test="firstName != null">
+                first_name = #{firstName},
+            </if>
+            <if test="nickName != null">
+                nick_name = #{nickName},
+            </if>
+            <if test="realName != null">
+                real_name = #{realName},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday},
+            </if>
+            <if test="userPhoto != null">
+                user_photo = #{userPhoto},
+            </if>
+            <if test="userPhone != null">
+                user_phone = #{userPhone},
+            </if>
+            <if test="userFrom != null">
+                user_from = #{userFrom},
+            </if>
+            <if test="userStatus != null">
+                user_status = #{userStatus},
+            </if>
+        </set>
+        where user_id = #{userId}
+    </update>
+
+    <select id="getUserByEmail" parameterType="java.lang.String" resultMap="BaseUser">
+        select
+        <include refid="Base_Column_List" />
+        from t_user
+        where user_email = #{email}
+    </select>
+
+    <select id="findUserById" parameterType="java.lang.Integer" resultMap="BaseUser">
+        select
+        <include refid="Base_Column_List" />
+        from t_user
+        where user_id = #{userId}
+    </select>
+
+    <select id="findUserByFacebookId" parameterType="java.lang.String" resultMap="BaseUser">
+        select
+        <include refid="Base_Column_List" />
+        from t_user
+        where facebook_id = #{facebookId}
+    </select>
+
+    <insert id="addCustomerFeedback" parameterType="com.tangmo.emall.entity.MessageUs">
+        insert into t_message_us
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="mTopic != null">
+                m_topic,
+            </if>
+            <if test="mEmail != null">
+                m_email,
+            </if>
+            <if test="mContent != null">
+                m_content,
+            </if>
+            <if test="firstName != null">
+                first_name,
+            </if>
+            <if test="lastName != null">
+                last_name,
+            </if>
+            <if test="orderNumber != null">
+                order_number,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="mTopic != null">
+                #{mTopic},
+            </if>
+            <if test="mEmail != null">
+                #{mEmail},
+            </if>
+            <if test="mContent != null">
+                #{mContent},
+            </if>
+            <if test="firstName != null">
+                #{firstName},
+            </if>
+            <if test="lastName != null">
+                #{lastName},
+            </if>
+            <if test="orderNumber != null">
+                #{orderNumber},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getCustomerFeedbackCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(*) from t_message_us where user_id = #{userId} AND TO_DAYS(NOW()) - TO_DAYS(created_time) = 0
+    </select>
+
+    <select id="getCustomerService" resultMap="BaseCustomer">
+        select service_id,service_text from t_customer_service
+    </select>
+
+    <select id="getHelpListByLevel" parameterType="java.lang.Integer" resultMap="BaseHelp">
+        select
+        <include refid="Base_Help_Column_List" />
+        from t_help
+        where level = #{level}
+        order by created_time desc
+    </select>
+
+    <select id="getHelpListByParentId" parameterType="java.lang.Integer" resultMap="BaseHelp">
+        select
+        <include refid="Base_Help_Column_List" />
+        from t_help
+        where parent_id = #{parentId}
+        order by created_time desc
+    </select>
+
+</mapper>

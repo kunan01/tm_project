@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.emall.dao.ShopPropDao" >
+
+    <resultMap id="BasePropKey" type="com.tangmo.emall.entity.PropKey">
+        <id column="key_id" property="keyId" jdbcType="INTEGER" />
+        <result column="key_name" property="keyName" jdbcType="VARCHAR" />
+        <result column="category_id" property="cateGoryId" jdbcType="INTEGER" />
+        <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+        <result column="created_time" property="createdTime" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="BasePropValue" type="com.tangmo.emall.entity.PropValue">
+        <id column="value_id" property="valueId" jdbcType="INTEGER" />
+        <result column="key_id" property="keyId" jdbcType="INTEGER" />
+        <result column="prop_value" property="propValue" jdbcType="VARCHAR" />
+        <result column="created_time" property="createdTime" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_Key_List">
+        key_id,key_name,category_id,shop_id,created_time
+    </sql>
+
+    <sql id="Base_Column_Value_List">
+        value_id,key_id,prop_value,created_time
+    </sql>
+
+    <insert id="addPropKey" parameterType="com.tangmo.emall.entity.PropKey">
+        insert into t_prop_key
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="keyName != null">
+                key_name,
+            </if>
+            <if test="cateGoryId != null">
+                category_id,
+            </if>
+            <if test="shopId != null">
+                shop_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="keyName != null">
+                #{keyName},
+            </if>
+            <if test="cateGoryId != null">
+                #{cateGoryId},
+            </if>
+            <if test="shopId != null">
+                #{shopId},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="addPropValue" parameterType="com.tangmo.emall.entity.PropValue">
+        insert into t_prop_value
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="keyId != null">
+                key_id,
+            </if>
+            <if test="propValue != null">
+                prop_value,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="keyId != null">
+                #{keyId},
+            </if>
+            <if test="propValue != null">
+                #{propValue},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getPropKeyByName" parameterType="com.tangmo.emall.entity.PropKey" resultMap="BasePropKey">
+        select
+        <include refid="Base_Column_Key_List" />
+        from t_prop_key
+        where key_name = #{keyName} AND shop_id = #{shopId}
+    </select>
+
+    <select id="getPropValueByName" parameterType="com.tangmo.emall.entity.PropValue" resultMap="BasePropValue">
+        select
+        <include refid="Base_Column_Value_List" />
+        from t_prop_value
+        where key_id = #{keyId} AND prop_value = #{propValue}
+    </select>
+
+    <select id="getPropKeyById" parameterType="java.lang.Integer" resultMap="BasePropKey">
+        select
+        <include refid="Base_Column_Key_List" />
+        from t_prop_key
+        where key_id = #{keyId}
+    </select>
+
+    <select id="getPropValueById" parameterType="java.lang.Integer" resultMap="BasePropValue">
+        select
+        <include refid="Base_Column_Value_List" />
+        from t_prop_value
+        where value_id = #{valueId}
+    </select>
+
+    <delete id="delPropValue" parameterType="java.lang.Integer">
+        delete from t_prop_value where value_id = #{valueId}
+    </delete>
+
+    <delete id="delPropKey" parameterType="java.lang.Integer">
+        delete from t_prop_key where key_id = #{keyId}
+    </delete>
+
+    <delete id="delPropValueByKeyId" parameterType="java.lang.Integer">
+        delete from t_prop_value where key_id = #{keyId}
+    </delete>
+
+    <select id="getPropValueByKeyId" parameterType="java.lang.Integer" resultMap="BasePropValue">
+        select
+        <include refid="Base_Column_Value_List" />
+        from t_prop_value
+        where key_id = #{keyId}
+        order by created_time desc
+    </select>
+
+    <select id="getPropKeyByShopIdAndCId" parameterType="java.lang.Integer" resultMap="BasePropKey">
+        select
+        <include refid="Base_Column_Key_List" />
+        from t_prop_key
+        where shop_id = #{shopId}
+        order by created_time
+    </select>
+
+    <select id="getPropKeyCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(*)
+        from t_prop_key
+        where category_id = #{categoryId}
+    </select>
+
+    <update id="updPropKey" parameterType="com.tangmo.emall.entity.PropKey">
+        update t_prop_key set key_name = #{keyName} where key_id = #{keyId}
+    </update>
+
+    <update id="updPropValue" parameterType="com.tangmo.emall.entity.PropValue">
+        update t_prop_value set prop_value = #{propValue} where value_id = #{valueId}
+    </update>
+</mapper>

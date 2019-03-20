@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.emall.dao.HelpDao" >
+
+    <resultMap id="BaseHelp" type="com.tangmo.emall.entity.Help">
+        <id column="help_id" property="helpId" jdbcType="INTEGER" />
+        <result column="help_title" property="helpTitle" jdbcType="VARCHAR" />
+        <result column="help_instructions" property="helpInstructions" jdbcType="VARCHAR" />
+        <result column="level" property="level" jdbcType="INTEGER" />
+        <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        help_id,help_title,help_instructions,level,parent_id,created_time
+    </sql>
+
+    <select id="getHelpListByLevel" parameterType="java.lang.Integer" resultMap="BaseHelp">
+        select
+        <include refid="Base_Column_List" />
+        from t_help
+        where level = #{level}
+        order by created_time desc
+    </select>
+
+    <select id="getHelpListByParentId" parameterType="java.lang.Integer" resultMap="BaseHelp">
+        select
+        <include refid="Base_Column_List" />
+        from t_help
+        where parent_id = #{parentId}
+        order by created_time desc
+    </select>
+
+    <insert id="addHelp" parameterType="com.tangmo.emall.entity.Help">
+        insert into t_help
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="helpTitle != null">
+                help_title,
+            </if>
+            <if test="helpInstructions != null">
+                help_instructions,
+            </if>
+            <if test="level != null">
+                level,
+            </if>
+            <if test="parentId != null">
+                parent_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="helpTitle != null">
+                #{helpTitle},
+            </if>
+            <if test="helpInstructions != null">
+                #{helpInstructions},
+            </if>
+            <if test="level != null">
+                #{level},
+            </if>
+            <if test="parentId != null">
+                #{parentId},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getHelpById" parameterType="java.lang.Integer" resultMap="BaseHelp">
+        select
+        <include refid="Base_Column_List" />
+        from t_help
+        where help_id = #{helpId}
+    </select>
+
+    <update id="updateHelp" parameterType="com.tangmo.emall.entity.Help">
+        update t_help
+        <set>
+            <if test="helpTitle != null">
+                help_title = #{helpTitle},
+            </if>
+            <if test="helpInstructions != null">
+                help_instructions = #{helpInstructions},
+            </if>
+        </set>
+        where help_id = #{helpId}
+    </update>
+
+    <delete id="deleteHelp" parameterType="java.lang.Integer">
+        delete from t_help where help_id = #{helpId}
+    </delete>
+</mapper>

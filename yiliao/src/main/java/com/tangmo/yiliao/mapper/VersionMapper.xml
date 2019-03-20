@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.yiliao.dao.VersionDao" >
+
+    <resultMap id="BaseVersion" type="com.tangmo.yiliao.entity.AppVersion">
+        <id column="v_id" property="vId" jdbcType="VARCHAR"></id>
+        <result column="v_number" property="vNumber" jdbcType="VARCHAR"></result>
+        <result column="v_content" property="vContent" jdbcType="VARCHAR"></result>
+        <result column="v_type" property="vType" jdbcType="INTEGER"></result>
+        <result column="online_time" property="onlineTime" jdbcType="VARCHAR"></result>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"></result>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR"></result>
+        <result column="create_userid" property="createUserId" jdbcType="VARCHAR"></result>
+        <result column="update_userid" property="updateUserId" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <select id="getVersion" resultMap="BaseVersion">
+        select top 1 v_id,v_number,v_content,v_type,CONVERT(varchar,online_time,120) as online_time,CONVERT(varchar,create_time,120) as create_time
+        from app_version where v_type = 0 order by create_time desc
+    </select>
+
+    <select id="getVersionAll" resultMap="BaseVersion" parameterType="com.tangmo.yiliao.entity.SelectUser">
+        select top ${end} v_id,v_number,v_content,v_type,CONVERT(varchar(10),online_time,120) as online_time,CONVERT(varchar(10),create_time,120) as create_time
+        from app_version where v_type = 0 and v_id not in (select top ${start} v_id
+        from app_version where v_type = 0 order by create_time desc) order by create_time desc
+    </select>
+
+    <select id="getVersionAllCount" resultType="java.lang.Integer" parameterType="com.tangmo.yiliao.entity.SelectUser">
+        select count(*) from app_version where v_type = 0
+    </select>
+
+    <update id="delVersion">
+        update app_version set v_type = 1 where v_id = #{vid}
+    </update>
+
+    <insert id="addVersion" parameterType="com.tangmo.yiliao.entity.AppVersion">
+        INSERT INTO [app_version]
+        ([v_id]
+        ,[v_number]
+        ,[v_content]
+        ,[v_type]
+        ,[online_time]
+        ,[create_time]
+        ,[update_time]
+        ,[create_userid]
+        ,[update_userid])
+        VALUES
+        (#{vId,jdbcType=VARCHAR}
+        ,#{vNumber,jdbcType=VARCHAR}
+        ,#{vContent,jdbcType=VARCHAR}
+        ,0
+        ,#{onlineTime,jdbcType=VARCHAR}
+        ,CONVERT(varchar,GETDATE(),120)
+        ,CONVERT(varchar,GETDATE(),120)
+        ,#{createUserId,jdbcType=VARCHAR}
+        ,#{createUserId,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updVersion" parameterType="com.tangmo.yiliao.entity.AppVersion">
+        update app_version set v_number = #{vNumber},v_content = #{vContent},online_time = #{onlineTime} where v_id = #{vId}
+    </update>
+
+</mapper>

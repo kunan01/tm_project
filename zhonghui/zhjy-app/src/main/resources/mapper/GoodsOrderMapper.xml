@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhjy.app.modules.dao.GoodsOrderDao">
+    <resultMap id="BaseResultMap" type="com.tangmo.zhjy.app.modules.bean.GoodsOrderSimple" >
+        <id column="go_id" property="goId" jdbcType="INTEGER"/>
+        <result column="cd_id" property="cdId" jdbcType="INTEGER"/>
+        <result column="ua_id" property="uaId" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="order_state" property="orderState" jdbcType="TINYINT"/>
+        <result column="order_number" property="orderNumber" jdbcType="VARCHAR"/>
+        <result column="pay_fee" property="payFee" jdbcType="DOUBLE"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="img_id" property="imgId" jdbcType="VARCHAR"/>
+        <result column="express_fee" property="expressFee" jdbcType="DOUBLE"/>
+        <result column="go_count" property="goCount" jdbcType="INTEGER"/>
+        <result column="price_now" property="priceNow" jdbcType="DOUBLE"/>
+    </resultMap>
+    
+    <resultMap id="BaseShopCartMap" type="com.tangmo.zhjy.app.modules.bean.ShopCart">
+        <id column="sc_id" property="scId" jdbcType="INTEGER"/>
+        <result column="c_id" property="cId" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="sc_count" property="scCount" jdbcType="INTEGER"/>
+        <result column="cd_size" property="cdSize" jdbcType="VARCHAR"/>
+        <result column="createtime" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="DetailResultMap" type="com.tangmo.zhjy.app.modules.bean.GoodsOrder" >
+        <id column="go_id" property="goId" jdbcType="INTEGER"/>
+        <result column="cd_id" property="cdId" jdbcType="INTEGER"/>
+        <result column="ua_id" property="uaId" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="go_count" property="goCount" jdbcType="INTEGER"/>
+        <result column="merchant_id" property="merchantId" jdbcType="INTEGER"/>
+        <result column="order_state" property="orderState" jdbcType="TINYINT"/>
+        <result column="order_number" property="orderNumber" jdbcType="VARCHAR"/>
+        <result column="trans_number" property="transNumber" jdbcType="VARCHAR"/>
+        <result column="express_fee" property="expressFee" jdbcType="DOUBLE"/>
+        <result column="discount_fee" property="discountFee" jdbcType="DOUBLE"/>
+        <result column="pay_fee" property="payFee" jdbcType="DOUBLE"/>
+        <result column="pay_time" property="payTime" jdbcType="TIMESTAMP"/>
+        <result column="createtime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="img_id" property="imgId" jdbcType="VARCHAR"/>
+        <result column="cd_size" property="cdSize" jdbcType="VARCHAR"/>
+        <result column="cd_color" property="cdColor" jdbcType="VARCHAR"/>
+        <result column="price_now" property="goodsPrice" jdbcType="DOUBLE"/>
+        <result column="express_no" property="expressNo" jdbcType="VARCHAR"/>
+        <association property="address" column="ua_Id" select="selectAddressByUaId"/>
+    </resultMap>
+
+    <resultMap id="AddressResultMap" type="com.tangmo.zhjy.app.modules.bean.UserAddress" >
+        <result column="ua_id" property="uaId" jdbcType="INTEGER"/>
+        <result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+        <result column="recipient" property="recipient" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="district" property="district" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="is_default" property="isDefault" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <insert id="insertGo" useGeneratedKeys="true" keyProperty="goId">
+        insert into goods_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cdId != null">
+                cd_id,
+            </if>
+            <if test="uaId != null">
+                ua_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="goCount != null">
+                go_count,
+            </if>
+            <if test="orderState != null">
+                order_state,
+            </if>
+            <if test="orderNumber != null">
+                order_number,
+            </if>
+            <if test="expressFee != null">
+                express_fee,
+            </if>
+            <if test="discountFee != null">
+                discount_fee,
+            </if>
+            <if test="payFee != null">
+                pay_fee,
+            </if>
+            <if test="cdSize != null">
+                cd_size,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cdId != null">
+                #{cdId,jdbcType=VARCHAR},
+            </if>
+            <if test="uaId != null">
+                #{uaId,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="goCount != null">
+                #{goCount,jdbcType=VARCHAR},
+            </if>
+            <if test="orderState != null">
+                #{orderState,jdbcType=VARCHAR},
+            </if>
+            <if test="orderNumber != null">
+                #{orderNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="expressFee != null">
+                #{expressFee,jdbcType=VARCHAR},
+            </if>
+            <if test="discountFee != null">
+                #{discountFee,jdbcType=INTEGER},
+            </if>
+            <if test="payFee != null">
+                #{payFee,jdbcType=INTEGER},
+            </if>
+            <if test="cdSize != null">
+                #{cdSize,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectOrderByState" resultMap="BaseResultMap">
+        SELECT gor.go_id,gor.cd_id,cd.title,cd.content,gor.pay_fee,gor.go_count,gor.express_fee,cd.price_now,
+        cd.img_id,gor.order_state FROM goods_order gor
+        INNER JOIN commodity cd ON gor.cd_id = cd.cd_id
+        WHERE gor.user_id = #{userId}
+        <if test="state == '0'.toString()"> AND gor.order_state = #{state}</if>
+        <if test="state == '1'.toString()"> AND gor.order_state &gt;= #{state}</if>
+        ORDER BY gor.go_id DESC
+    </select>
+
+    <select id="selectAllOrder" resultMap="BaseResultMap">
+        SELECT gor.go_id,gor.cd_id,cd.title,cd.content,gor.pay_fee,gor.go_count,gor.express_fee,cd.price_now,
+        cd.img_id,gor.order_state FROM goods_order gor
+        INNER JOIN commodity cd ON gor.cd_id = cd.cd_id
+        WHERE gor.user_id = #{userId}
+        ORDER BY gor.go_id DESC
+    </select>
+
+    <select id="selectById" resultMap="DetailResultMap">
+        SELECT gor.go_id,gor.cd_id,cd.title,cd.content,gor.pay_fee,cd.img_id,gor.cd_size,gor.user_id,gor.express_no,
+        gor.order_state,gor.ua_id,gor.pay_fee,gor.trans_number,gor.express_fee,gor.cd_color,gor.go_count,cd.user_id  merchant_id,
+        gor.discount_fee,gor.pay_fee,gor.pay_time,gor.createtime,gor.order_number,cd.price_now FROM goods_order gor
+        INNER JOIN commodity cd ON gor.cd_id = cd.cd_id
+        WHERE gor.go_id = #{goId}
+    </select>
+
+    <select id="selectAddressByUaId" resultMap="AddressResultMap">
+        SELECT ua_id,mobile,recipient,is_default,address,city,district
+        FROM user_address WHERE ua_id = #{uaId}
+    </select>
+
+    <update id="updateOrderState">
+        UPDATE goods_order SET order_state = #{state} WHERE go_id = #{goId}
+    </update>
+
+    <update id="updateOrderDone">
+        UPDATE goods_order SET order_state = 1,pay_time = now() WHERE pay_number = #{orderNum}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM goods_order WHERE go_id = #{goId}
+    </delete>
+
+    <select id="selectByOrderNo" resultMap="DetailResultMap" parameterType="java.lang.String">
+        SELECT gor.go_id,gor.cd_id,cd.title,cd.content,gor.pay_fee,cd.img_id,gor.cd_size,gor.user_id,gor.express_no,
+        gor.order_state,gor.ua_id,gor.pay_fee,gor.trans_number,gor.express_fee,gor.cd_color,gor.go_count,cd.user_id  merchant_id,
+        gor.discount_fee,gor.pay_fee,gor.pay_time,gor.createtime,gor.order_number,cd.price_now FROM goods_order gor
+        INNER JOIN commodity cd ON gor.cd_id = cd.cd_id
+        WHERE gor.pay_number = #{orderNum}
+    </select>
+
+    <insert id="addCart" parameterType="com.tangmo.zhjy.app.modules.bean.ShopCart">
+        INSERT INTO shop_cart (c_id,sc_count,user_id,cd_size)
+        VALUES(#{cId},#{scCount},#{userId},#{cdSize})
+    </insert>
+
+    <delete id="delCartById">
+        DELETE FROM shop_cart WHERE sc_id = #{scId}
+    </delete>
+
+    <select id="getCommCountByCartId" resultType="java.lang.Integer">
+        SELECT cd_count from commodity where cd_id = (select c_id from shop_cart where sc_id = #{scId})
+    </select>
+
+    <update id="updCartCountById">
+        UPDATE shop_cart SET sc_count = #{count} where sc_id = #{scId}
+    </update>
+
+    <select id="getShopCarByCdIdAndUserId" resultMap="BaseShopCartMap">
+        select sc_id,c_id,sc_count,user_id,cd_size,createtime from shop_cart where c_id = #{cdId} and user_id = #{userId}
+    </select>
+
+    <select id="getCartList" parameterType="java.lang.Integer" resultMap="BaseShopCartMap">
+        select sc_id,c_id,sc_count,user_id,cd_size,createtime from shop_cart
+        where user_id = #{userId}
+    </select>
+
+    <update id="updPayNo">
+        update goods_order set pay_number = #{payNo} where go_id = #{goId}
+    </update>
+</mapper>

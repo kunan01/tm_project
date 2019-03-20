@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhygzhglxt.dao.TbShuttleBusMapper">
+
+    <resultMap id="BaseResultMap" type="com.tangmo.zhygzhglxt.entity.TbShuttleBus">
+
+        <id property="shuttleBusId" column="shuttle_bus_id" jdbcType="VARCHAR"/>
+        <result property="shuttleBusCode" column="shuttle_bus_code" jdbcType="VARCHAR"/>
+        <result property="startAddress" column="start_address" jdbcType="VARCHAR"/>
+        <result property="endAddress" column="end_address" jdbcType="VARCHAR"/>
+        <result property="interval" column="interval" jdbcType="VARCHAR"/>
+        <result property="km" column="km" jdbcType="VARCHAR"/>
+        <result property="totalTime" column="total_time" jdbcType="VARCHAR"/>
+        <result property="state" column="state" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="VARCHAR"/>
+        <result property="flag" column="flag" jdbcType="VARCHAR"/>
+        <result property="parmId" column="parm_id" jdbcType="VARCHAR"/>
+        <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="areaId" column="area_id" jdbcType="VARCHAR"/>
+        <result property="fare" column="fare" jdbcType="VARCHAR"/>
+        <result property="intervalTime" column="interval_time" jdbcType="VARCHAR"/>
+        <result column="start_longitude" property="startLongitude" jdbcType="VARCHAR"/>
+        <result column="start_latitude" property="startLatitude" jdbcType="VARCHAR"/>
+        <result column="end_longitude" property="endLongitude" jdbcType="VARCHAR"/>
+        <result column="end_latitude" property="endLatitude" jdbcType="VARCHAR"/>
+
+    </resultMap>
+
+    <!--查询所有班车(途径站名 区域)-->
+    <select id="jtQueryShuttleBus" resultMap="BaseResultMap">
+
+        SELECT
+        shuttle_bus_id,
+        shuttle_bus_code,
+        start_address,
+        end_address,
+        tb_shuttle_bus.interval,
+        km,
+        total_time,
+        state,
+        parm_id,
+        address,
+        area_id,
+        fare,
+        interval_time
+        FROM tb_shuttle_bus
+        WHERE flag = 0
+        AND address LIKE #{name,jdbcType=VARCHAR}
+        <if test="areaId != null">
+            AND area_id = #{areaId,jdbcType=VARCHAR}
+        </if>
+        ORDER BY create_time ASC
+
+
+    </select>
+
+    <!--添加班车-->
+    <insert id="jtAdd" parameterType="com.tangmo.zhygzhglxt.entity.TbShuttleBus">
+
+        INSERT INTO tb_shuttle_bus
+        (shuttle_bus_id,
+        shuttle_bus_code,
+        start_address,
+        end_address,
+        tb_shuttle_bus.interval,
+        km,
+        total_time,
+        state,
+        create_time,
+        update_time,
+        parm_id,
+        address,
+        area_id,
+        fare,
+        interval_time)
+        VALUES (UUID(),
+        UUID(),
+        #{startAddress},
+        #{endAddress},
+        #{interval},
+        #{km},
+        #{totalTime},
+        #{state},
+        now(),
+        now(),
+        #{parmId},
+        #{address},
+        #{areaId},
+        #{fare},
+        #{intervalTime});
+
+    </insert>
+
+    <!--删除指定班车车次（班车表唯一标识）-->
+    <update id="jtDelete" parameterType="com.tangmo.zhygzhglxt.entity.TbShuttleBus">
+
+        UPDATE tb_shuttle_bus
+        SET flag = 1
+        WHERE shuttle_bus_code = #{shuttleBusCode}
+
+    </update>
+
+
+    <!--修改指定班车车次（班车表唯一标识）-->
+    <update id="jtUpdate" parameterType="java.lang.String">
+
+        UPDATE tb_shuttle_bus
+
+        <set>
+            <if test="shuttleBusId != null">
+                shuttle_bus_id = #{shuttleBusId,jdbcType=VARCHAR},
+            </if>
+            <if test="shuttleBusCode != null">
+                shuttle_bus_code = #{shuttleBusCode,jdbcType=VARCHAR},
+            </if>
+            <if test="startAddress">
+                start_address = #{startAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="endAddress != null">
+                end_address = #{endAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="interval != null">
+                tb_shuttle_bus.interval = #{interval,jdbcType=VARCHAR},
+            </if>
+            <if test="km != null">
+                km = #{km,jdbcType=VARCHAR},
+            </if>
+            <if test="totalTime != null">
+                total_time = #{totalTime,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                state = #{state,jdbcType=VARCHAR},
+            </if>
+            update_time =NOW(),
+            <if test="parmId">
+                parm_id = #{parmId,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="areaId != null">
+                area_id = #{areaId,jdbcType=VARCHAR},
+            </if>
+            <if test="fare != null">
+                fare = #{fare,jdbcType=VARCHAR},
+            </if>
+            <if test="intervalTime != null">
+                interval_time = #{intervalTime,jdbcType=VARCHAR}
+            </if>
+        </set>
+
+        WHERE shuttle_bus_code = #{shuttleBusCode,jdbcType=VARCHAR}
+
+    </update>
+
+
+</mapper>

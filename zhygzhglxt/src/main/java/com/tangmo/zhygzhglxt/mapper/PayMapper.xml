@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhygzhglxt.dao.PayDao">
+
+    <resultMap id="BaseResultMap" type="com.tangmo.zhygzhglxt.entity.Pay">
+
+        <!--列匹配实体属性-->
+        <result column="user_code" property="userCode" jdbcType="VARCHAR"/>
+        <result column="out_trade_no" property="out_trade_no" jdbcType="VARCHAR"/>
+        <result column="return_msg" property="return_msg" jdbcType="VARCHAR"/>
+
+    </resultMap>
+
+    <sql id="Base_Column_List">
+
+    </sql>
+    <insert id="insertPay" parameterType="com.tangmo.zhygzhglxt.entity.Pay">
+        INSERT INTO
+        pay_info (
+        out_trade_no,user_code,trade_type,return_msg,result_code,total_fee,pay_target,pay_type
+        )
+        VALUES
+        (#{out_trade_no},#{userCode},#{trade_type},#{return_msg},#{result_code},#{total_fee},#{payTarget},#{payType})
+    </insert>
+
+    <select id="selectByTradeNo" resultMap="BaseResultMap">
+        SELECT out_trade_no,result_code,user_code
+        FROM pay_info
+        WHERE out_trade_no = #{tradeNo}
+    </select>
+
+    <update id="updateByTradeNo">
+        UPDATE
+        pay_info
+        SET
+        result_code = #{result_code},
+        return_msg = #{return_msg},
+        pay_type = #{payType}
+        WHERE
+        out_trade_no = #{out_trade_no}
+    </update>
+</mapper>

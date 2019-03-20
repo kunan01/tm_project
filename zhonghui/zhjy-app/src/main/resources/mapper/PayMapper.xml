@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhjy.app.modules.dao.PayDao" >
+
+    <resultMap id="BaseResultMap" type="com.tangmo.zhjy.app.modules.bean.Pay" >
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="out_trade_no" property="out_trade_no" jdbcType="VARCHAR"/>
+        <result column="return_msg" property="return_msg" jdbcType="VARCHAR"/>
+        <result column="total_fee" property="total_fee1" jdbcType="DOUBLE"/>
+    </resultMap>
+    <sql id="Base_Column_List" >
+
+    </sql>
+    <insert id="insertPay" parameterType="com.tangmo.zhjy.app.modules.bean.Pay">
+        INSERT INTO pay_info (out_trade_no,user_id,trade_type,return_msg,result_code,total_fee,pay_target,pay_type)
+        VALUES (#{out_trade_no},#{userId},#{trade_type},#{return_msg},#{result_code},#{total_fee1},#{payTarget},#{payType})
+    </insert>
+
+    <select id="selectByTradeNo" resultMap="BaseResultMap">
+        SELECT out_trade_no,result_code,user_id,total_fee FROM pay_info WHERE out_trade_no = #{tradeNo}
+    </select>
+
+    <update id="updateByTradeNo">
+        UPDATE pay_info SET result_code = #{result_code},return_msg = #{return_msg} WHERE
+        out_trade_no = #{out_trade_no}
+    </update>
+</mapper>

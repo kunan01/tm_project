@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhjy.app.modules.dao.AppUserBeanMapper">
+	<resultMap id="BaseResultMap" type="com.tangmo.zhjy.app.modules.bean.AppUserBean">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="nike_name" property="nikeName" jdbcType="VARCHAR" />
+		<result column="sex" property="sex" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="real_name" property="realName" jdbcType="VARCHAR" />
+		<result column="identity_id" property="identityId" jdbcType="VARCHAR" />
+		<result column="is_realName" property="isRealname" jdbcType="VARCHAR" />
+		<result column="is_store" property="isStore" jdbcType="VARCHAR" />
+		<result column="freeze" property="freeze" jdbcType="VARCHAR" />
+		<result column="province" property="province" jdbcType="VARCHAR" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+		<result column="front" property="front" jdbcType="VARCHAR" />
+		<result column="verso" property="verso" jdbcType="VARCHAR" />
+		<result column="headImage" property="headImage" jdbcType="VARCHAR" />
+		<result column="is_shop" property="isShop" jdbcType="TINYINT" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, phone, nike_name, sex, password, real_name, identity_id, is_realName,
+		is_store,
+		freeze,province,city,is_shop,headImage
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+        *
+		from user
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<!-- 根据社区发布信息编号查询未读人员信息 -->
+	<select id="findByCommunityInformId" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from user
+		WHERE
+		id IN (
+		SELECT
+		app_user_id
+		FROM
+		app_community_inform_appuser
+		WHERE
+		app_community_inform = #{communityInformId}
+		AND is_read = 0
+		)
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from user
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.tangmo.zhjy.app.modules.bean.AppUserBean">
+		insert into user (id, phone, nike_name,
+		sex, password, real_name,
+		identity_id, is_realName, is_store,
+		freeze,province,city)
+		values (#{id,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR},
+		#{nikeName,jdbcType=VARCHAR},
+		#{sex,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR},
+		#{identityId,jdbcType=VARCHAR}, #{isRealname,jdbcType=VARCHAR},
+		#{isStore,jdbcType=VARCHAR},
+		#{freeze,jdbcType=VARCHAR},#{province,jdbcType=VARCHAR},#{city,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.tangmo.zhjy.app.modules.bean.AppUserBean">
+		insert into user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="phone != null">
+				phone,
+			</if>
+			<if test="nikeName != null">
+				nike_name,
+			</if>
+			<if test="sex != null">
+				sex,
+			</if>
+			<if test="password != null">
+				password,
+			</if>
+			<if test="realName != null">
+				real_name,
+			</if>
+			<if test="identityId != null">
+				identity_id,
+			</if>
+			<if test="isRealname != null">
+				is_realName,
+			</if>
+			<if test="isStore != null">
+				is_store,
+			</if>
+			<if test="freeze != null">
+				freeze,
+			</if>
+			<if test="province != null">
+				province,
+			</if>
+			<if test="city != null">
+				city
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="phone != null">
+				#{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="nikeName != null">
+				#{nikeName,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				#{sex,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				#{password,jdbcType=VARCHAR},
+			</if>
+			<if test="realName != null">
+				#{realName,jdbcType=VARCHAR},
+			</if>
+			<if test="identityId != null">
+				#{identityId,jdbcType=VARCHAR},
+			</if>
+			<if test="isRealname != null">
+				#{isRealname,jdbcType=VARCHAR},
+			</if>
+			<if test="isStore != null">
+				#{isStore,jdbcType=VARCHAR},
+			</if>
+			<if test="freeze != null">
+				#{freeze,jdbcType=VARCHAR},
+			</if>
+			<if test="province != null">
+				#{province,jdbcType=VARCHAR},
+			</if>
+			<if test="city != null">
+				#{city,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.tangmo.zhjy.app.modules.bean.AppUserBean">
+		update user
+		<set>
+			<if test="phone != null">
+				phone = #{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="nikeName != null">
+				nike_name = #{nikeName,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				sex = #{sex,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				password = #{password,jdbcType=VARCHAR},
+			</if>
+			<if test="realName != null">
+				real_name = #{realName,jdbcType=VARCHAR},
+			</if>
+			<if test="identityId != null">
+				identity_id = #{identityId,jdbcType=VARCHAR},
+			</if>
+			<if test="isRealname != null">
+				is_realName = #{isRealname,jdbcType=VARCHAR},
+			</if>
+			<if test="isStore != null">
+				is_store = #{isStore,jdbcType=VARCHAR},
+			</if>
+			<if test="freeze != null">
+				freeze = #{freeze,jdbcType=VARCHAR},
+			</if>
+			<if test="province != null">
+				province=#{province,jdbcType=VARCHAR},
+			</if>
+			<if test="city != null">
+				city=#{city,jdbcType=VARCHAR},
+			</if>
+			<if test="headImage!=null">
+				headImage=#{headImage,jdbcType=VARCHAR},
+			</if>
+			<if test="front!=null">
+				front = #{front,jdbcType=VARCHAR},
+			</if>
+			<if test="verso">
+				verso = #{verso,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.tangmo.zhjy.app.modules.bean.AppUserBean">
+		update user
+		set phone = #{phone,jdbcType=VARCHAR},
+		nike_name = #{nikeName,jdbcType=VARCHAR},
+		sex = #{sex,jdbcType=VARCHAR},
+		password = #{password,jdbcType=VARCHAR},
+		real_name = #{realName,jdbcType=VARCHAR},
+		identity_id = #{identityId,jdbcType=VARCHAR},
+		is_realName = #{isRealname,jdbcType=VARCHAR},
+		is_store = #{isStore,jdbcType=VARCHAR},
+		freeze = #{freeze,jdbcType=VARCHAR},
+		province=#{province,jdbcType=VARCHAR},
+		city=#{city,jdbcType=VARCHAR},
+		headImage=#{headImage,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<!-- 根据手机号码查询 -->
+	<select id="findByPhone" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from user
+		where phone=#{phone,jdbcType=VARCHAR}
+	</select>
+	<!-- 根据用户名密码查询 -->
+	<select id="findByUserAndPassword" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from user
+		where phone=#{phone,jdbcType=VARCHAR} and password=#{password,jdbcType=VARCHAR}
+	</select>
+</mapper>

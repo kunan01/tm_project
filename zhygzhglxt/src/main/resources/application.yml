@@ -1,0 +1,69 @@
+#服务器端口
+server:
+  port: 8005
+  tomcat:
+    uri-encoding: UTF-8
+  context-path: /zhygzhglxt
+
+#运用是激活配置文件{application-{key}.yml or application-{key}.properties}
+spring:
+  profiles:
+    active: test
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
+      enabled: true
+    multipart:
+      max-file-size: 10mb
+      max-request-size: 1024mb
+
+mybatis:
+  mapper-locations: classpath:com/tangmo/zhygzhglxt/mapper/*.xml
+
+---
+#部署服务器需要注释
+spring:
+  profiles: test
+  datasource:
+      url: jdbc:mysql://127.0.0.1:3306/zhygzhglxt?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useSSL=false&allowMultiQueries=true
+      driver-class-name: com.mysql.jdbc.Driver
+      username: root
+      password: root123
+
+#部署服务器需要解注释
+#spring:
+#  profiles: pro
+#  datasource:
+#    url: jdbc:mysql://119.3.213.252:3306/zhygzhglxt?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useSSL=false&allowMultiQueries=true
+#    driver-class-name: com.mysql.jdbc.Driver
+#    username: root
+#    password: tangmo
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+
+jedis:
+  pool:
+    host: 127.0.0.1
+    port: 6379
+    config:
+      maxTotal: 100
+      maxIdle: 10
+      maxWaitMillis: 3000
+      testOnBorrow: true
+
+app:
+  upload-head-path: D:/zhygzhglxt/apache-tomcat-7.0.62/webapps/static/app/userHead
+  upload-identity-path: D:/zhygzhglxt/apache-tomcat-7.0.62/webapps/static/app/identity
+  upload-goods-path: D:/zhygzhglxt/apache-tomcat-7.0.62/webapps/static/app/goods
+
+sys:
+  upload-shuffling-path: D:/zhygzhglxt/apache-tomcat-7.0.62/webapps/static/sys/shuffling
+  upload-hotel-path: D:/zhygzhglxt/apache-tomcat-7.0.62/webapps/static/sys/hotel
+  upload-room-path: D:/zhygzhglxt/apache-tomcat-7.0.62/webapps/static/sys/room
+  upload-restaurant-path: D:/zhygzhglxt/apache-tomcat-7.0.62/webapps/static/sys/restaurant
+  upload-food-path: D:/zhygzhglxt/apache-tomcat-7.0.62/webapps/static/sys/food
+  upload-privateRoom-path: D:/zhygzhglxt/apache-tomcat-7.0.62/webapps/static/sys/privateRoom
+  upload-ueditor-path: D:/zhygzhglxt/apache-tomcat-7.0.62/webapps/static/sys/ueditor

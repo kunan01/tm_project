@@ -1,0 +1,35 @@
+#服务器端口
+server:
+  port: 8081
+  tomcat:
+    uri-encoding: UTF-8
+
+mybatis:
+  mapper-locations: classpath:com/tangmo/yiliao/mapper/*.xml
+
+spring:
+  datasource:
+     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+     url: jdbc:sqlserver://117.34.70.145:1433;Databasename=yiliao
+     username: sa
+     password: 10isp.cOm!2016
+  jpa:
+       database: sql_server
+       show-sql: true
+       database-platform: org.hibernate.dialect.SQLServer2008Dialect
+
+jedis :
+  pool :
+    host : 127.0.0.1
+    port : 6379
+    config :
+      maxTotal: 100
+      maxIdle: 10
+      maxWaitMillis : 3000
+      testOnBorrow : true
+
+
+
+
+
+

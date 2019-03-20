@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhygzhglxt.dao.TbBalanceOrderMapper">
+    <resultMap id="BaseResultMap" type="com.tangmo.zhygzhglxt.entity.TbBalanceOrder">
+        <!--
+          列对应实体属性
+        -->
+        <id column="balance_order_id" property="balanceOrderId" jdbcType="VARCHAR"/>
+        <result column="balance_order_code" property="balanceOrderCode" jdbcType="VARCHAR"/>
+        <result column="price" property="price" jdbcType="DECIMAL"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="user_code" property="userCode" jdbcType="VARCHAR"/>
+        <result column="flag" property="flag" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR"/>
+        <result column="state" property="state" jdbcType="VARCHAR"/>
+        <result column="use_type" property="useType" jdbcType="VARCHAR"/>
+        <result column="trade_type" property="tradeType" jdbcType="VARCHAR"/>
+        <result column="balance_number" property="balanceNumber" jdbcType="VARCHAR"/>
+        <result column="trade_name" property="tradeName" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--
+          列名
+        -->
+        balance_order_id,
+        balance_order_code,
+        price,
+        type,
+        user_code,
+        flag,
+        create_time,
+        update_time,
+        state,
+        use_type,
+        trade_type,
+        balance_number,
+        trade_name
+    </sql>
+
+    <!--&lt;!&ndash;-->
+    <!--根据乘客订单的唯标识查询订单的详情-->
+    <!--&ndash;&gt;-->
+    <!--<select id="selOrderDetailByOrderCode" resultMap="BaseResultMap" parameterType="java.lang.String" >-->
+
+    <!--select -->
+    <!--<include refid="Base_Column_List" />-->
+    <!--from tb_passenger_order-->
+    <!--where order_code = #{passengerOrderCode,jdbcType=VARCHAR}-->
+    <!--AND flag = "0"-->
+    <!--</select>-->
+
+    <!--&lt;!&ndash;-->
+    <!--根据乘客订单的订单单号查询订单的详情-->
+    <!--&ndash;&gt;-->
+    <!--<select id="selectByPassOrderNumber" resultMap="BaseResultMap" parameterType="java.lang.String" >-->
+
+    <!--select-->
+    <!--<include refid="Base_Column_List" />-->
+    <!--from tb_passenger_order-->
+    <!--where order_number = #{orderNumber,jdbcType=VARCHAR}-->
+    <!--</select>-->
+
+    <!--&lt;!&ndash;-->
+    <!--订单统计：后台根据年月查询订单的完成量和取消量-->
+    <!--&ndash;&gt;-->
+    <!--<select id="selOrderByDate" resultType="java.util.Map" parameterType="java.lang.String" >-->
+
+    <!--select-->
+    <!--LEFT (creat_time, 7) timeDate,-->
+    <!--(select count(*) from tb_passenger_order t1  where order_state = "2"-->
+    <!--<if test="timeDate != null" >-->
+    <!--and LEFT (t1.creat_time, 7) = #{timeDate,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--) complete,-->
+    <!--(select count(*) from tb_passenger_order t1  where order_state = "3"-->
+    <!--<if test="timeDate != null" >-->
+    <!--and LEFT (t1.creat_time, 7) = #{timeDate,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--) cancel-->
+    <!--from tb_passenger_order-->
+    <!--where 1 = 1-->
+    <!--<if test="timeDate != null" >-->
+    <!--AND LEFT (creat_time, 7) = #{timeDate,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--</select>-->
+
+    <!--&lt;!&ndash;-->
+    <!--订单统计：后台根据年月查询订单 实时单完成单量 预约单完成单量 取消的实时单量 取消的预约单单量-->
+    <!--&ndash;&gt;-->
+    <!--<select id="selOrderCountByDate" resultType="java.util.Map" parameterType="java.lang.String" >-->
+
+    <!--select DISTINCT-->
+    <!--LEFT (creat_time, 7) timeDate,-->
+    <!--(select count(*) from tb_passenger_order t1  where order_state = "2" AND end_about = "1"-->
+    <!--<if test="timeDate != null" >-->
+    <!--and LEFT (t1.creat_time, 7) = #{timeDate,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--) nowComplete,-->
+    <!--(select count(*) from tb_passenger_order t1  where order_state = "3" AND end_about = "1"-->
+    <!--<if test="timeDate != null" >-->
+    <!--and LEFT (t1.creat_time, 7) = #{timeDate,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--) nowCancel,-->
+    <!--(select count(*) from tb_passenger_order t1  where order_state = "2" AND end_about = "0"-->
+    <!--<if test="timeDate != null" >-->
+    <!--and LEFT (t1.creat_time, 7) = #{timeDate,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--) orderComplete,-->
+    <!--(select count(*) from tb_passenger_order t1  where order_state = "3" AND end_about = "0"-->
+    <!--<if test="timeDate != null" >-->
+    <!--and LEFT (t1.creat_time, 7) = #{timeDate,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--) orderCancel-->
+    <!--from tb_passenger_order-->
+    <!--where 1 = 1-->
+    <!--<if test="timeDate != null" >-->
+    <!--AND LEFT (creat_time, 7) = #{timeDate,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--</select>-->
+
+    <!--&lt;!&ndash;-->
+    <!--订单统计：后台根据年月查询订单 这个月内每天的用户的单量的统计和完成单量-->
+    <!--&ndash;&gt;-->
+    <!--<select id="selOrderCountListByDate" resultType="java.util.Map">-->
+
+    <!--SELECT-->
+    <!--LEFT (creat_time, 10) timeDate,-->
+    <!--(select count(*) from tb_passenger_order t1 where-->
+    <!--LEFT (t1.creat_time, 10) = LEFT (t.creat_time, 10) ) totalNumber,-->
+    <!--(select count(*) from tb_passenger_order t1 where-->
+    <!--LEFT (t1.creat_time, 10) = LEFT (t.creat_time, 10)  and order_state = "2" ) completeNumber-->
+    <!--FROM-->
+    <!--`tb_passenger_order` t-->
+    <!--WHERE-->
+    <!--LEFT (creat_time, 10) BETWEEN #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR}-->
+    <!--GROUP BY LEFT (creat_time, 10)-->
+    <!--order by LEFT (creat_time, 10) asc-->
+
+    <!--</select>-->
+
+    <!--&lt;!&ndash;-->
+    <!--订单统计：根据开始时间和结束时间查询每日的订单统计量-->
+    <!--&ndash;&gt;-->
+    <!--<select id="selOrderByStartDateEndDate" resultType="java.util.Map">-->
+
+    <!--SELECT-->
+    <!--LEFT (creat_time, 10) timeDate,-->
+    <!--(select count(*) from tb_passenger_order t1 where LEFT (t1.creat_time, 10) = LEFT (t.creat_time, 10) ) totalNumber,-->
+    <!--(select count(*) from tb_passenger_order t1 where LEFT (t1.creat_time, 10) = LEFT (t.creat_time, 10)  and end_about = "0" ) orderTotalNumber,-->
+    <!--(select count(*) from tb_passenger_order t1 where LEFT (t1.creat_time, 10) = LEFT (t.creat_time, 10)  and end_about = "1" ) nowTotalNumber,-->
+    <!--(select count(*) from tb_passenger_order t1 where LEFT (t1.creat_time, 10) = LEFT (t.creat_time, 10)  and end_about = "0" and order_state = "3") cancelOrderNumber,-->
+    <!--(select count(*) from tb_passenger_order t1 where LEFT (t1.creat_time, 10) = LEFT (t.creat_time, 10)  and end_about = "0" and order_state = "2") completeOrderNumber,-->
+    <!--(select count(*) from tb_passenger_order t1 where LEFT (t1.creat_time, 10) = LEFT (t.creat_time, 10)  and end_about = "1" and order_state = "3") cancelNowNumber,-->
+    <!--(select count(*) from tb_passenger_order t1 where LEFT (t1.creat_time, 10) = LEFT (t.creat_time, 10)  and end_about = "1" and order_state = "2") completeNowNumber-->
+    <!--FROM-->
+    <!--`tb_passenger_order` t-->
+    <!--WHERE 1 = 1-->
+    <!--<if test="startDate != null" >-->
+    <!--AND LEFT (creat_time, 10) &gt;= #{startDate,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--<if test="endDate != null" >-->
+    <!--AND LEFT (creat_time, 10) &lt;= #{endDate,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--GROUP BY LEFT (creat_time, 10)-->
+    <!--order by LEFT (creat_time, 10) asc-->
+
+    <!--</select>-->
+
+
+    <!--&lt;!&ndash;-->
+    <!--统计用户的总订单数-->
+    <!--&ndash;&gt;-->
+    <!--<select id="totalUserOrder" resultType="java.lang.Integer" parameterType="java.lang.String" >-->
+
+    <!--select-->
+    <!--count(*) total-->
+    <!--from tb_passenger_order-->
+    <!--where user_code = #{userCode,jdbcType=VARCHAR}-->
+    <!--</select>-->
+
+    <!--&lt;!&ndash;-->
+    <!--根据用户的唯一标识，统计用户的订单取消数，订单的完成数-->
+    <!--&ndash;&gt;-->
+    <!--<select id="totalUserOrderByState" resultType="java.lang.Integer" parameterType="java.lang.String" >-->
+
+    <!--select-->
+    <!--count(*) total-->
+    <!--from tb_passenger_order-->
+    <!--where user_code = #{userCode,jdbcType=VARCHAR}-->
+    <!--AND order_state = #{orderState,jdbcType=VARCHAR}-->
+    <!--</select>-->
+
+
+    <!--<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >-->
+    <!--&lt;!&ndash;-->
+    <!--WARNING - @mbggenerated-->
+    <!--This element is automatically generated by MyBatis Generator, do not modify.-->
+    <!--&ndash;&gt;-->
+    <!--select-->
+    <!--<include refid="Base_Column_List" />-->
+    <!--from tb_passenger_order-->
+    <!--where order_id = #{orderId,jdbcType=VARCHAR}-->
+    <!--</select>-->
+    <!--&lt;!&ndash;-->
+    <!--根据用户的唯一标识查询是否有正在进行的订单.-->
+    <!--&ndash;&gt;-->
+    <!--<select id="selOrderStateByUserCode" resultMap="BaseResultMap" parameterType="java.lang.String" >-->
+
+    <!--select-->
+    <!--<include refid="Base_Column_List" />-->
+    <!--from tb_passenger_order-->
+    <!--where user_code = #{userCode,jdbcType=VARCHAR}-->
+    <!--AND flag = "0"-->
+    <!--AND (order_state = "1" OR order_state = "0")-->
+    <!--</select>-->
+
+    <!--&lt;!&ndash;-->
+    <!--根据用户的唯一标识code模糊查找所有订单（可分页）-->
+    <!--&ndash;&gt;-->
+    <!--<select id="selPassOrderByUserCode" resultMap="BaseResultMap" >-->
+
+    <!--select-->
+    <!--<include refid="Base_Column_List" />-->
+    <!--from tb_passenger_order-->
+    <!--where (start_address LIKE #{name,jdbcType=VARCHAR}-->
+    <!--OR end_address LIKE #{name,jdbcType=VARCHAR}-->
+    <!--OR order_number LIKE #{name,jdbcType=VARCHAR})-->
+    <!--AND user_code = #{userCode,jdbcType=VARCHAR}-->
+    <!--<if test="state != null" >-->
+    <!--AND order_state = #{state,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--<if test="endAbout != null" >-->
+    <!--AND end_about =#{endAbout,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--AND flag = "0"-->
+    <!--ORDER BY update_time DESC-->
+    <!--</select>-->
+
+
+    <!--&lt;!&ndash;-->
+    <!--后台根据条件查询订单信息（可分页）-->
+    <!--&ndash;&gt;-->
+    <!--<select id="selOrderByCondition" resultMap="BaseResultMap" parameterType="com.tangmo.zhygzhglxt.entity.dto.OrderDto" >-->
+
+    <!--select-->
+    <!--<include refid="Base_Column_List" />-->
+    <!--from tb_passenger_order-->
+    <!--where (start_address LIKE #{name,jdbcType=VARCHAR}-->
+    <!--OR end_address LIKE #{name,jdbcType=VARCHAR}-->
+    <!--OR order_number LIKE #{name,jdbcType=VARCHAR})-->
+    <!--<if test="orderState != null" >-->
+    <!--AND order_state = #{orderState,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--<if test="endAbout != null" >-->
+    <!--AND end_about =#{endAbout,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--<if test="year != null" >-->
+    <!--AND YEAR(tb_passenger_order.create_time) = #{year,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--<if test="month != null" >-->
+    <!--AND MONTH(tb_passenger_order.create_time) = #{month,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--<if test="day != null" >-->
+    <!--AND DAY(tb_passenger_order.create_time) = #{day,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--AND flag = "0"-->
+    <!--ORDER BY update_time DESC-->
+    <!--</select>-->
+
+    <!--&lt;!&ndash;-->
+    <!--根据用户的唯一标识code和类型不同模糊查找所有订单（可分页）订单状态（0未接单 1已接单 2订单完成 3订单已取消）-->
+    <!--&ndash;&gt;-->
+    <!--<select id="selPassOrderByUserCodeAndType" resultMap="BaseResultMap" >-->
+
+    <!--select-->
+    <!--<include refid="Base_Column_List" />-->
+    <!--from tb_passenger_order-->
+    <!--where (start_address LIKE #{name,jdbcType=VARCHAR}-->
+    <!--OR end_address LIKE #{name,jdbcType=VARCHAR}-->
+    <!--OR order_number LIKE #{name,jdbcType=VARCHAR})-->
+    <!--AND user_code = #{userCode,jdbcType=VARCHAR}-->
+    <!--<if test="type == 0" >-->
+    <!--AND (order_state = "1" OR order_state = "0")-->
+    <!--</if>-->
+    <!--<if test="type == 1" >-->
+    <!--AND (order_state = "2" OR order_state = "3")-->
+    <!--</if>-->
+    <!--AND flag = "0"-->
+    <!--ORDER BY update_time DESC-->
+    <!--</select>-->
+
+    <!--&lt;!&ndash;用户修改订单状态&ndash;&gt;-->
+    <!--<update id="jtUpdateById" parameterType="com.tangmo.zhygzhglxt.entity.TbBalanceOrder" >-->
+
+    <!--UPDATE tb_passenger_order-->
+    <!--SET  order_state = #{state}-->
+    <!--WHERE order_code = #{orderCode}-->
+
+    <!--</update>-->
+
+    <!--&lt;!&ndash;根据乘客订单的唯一标识修改订单状态&ndash;&gt;-->
+    <!--<update id="updateStateByPassengerOrderCode">-->
+
+    <!--UPDATE tb_passenger_order-->
+    <!--SET  order_state = #{state,jdbcType=VARCHAR}-->
+    <!--WHERE order_code = #{passengerOrderCode,jdbcType=VARCHAR}-->
+
+    <!--</update>-->
+
+    <!--&lt;!&ndash;改变订单的支付方式和订单价格&ndash;&gt;-->
+    <!--<update id="updatePayWayPriceByPassengerOrderCode">-->
+
+    <!--UPDATE tb_passenger_order-->
+    <!--SET  pay_way = "1",-->
+    <!--price = #{price,jdbcType=DECIMAL}-->
+    <!--WHERE order_code = #{passengerOrderCode,jdbcType=VARCHAR}-->
+
+    <!--</update>-->
+
+    <!--&lt;!&ndash;根据乘客订单的唯一标识修改订单状态并且修改订单的支付方式&ndash;&gt;-->
+    <!--<update id="updateStatePayByPassengerOrderCode">-->
+
+    <!--UPDATE tb_passenger_order-->
+    <!--SET  order_state = #{state,jdbcType=VARCHAR},-->
+    <!--pay_way = #{payWay,jdbcType=VARCHAR}-->
+    <!--WHERE order_code = #{passengerOrderCode,jdbcType=VARCHAR}-->
+
+    <!--</update>-->
+
+
+    <!--<delete id="deleteByPrimaryKey" parameterType="java.lang.String" >-->
+    <!--&lt;!&ndash;-->
+    <!--WARNING - @mbggenerated-->
+    <!--This element is automatically generated by MyBatis Generator, do not modify.-->
+    <!--&ndash;&gt;-->
+    <!--delete from tb_passenger_order-->
+    <!--where order_id = #{orderId,jdbcType=VARCHAR}-->
+    <!--</delete>-->
+
+
+    <!--
+       动态添加乘客订单
+     -->
+    <insert id="insertSelective" parameterType="com.tangmo.zhygzhglxt.entity.TbBalanceOrder">
+
+        insert into tb_balance_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="balanceOrderId != null">
+                balance_order_id,
+            </if>
+            <if test="balanceOrderCode != null">
+                balance_order_code,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="userCode != null">
+                user_code,
+            </if>
+            <if test="flag != null">
+                flag,
+            </if>
+            create_time,
+            update_time,
+            <if test="state != null">
+                state,
+            </if>
+            <if test="useType != null">
+                use_type,
+            </if>
+            <if test="tradeType != null">
+                trade_type,
+            </if>
+            <if test="balanceNumber != null">
+                balance_number,
+            </if>
+            <if test="tradeName != null">
+                trade_name,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="balanceOrderId != null">
+                #{balanceOrderId,jdbcType=VARCHAR},
+            </if>
+            <if test="balanceOrderCode != null">
+                #{balanceOrderCode,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null">
+                #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="userCode != null">
+                #{userCode,jdbcType=VARCHAR},
+            </if>
+            <if test="flag != null">
+                #{flag,jdbcType=VARCHAR},
+            </if>
+            now(),
+            now(),
+            <if test="state != null">
+                #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="useType != null">
+                #{useType,jdbcType=VARCHAR},
+            </if>
+            <if test="tradeType != null">
+                #{tradeType,jdbcType=VARCHAR},
+            </if>
+            <if test="balanceNumber != null">
+                #{balanceNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="tradeName != null">
+                #{tradeName,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+
+    <!--<update id="updateByPrimaryKeySelective" parameterType="com.tangmo.zhygzhglxt.entity.TbBalanceOrder" >-->
+    <!--&lt;!&ndash;-->
+    <!--WARNING - @mbggenerated-->
+    <!--This element is automatically generated by MyBatis Generator, do not modify.-->
+    <!--&ndash;&gt;-->
+    <!--update tb_passenger_order-->
+    <!--<set >-->
+    <!--<if test="orderCode != null" >-->
+    <!--order_code = #{orderCode,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="orderNumber != null" >-->
+    <!--order_number = #{orderNumber,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="userCode != null" >-->
+    <!--user_code = #{userCode,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="startAddress != null" >-->
+    <!--start_address = #{startAddress,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="endAddress != null" >-->
+    <!--end_address = #{endAddress,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="km != null" >-->
+    <!--km = #{km,jdbcType=DECIMAL},-->
+    <!--</if>-->
+    <!--<if test="price != null" >-->
+    <!--price = #{price,jdbcType=DECIMAL},-->
+    <!--</if>-->
+    <!--<if test="peopleNumber != null" >-->
+    <!--people_number = #{peopleNumber,jdbcType=INTEGER},-->
+    <!--</if>-->
+    <!--<if test="appointmentTime != null" >-->
+    <!--appointment_time = #{appointmentTime,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="creatTime != null" >-->
+    <!--creat_time = #{creatTime,jdbcType=TIMESTAMP},-->
+    <!--</if>-->
+    <!--<if test="updateTime != null" >-->
+    <!--update_time = #{updateTime,jdbcType=TIMESTAMP},-->
+    <!--</if>-->
+    <!--<if test="flag != null" >-->
+    <!--flag = #{flag,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="orderState != null" >-->
+    <!--order_state = #{orderState,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="startLongitude != null" >-->
+    <!--start_longitude = #{startLongitude,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="startLatitude != null" >-->
+    <!--start_latitude = #{startLatitude,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="endLongitude != null" >-->
+    <!--end_longitude = #{endLongitude,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="endLatitude != null" >-->
+    <!--end_latitude = #{endLatitude,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="endAbout != null" >-->
+    <!--end_about = #{endAbout,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="tbParmId != null" >-->
+    <!--tb_parm_id = #{tbParmId,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="goodsName != null" >-->
+    <!--goods_name = #{goodsName,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="goodsDetails != null" >-->
+    <!--goods_details = #{goodsDetails,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="dgTime != null" >-->
+    <!--dg_time = #{dgTime,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="payWay != null" >-->
+    <!--pay_way = #{payWay,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="contact != null" >-->
+    <!--contact = #{contact,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="phone != null" >-->
+    <!--phone = #{phone,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="remarks != null" >-->
+    <!--remarks = #{remarks,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="audit != null" >-->
+    <!--audit = #{audit,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="carNumber != null" >-->
+    <!--car_number = #{carNumber,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--<if test="busRoute != null" >-->
+    <!--bus_route = #{busRoute,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--</set>-->
+    <!--where order_id = #{orderId,jdbcType=VARCHAR}-->
+    <!--</update>-->
+
+
+    <!--&lt;!&ndash;后台根据查询所有订单（模糊(开始地，结束地),订单状态,预约实时单查询,分页,）&ndash;&gt;-->
+    <!--<select id="jtQueryByList" resultMap="BaseResultMap">-->
+
+    <!--SELECT-->
+    <!--<include refid="Base_Column_List" />-->
+    <!--FROM tb_passenger_order-->
+    <!--WHERE (start_address LIKE #{name,jdbcType=VARCHAR}-->
+    <!--OR end_address LIKE #{name,jdbcType=VARCHAR} OR contact LIKE #{name,jdbcType=VARCHAR}-->
+    <!--OR order_number LIKE #{name,jdbcType=VARCHAR})-->
+    <!--<if test="orderState != null" >-->
+    <!--AND order_state =#{orderState,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--<if test="endAbout != null" >-->
+    <!--AND end_about= #{endAbout,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--AND flag = 0-->
+
+    <!--</select>-->
+
+
+    <!--&lt;!&ndash;查询指定订单详情&ndash;&gt;-->
+    <!--<select id="jtQueryByListByCode" resultMap="BaseResultMap">-->
+
+    <!--SELECT-->
+    <!--<include refid="Base_Column_List" />-->
+    <!--FROM tb_passenger_order-->
+    <!--WHERE flag = "0"-->
+    <!--AND order_code = #{orderCode,jdbcType=VARCHAR}-->
+
+    <!--</select>-->
+
+    <!--&lt;!&ndash;删除指定订单（假删）&ndash;&gt;-->
+    <!--<update id="jtDelete" parameterType="com.tangmo.zhygzhglxt.entity.TbBalanceOrder" >-->
+
+    <!--UPDATE tb_passenger_order-->
+    <!--SET flag = "1"-->
+    <!--WHERE order_code = #{orderCode,jdbcType=VARCHAR}-->
+
+    <!--</update>-->
+
+
+</mapper>

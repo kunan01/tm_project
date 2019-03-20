@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhjy.app.modules.dao.AppMyChannelBeanMapper" >
+  <resultMap id="BaseResultMap" type="com.tangmo.zhjy.app.modules.bean.AppMyChannelBean" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="two_classifyId" property="twoClassifyid" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, two_classifyId
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from app_mychannel
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from app_mychannel
+    where user_id = #{userId,jdbcType=INTEGER} and  two_classifyId=#{twoClassifyId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tangmo.zhjy.app.modules.bean.AppMyChannelBean" >
+    insert into app_mychannel (id, user_id, two_classifyId
+      )
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{twoClassifyid,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.tangmo.zhjy.app.modules.bean.AppMyChannelBean" >
+    insert into app_mychannel
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="twoClassifyid != null" >
+        two_classifyId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="twoClassifyid != null" >
+        #{twoClassifyid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tangmo.zhjy.app.modules.bean.AppMyChannelBean" >
+    update app_mychannel
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="twoClassifyid != null" >
+        two_classifyId = #{twoClassifyid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tangmo.zhjy.app.modules.bean.AppMyChannelBean" >
+    update app_mychannel
+    set user_id = #{userId,jdbcType=INTEGER},
+      two_classifyId = #{twoClassifyid,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <delete id="delByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from app_mychannel where id = #{id}
+    </delete>
+
+    <select id="getMyChannel" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from app_mychannel
+        where user_id = #{userId}
+        order by id desc
+    </select>
+
+    <select id="selectByValue" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from app_mychannel
+        where user_id = #{userId} AND two_classifyId = #{twoClassifyid}
+    </select>
+</mapper>

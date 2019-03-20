@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhjy.app.modules.dao.AppInformationMapper">
+	<resultMap id="BaseResultMap"
+		type="com.tangmo.zhjy.app.modules.bean.AppInformation">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="publish_data" property="publishData" jdbcType="DATE" />
+		<result column="freeze" property="freeze" jdbcType="INTEGER" />
+		<result column="is_show" property="isShow" jdbcType="INTEGER" />
+		<result column="sys_userId" property="sysUserid" jdbcType="INTEGER" />
+		<result column="app_userId" property="appUserid" jdbcType="INTEGER" />
+		<result column="app_two_classifyId" property="twoClassifyId"
+			jdbcType="INTEGER" />
+		<result column="is_checked" property="isChecked" jdbcType="INTEGER"></result>
+        <result column="visit_count" property="visitCount" jdbcType="INTEGER"></result>
+		<result column="create_time" property="createTime"></result>
+	</resultMap>
+
+	<resultMap id="ResultMapWithBLOBs"
+		type="com.tangmo.zhjy.app.modules.bean.AppInformation" extends="BaseResultMap">
+		<result column="content" property="content" jdbcType="LONGVARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, title, publish_data, freeze, is_show, visit_count,
+		sys_userId,app_two_classifyId,is_checked,create_time,app_userId
+	</sql>
+	<sql id="Blob_Column_List">
+		content
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs"
+		parameterType="java.lang.Integer">
+
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from app_information
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+
+    <update id="addInfoVisitCount" parameterType="java.lang.Integer">
+        update app_information set visit_count = visit_count + 1 where id = #{id,jdbcType=INTEGER}
+    </update>
+
+	<!-- 根据用户编号查找收藏文章 -->
+	<select id="findByUserId" resultMap="ResultMapWithBLOBs"
+		parameterType="java.lang.Integer">
+		SELECT
+		*
+		FROM
+		app_information
+		WHERE
+		id IN (
+		SELECT
+		informationId
+		FROM
+		app_collect
+		WHERE
+		user_id = #{userId}
+		)
+	</select>
+	<select id="sysFindPage" resultMap="ResultMapWithBLOBs">
+		selecta.id,a.title,a.publish_data,"" as content,a.freeze,a.is_show,a.sys_userId,a.visit_count,
+		a.app_two_classifyId,a.is_checked,b.username from
+		app_information a LEFT JOIN sys_user b on a.sys_userId=b.id where
+		a.app_two_classifyId in (select id from app_two_classify where
+		app_classifyId=#{classifyId,jdbcType=INTEGER} and is_show=0)
+		and
+		a.title like #{title,jdbcType=VARCHAR} ORDER BY a.publish_data DESC
+	</select>
+	<select id="appFindPage" resultMap="ResultMapWithBLOBs">
+		SELECT
+		a.id,a.title,a.publish_data,"" as content,a.freeze,a.is_show,a.sys_userId,a.visit_count,
+		a.app_two_classifyId,a.is_checked,b.sum
+		FROM
+		app_information a
+		LEFT JOIN (
+		SELECT
+		a.id,
+		count(b.app_info_id) sum
+		FROM
+		app_information a
+		LEFT JOIN (
+		SELECT
+		app_info_id,
+		app_userId
+		FROM
+		app_information_pageview
+		) b ON a.id =
+		b.app_info_id
+		WHERE
+		a.title LIKE #{title,jdbcType=VARCHAR}
+		<if test="twoClassifyId!=null">
+			AND a.app_two_classifyId =
+			#{twoClassifyId,jdbcType=INTEGER}
+		</if>
+		AND a.is_checked = 1 AND a.is_show = 0
+		) b on a.id=b.id where a.title like
+		#{title,jdbcType=VARCHAR}
+		<if test="twoClassifyId!=null">
+			AND a.app_two_classifyId =
+			#{twoClassifyId,jdbcType=INTEGER}
+		</if>
+		ORDER BY a.publish_data DESC
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		app_information
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.tangmo.zhjy.app.modules.bean.AppInformation"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into app_information (
+		title, publish_data,
+		freeze, app_userId,app_two_classifyId,
+		content,create_time)
+		values
+		(#{title,jdbcType=VARCHAR},now(),
+		#{freeze,jdbcType=INTEGER},
+		#{appUserid,jdbcType=INTEGER},
+		#{twoClassifyId,jdbcType=INTEGER},
+		#{content,jdbcType=LONGVARCHAR},now()
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.tangmo.zhjy.app.modules.bean.AppInformation">
+		insert into app_information
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="title != null">
+				title,
+			</if>
+			<if test="publishData != null">
+				publish_data,
+			</if>
+			<if test="freeze != null">
+				freeze,
+			</if>
+			<if test="isShow != null">
+				is_show,
+			</if>
+			<if test="sysUserid != null">
+				sys_userId,
+			</if>
+			<if test="content != null">
+				content,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="publishData != null">
+				now(),
+			</if>
+			<if test="freeze != null">
+				#{freeze,jdbcType=INTEGER},
+			</if>
+			<if test="isShow != null">
+				#{isShow,jdbcType=INTEGER},
+			</if>
+			<if test="sysUserid != null">
+				#{sysUserid,jdbcType=INTEGER},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.tangmo.zhjy.app.modules.bean.AppInformation">
+		update app_information
+		<set>
+			<if test="title != null">
+				title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="publishData != null">
+				publish_data = #{publishData,jdbcType=DATE},
+			</if>
+			<if test="freeze != null">
+				freeze = #{freeze,jdbcType=INTEGER},
+			</if>
+			<if test="isShow != null">
+				is_show = #{isShow,jdbcType=INTEGER},
+			</if>
+			<if test="sysUserid != null">
+				sys_userId = #{sysUserid,jdbcType=INTEGER},
+			</if>
+			<if test="content != null">
+				content = #{content,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="isChecked!=null">
+				is_checked = #{isChecked,jdbcType=INTEGER}
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.tangmo.zhjy.app.modules.bean.AppInformation">
+		update
+		app_information
+		set title = #{title,jdbcType=VARCHAR},
+		publish_data =
+		#{publishData,jdbcType=DATE},
+		freeze = #{freeze,jdbcType=INTEGER},
+		is_show = #{isShow,jdbcType=INTEGER},
+		sys_userId =
+		#{sysUserid,jdbcType=INTEGER},
+		content =
+		#{content,jdbcType=LONGVARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.tangmo.zhjy.app.modules.bean.AppInformation">
+		update
+		app_information
+		set title = #{title,jdbcType=VARCHAR},
+		publish_data =
+		#{publishData,jdbcType=DATE},
+		freeze = #{freeze,jdbcType=INTEGER},
+		is_show = #{isShow,jdbcType=INTEGER},
+		sys_userId =
+		#{sysUserid,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<!-- 根据一级菜单查询文章 -->
+	<select id="findClassifyId" resultMap="ResultMapWithBLOBs">
+		SELECT
+		<include refid="Base_Column_List" />
+		,
+        content
+		FROM
+		app_information
+		WHERE
+		app_two_classifyId IN (
+		SELECT
+		id
+		FROM
+		app_two_classify
+		<if test="classifId!=null">
+			<where>
+				app_classifyId = #{classifId}
+			</where>
+		</if>
+		)
+		and title like #{title}
+        and is_show = 0 and is_checked = 1
+		order by publish_data desc
+	</select>
+
+    <select id="getHotInformation" resultMap="ResultMapWithBLOBs">
+        SELECT
+        <include refid="Base_Column_List" />
+        ,
+        content
+        FROM
+        app_information
+        WHERE
+        app_two_classifyId in (
+        SELECT
+        id
+        FROM
+        app_two_classify where app_classifyId = 3
+        )
+        and is_show = 0 and is_checked = 1
+        order by publish_data desc
+    </select>
+
+
+    <!-- 根据二级菜单查询文章 -->
+    <select id="findTwoClassifyId" resultMap="ResultMapWithBLOBs">
+        SELECT
+        <include refid="Base_Column_List" />
+        ,
+        content
+        FROM
+        app_information
+        WHERE
+        app_two_classifyId = #{twoclassifId}
+        and title like #{title}
+        and is_show = 0 and is_checked = 1
+        order by publish_data desc
+    </select>
+	<!-- 查询浏览记录 -->
+	<select id="queryBrowsingHistory" resultMap="ResultMapWithBLOBs">
+		SELECT
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		FROM
+		app_information
+		where
+		id IN (
+		SELECT
+		app_informId
+		FROM
+		app_browsingHistory
+		WHERE
+		user_id = #{userId}
+		)
+        order by id desc
+	</select>
+
+    <delete id="ClearBrowsingHistory">
+        delete from app_browsingHistory where user_id = #{userId}
+    </delete>
+    
+    <select id="getInformationById" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+        SELECT
+        <include refid="Base_Column_List" />
+        ,
+        <include refid="Blob_Column_List" />
+        FROM
+        app_information
+        where app_userId = #{userId} AND is_show = 0 order by publish_data desc
+    </select>
+</mapper>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.tangmo.yiliao.dao.DepartmentOrAuditDao" >
+
+    <resultMap id="BaseDepartment" type="com.tangmo.yiliao.entity.Department">
+        <id column="dt_id" property="dtId" jdbcType="VARCHAR"></id>
+        <result column="dt_name" property="dtName" jdbcType="VARCHAR"></result>
+        <result column="dt_imgid" property="dtImgId" jdbcType="VARCHAR"></result>
+        <result column="sorting_id" property="sortingId" jdbcType="INTEGER"></result>
+        <result column="dt_state" property="dtState" jdbcType="TINYINT"></result>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"></result>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR"></result>
+        <result column="create_userid" property="createUserId" jdbcType="VARCHAR"></result>
+        <result column="update_userid" property="updateUserId" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <resultMap id="BaseDoctorAppliend" type="com.tangmo.yiliao.entity.DoctorApplied">
+        <id column="da_id" property="daId" jdbcType="VARCHAR" ></id>
+        <result column="user_id" property="userId" jdbcType="VARCHAR" ></result>
+        <result column="name" property="name" jdbcType="VARCHAR" ></result>
+        <result column="phone" property="phone" jdbcType="VARCHAR" ></result>
+        <result column="da_hospital" property="daHospital" jdbcType="VARCHAR" ></result>
+        <result column="dt_id" property="dtId" jdbcType="VARCHAR" ></result>
+        <result column="da_position" property="daPosition" jdbcType="VARCHAR" ></result>
+        <result column="da_disease" property="daDisease" jdbcType="VARCHAR" ></result>
+        <result column="da_achievement" property="daAchievement" jdbcType="VARCHAR" ></result>
+        <result column="da_certificate" property="daCertificate" jdbcType="VARCHAR" ></result>
+        <result column="da_certificateName" property="daCertificateName" jdbcType="VARCHAR" ></result>
+        <result column="da_state" property="daState" jdbcType="TINYINT" ></result>
+        <result column="da_why" property="daWhy" jdbcType="VARCHAR" ></result>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR" ></result>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR" ></result>
+        <result column="create_userid" property="createUserId" jdbcType="VARCHAR" ></result>
+        <result column="update_userid" property="updateUserId" jdbcType="VARCHAR" ></result>
+        <result column="da_type" property="daType" jdbcType="TINYINT" ></result>
+    </resultMap>
+    
+    <select id="getDepartmentALL" parameterType="com.tangmo.yiliao.entity.SelectUser" resultMap="BaseDepartment">
+        select top ${end} dt_id,dt_name,dt_imgid,sorting_id,CONVERT(varchar,create_time,120) as create_time from department
+        where dt_state = 0 and dt_name like '%${condName}%' and dt_id not in(select top ${start} dt_id from department
+        where dt_state = 0 and dt_name like '%${condName}%' order by sorting_id) order by sorting_id
+    </select>
+
+    <select id="getDepartmentALLCount" parameterType="com.tangmo.yiliao.entity.SelectUser" resultType="java.lang.Integer">
+        select count(*) from department
+        where dt_state = 0 and dt_name like '%${condName}%'
+    </select>
+
+    <update id="delDepartmentById">
+        update department set dt_id = #{newDtId},dt_state = 1,update_userid = #{userId},update_time = CONVERT(varchar,GETDATE(),120)
+		where dt_id = #{dtId}
+    </update>
+
+    <update id="updDepartmentById" parameterType="com.tangmo.yiliao.entity.Department">
+        update department set dt_name = #{dtName},dt_imgid = #{dtImgId},update_time = CONVERT(varchar,GETDATE(),120),update_userid = #{updateUserId},sorting_id = #{sortingId}
+		where dt_id = #{dtId}
+    </update>
+
+    <select id="getDtIdCount" resultType="java.lang.Integer">
+        select count(*)+(select count(*) from system_the_article where dt_id = #{dtId} and state = 0)
+        from doctor_details where dd_field = #{dtId} and dd_state = 0
+    </select>
+
+    <update id="delDepartOrderBy">
+        update department set sorting_id = sorting_id - 1
+        where sorting_id >= (select sorting_id from department where dt_id = #{dtId}) and dt_state = 0
+    </update>
+
+    <update id="updDepartOrderByJian">
+        update department set sorting_id = sorting_id - 1
+        where sorting_id &gt; #{soId} and sorting_id &lt;= #{newSoId} and dt_state = 0
+    </update>
+
+    <update id="updDepartOrderByJia">
+        update department set sorting_id = sorting_id + 1
+        where sorting_id &lt; #{soId} and sorting_id &gt;= #{newSoId} and dt_state = 0
+    </update>
+
+    <update id="addDepartOrderBy">
+        update department set sorting_id = sorting_id + 1
+        where sorting_id >= #{soId} and dt_state = 0
+    </update>
+
+    <select id="getDeparCount" resultType="java.lang.Integer">
+        select count(*) from department where dt_state = 0
+    </select>
+
+    <select id="getDeparCountById" resultType="java.lang.Integer">
+        select sorting_id from department where dt_id = #{dtId}
+    </select>
+
+    <insert id="addDepartment" parameterType="com.tangmo.yiliao.entity.Department">
+        INSERT INTO [department]
+            ([dt_id]
+            ,[dt_name]
+            ,[dt_imgid]
+            ,[sorting_id]
+            ,[create_time]
+            ,[update_time]
+            ,[create_userid]
+            ,[update_userid])
+            VALUES
+            (#{dtId,jdbcType=VARCHAR}
+            ,#{dtName,jdbcType=VARCHAR}
+            ,#{dtImgId,jdbcType=VARCHAR}
+            ,#{sortingId,jdbcType=INTEGER}
+            ,CONVERT(varchar,GETDATE(),120)
+            ,CONVERT(varchar,GETDATE(),120)
+            ,#{createUserId,jdbcType=VARCHAR}
+            ,#{createUserId,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="getDoctorCount" resultType="java.lang.Integer">
+        select COUNT(*) from doctor_applied where da_state = #{type}
+    </select>
+
+    <select id="getDoctorAudit" resultMap="BaseDoctorAppliend">
+        select top ${end} da_id,user_id,name,phone,da_hospital,(select dt_name from department where dt_id = da.dt_id) as dt_id,
+		da_position,da_disease,da_achievement,da_certificateName,da_certificate,da_why,CONVERT(varchar,create_time,120) as create_time,da_type
+		from doctor_applied da where da_state = #{type} and da_id not in (select top ${start} da_id
+								from doctor_applied da where da_state = #{type})
+    </select>
+
+    <select id="getDoctorAppById" resultMap="BaseDoctorAppliend">
+         select da_id,user_id,name,phone,da_hospital,dt_id,
+		 da_position,da_disease,da_achievement,da_certificateName,da_certificate,da_why,da_type
+		 from doctor_applied da where da.da_id = #{daId}
+    </select>
+
+    <update id="updDoctorAppById">
+          update doctor_applied set da_state = #{type}
+                                <if test="val != null">,da_why = #{val}</if>
+                                ,update_time = CONVERT(varchar,GETDATE(),120)
+                                ,update_userid = #{userId}
+	       where da_id = #{daId}
+    </update>
+
+    <insert id="addDoctor" parameterType="com.tangmo.yiliao.entity.DoctorApplied">
+        INSERT INTO [doctor_details]
+            ([dd_id]
+            ,[user_id]
+            ,[dd_hospital]
+            ,[dd_position]
+            ,[dd_Service]
+            ,[dd_experience]
+            ,[dd_field]
+            ,[dd_certificate]
+            ,[dd_certificateName]
+            ,[dd_phone]
+            ,[create_time]
+            ,[update_time]
+            ,[create_userid]
+            ,[update_userid])
+            VALUES
+            (#{daId,jdbcType=VARCHAR}
+            ,#{userId,jdbcType=VARCHAR}
+            ,#{daHospital,jdbcType=VARCHAR}
+            ,#{daPosition,jdbcType=VARCHAR}
+            ,#{daDisease,jdbcType=VARCHAR}
+            ,#{daAchievement,jdbcType=VARCHAR}
+            ,#{dtId,jdbcType=VARCHAR}
+            ,#{daCertificate,jdbcType=VARCHAR}
+            ,#{daCertificateName,jdbcType=VARCHAR}
+            ,#{phone,jdbcType=VARCHAR}
+            ,GETDATE()
+            ,GETDATE()
+            ,#{createUserId,jdbcType=VARCHAR}
+            ,#{createUserId,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updDoctor" parameterType="com.tangmo.yiliao.entity.DoctorApplied">
+        UPDATE [doctor_details]
+        SET [dd_hospital] = #{daHospital,jdbcType=VARCHAR}
+        ,[dd_position] = #{daPosition,jdbcType=VARCHAR}
+        ,[dd_Service] = #{daDisease,jdbcType=VARCHAR}
+        ,[dd_experience] = #{daAchievement,jdbcType=VARCHAR}
+        ,[dd_field] = #{dtId,jdbcType=VARCHAR}
+        ,[dd_certificate] = #{daCertificate,jdbcType=VARCHAR}
+        ,[dd_certificateName] = #{daCertificateName,jdbcType=VARCHAR}
+        ,[dd_phone] = #{phone,jdbcType=VARCHAR}
+        ,[update_time] = CONVERT(varchar,GETDATE(),120)
+        ,[update_userid] = #{updateUserId,jdbcType=VARCHAR}
+        WHERE user_id = #{userId,jdbcType=VARCHAR}
+    </update>
+</mapper>

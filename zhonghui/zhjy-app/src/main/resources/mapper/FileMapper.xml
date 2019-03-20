@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhjy.app.modules.dao.FileDao" >
+    <resultMap id="BaseResultMap" type="com.tangmo.zhjy.app.modules.bean.RsFile" >
+        <result column="path" property="path" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+
+    </sql>
+    <insert id="insertSelective" parameterType="com.tangmo.zhjy.app.modules.bean.RsFile">
+        insert into rs_file (rf_id,path,user_id) VALUES (#{rfId},#{path},#{userId})
+    </insert>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT path FROM rs_file WHERE rf_id = #{rfId}
+    </select>
+</mapper>

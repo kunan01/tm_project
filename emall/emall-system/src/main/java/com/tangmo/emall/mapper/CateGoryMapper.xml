@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.emall.dao.CateGoryDao" >
+    
+    <resultMap id="BaseCateGory" type="com.tangmo.emall.entity.CateGory">
+        <id column="category_id" property="categoryId" jdbcType="INTEGER" />
+        <result column="category_name" property="categoryName" jdbcType="VARCHAR" />
+        <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+        <result column="category_level" property="categoryLevel" jdbcType="INTEGER" />
+        <result column="created_time" property="createdTime" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="BaseSorting" type="com.tangmo.emall.entity.SortingWay">
+        <id column="sorting_id" property="sortingId" jdbcType="INTEGER" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="sorting_rules" property="sortingRules" jdbcType="VARCHAR" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="sorting_type" property="sortingType" jdbcType="TINYINT" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        category_id,category_name,parent_id,category_level,created_time
+    </sql>
+
+    <select id="getCateGoryByNameAndLevel" resultMap="BaseCateGory">
+        select
+        <include refid="Base_Column_List" />
+        from
+        t_category where category_name = #{name} and category_level = #{level} and data_flag = 0
+    </select>
+
+    <insert id="addCateGory" parameterType="com.tangmo.emall.entity.CateGory">
+        insert into t_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="categoryName != null">
+                category_name,
+            </if>
+            <if test="parentId != null">
+                parent_id,
+            </if>
+            <if test="categoryLevel != null">
+                category_level,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="categoryName != null">
+                #{categoryName},
+            </if>
+            <if test="parentId != null">
+                #{parentId},
+            </if>
+            <if test="categoryLevel != null">
+                #{categoryLevel},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updCategory" parameterType="com.tangmo.emall.entity.CateGory">
+        update t_category set category_name = #{categoryName}
+        where category_id = #{categoryId}
+    </update>
+
+    <select id="getCateGoryList" parameterType="java.lang.Integer" resultMap="BaseCateGory">
+        select
+        <include refid="Base_Column_List" />
+        from t_category where category_level = #{level} and data_flag = 0
+        order by created_time desc
+    </select>
+
+    <select id="getCateGoryById" parameterType="java.lang.Integer" resultMap="BaseCateGory">
+        select
+        <include refid="Base_Column_List" />
+        from
+        t_category where category_id = #{cId}
+    </select>
+
+    <select id="getCateGoryListByPId" parameterType="java.lang.Integer" resultMap="BaseCateGory">
+        select
+        <include refid="Base_Column_List" />
+        from
+        t_category where parent_id = #{cId} and data_flag = 0
+        order by created_time desc
+    </select>
+
+    <update id="delCateGory" parameterType="java.lang.Integer">
+        update t_category set data_flag = 1 where category_id = #{cId}
+    </update>
+
+    <update id="delCateGoryListByPId" parameterType="java.lang.Integer">
+        update t_category set data_flag = 1 where parent_id = #{cId}
+    </update>
+
+    <insert id="addSortingWay" parameterType="com.tangmo.emall.entity.SortingWay">
+        insert into t_sorting_way
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null">
+                title,
+            </if>
+            <if test="sortingRules != null">
+                sorting_rules,
+            </if>
+            <if test="sortingType != null">
+                sorting_type,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null">
+                #{title},
+            </if>
+            <if test="sortingRules != null">
+                #{sortingRules},
+            </if>
+            <if test="sortingType != null">
+                #{sortingType},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getSortingWayById" resultMap="BaseSorting">
+        select sorting_id,title,sorting_rules,created_time,sorting_type from t_sorting_way
+        where sorting_id = #{sId}
+    </select>
+
+    <update id="updateSortingWay" parameterType="com.tangmo.emall.entity.SortingWay">
+        update t_sorting_way
+        <set>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="sortingRules != null">
+                sorting_rules = #{sortingRules},
+            </if>
+        </set>
+        where sorting_id = #{sortingId}
+    </update>
+
+    <delete id="delSortingWay" parameterType="java.lang.Integer">
+        delete from t_sorting_way where sorting_id = #{sId}
+    </delete>
+
+    <select id="getSortingWay" parameterType="java.lang.Integer" resultMap="BaseSorting">
+        select sorting_id,title,sorting_rules,created_time,sorting_type from t_sorting_way
+        <if test="sortingType != -1">sorting_type = #{sortingType}</if>
+        order by created_time desc
+    </select>
+
+</mapper>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.emall.dao.CollectDao" >
+
+    <resultMap id="BaseCollect" type="com.tangmo.emall.entity.Collect">
+        <id column="collect_id" property="collectId" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="product_id" property="productId" jdbcType="INTEGER" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="data_failure" property="dataFailure" jdbcType="TINYINT" />
+    </resultMap>
+
+    <sql id="Base_Collect_Column_List">
+        collect_id,user_id,product_id,created_time,data_failure
+    </sql>
+
+    <select id="getCollectByUserIdAndPId" parameterType="com.tangmo.emall.entity.Collect" resultMap="BaseCollect">
+        select
+        <include refid="Base_Collect_Column_List" />
+        from t_collect
+        where user_id = #{userId} and product_id = #{productId}
+    </select>
+
+    <insert id="addCollect" parameterType="com.tangmo.emall.entity.Collect">
+        insert into t_collect
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="productId != null">
+                product_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="productId != null">
+                #{productId},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getCollectById" parameterType="java.lang.Integer" resultMap="BaseCollect">
+        select
+        <include refid="Base_Collect_Column_List" />
+        from t_collect
+        where collect_id = #{collectId}
+    </select>
+
+    <delete id="delCollect" parameterType="java.lang.Integer">
+        delete from t_collect where collect_id = #{collectId}
+    </delete>
+
+    <delete id="clearCollect" parameterType="java.lang.Integer">
+        delete from t_collect where user_id = #{userId}
+    </delete>
+
+    <select id="getCollectListByUserId" parameterType="java.lang.Integer" resultMap="BaseCollect">
+        select
+        <include refid="Base_Collect_Column_List" />
+        from t_collect
+        where user_id = #{userId}
+        order by created_time desc
+    </select>
+</mapper>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.emall.dao.PrescriptionDao" >
+
+    <resultMap id="BasePrescriptionKey" type="com.tangmo.emall.entity.PrescriptionKey">
+        <id column="pk_id" property="pkId" jdbcType="INTEGER" />
+        <result column="pk_name" property="pkName" jdbcType="VARCHAR" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="state" property="state" jdbcType="TINYINT" />
+    </resultMap>
+    
+    <resultMap id="BasePrescriptionValue" type="com.tangmo.emall.entity.PrescriptionValue">
+        <id column="pv_id" property="pvId" jdbcType="INTEGER" />
+        <result column="pk_id" property="pkId" jdbcType="INTEGER" />
+        <result column="pv_detailed" property="pvDetailed" jdbcType="VARCHAR" />
+        <result column="pv_introduce" property="pvIntroduce" jdbcType="VARCHAR" />
+        <result column="pv_price" property="pvPrice" jdbcType="DECIMAL" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <resultMap id="BasePrescription" type="com.tangmo.emall.entity.Prescription">
+        <id column="prescription_id" property="prescriptionId" jdbcType="INTEGER" />
+        <result column="prescription_name" property="prescriptionName" jdbcType="VARCHAR" />
+        <result column="right_sphere" property="rightSphere" jdbcType="VARCHAR" />
+        <result column="right_cylinder" property="rightCylinder" jdbcType="VARCHAR" />
+        <result column="right_axis" property="rightAxis" jdbcType="VARCHAR" />
+        <result column="right_add" property="rightAdd" jdbcType="VARCHAR" />
+        <result column="right_pd" property="rightPd" jdbcType="VARCHAR" />
+        <result column="left_sphere" property="leftSphere" jdbcType="VARCHAR" />
+        <result column="left_cylinder" property="leftCylinder" jdbcType="VARCHAR" />
+        <result column="left_axis" property="leftAxis" jdbcType="VARCHAR" />
+        <result column="left_add" property="leftAdd" jdbcType="VARCHAR" />
+        <result column="left_pd" property="leftPd" jdbcType="VARCHAR" />
+        <result column="near_pd" property="nearPd" jdbcType="VARCHAR" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="comment" property="comment" jdbcType="VARCHAR" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="data_flag" property="dataFlag" jdbcType="TINYINT" />
+    </resultMap>
+
+    <sql id="Base_PrescriptionKey_Column">
+        pk_id,pk_name,created_time,state
+    </sql>
+
+    <sql id="Base_PrescriptionValue_Column">
+        pv_id,pk_id,pv_detailed,pv_introduce,pv_price,created_time
+    </sql>
+
+    <sql id="Base_Prescription_Column">
+        prescription_id,prescription_name,right_sphere,right_cylinder,right_axis,right_add,right_pd,left_sphere,left_cylinder,
+        left_axis,left_add,left_pd,near_pd,user_id,comment,created_time,data_flag
+    </sql>
+
+    <select id="getPrescriptionKeyList" resultMap="BasePrescriptionKey">
+        select
+        <include refid="Base_PrescriptionKey_Column" />
+        from t_prescription_key
+        where data_flag = 0
+        order by created_time
+    </select>
+
+    <select id="getPrescriptionValueList" parameterType="java.lang.Integer" resultMap="BasePrescriptionValue">
+        select
+        <include refid="Base_PrescriptionValue_Column" />
+        from t_prescription_value
+        where data_flag = 0 and pk_id = #{keyId}
+        order by created_time
+    </select>
+
+    <insert id="addPrescription" parameterType="com.tangmo.emall.entity.Prescription" useGeneratedKeys="true" keyColumn="prescription_id" keyProperty="prescriptionId">
+        insert into t_prescription
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="prescriptionName != null">
+                prescription_name,
+            </if>
+            <if test="rightSphere != null">
+                right_sphere,
+            </if>
+            <if test="rightCylinder != null">
+                right_cylinder,
+            </if>
+            <if test="rightAxis != null">
+                right_axis,
+            </if>
+            <if test="rightAdd != null">
+                right_add,
+            </if>
+            <if test="rightPd != null">
+                right_pd,
+            </if>
+            <if test="leftSphere != null">
+                left_sphere,
+            </if>
+            <if test="leftCylinder != null">
+                left_cylinder,
+            </if>
+            <if test="leftAxis != null">
+                left_axis,
+            </if>
+            <if test="leftAdd != null">
+                left_add,
+            </if>
+            <if test="leftPd != null">
+                left_pd,
+            </if>
+            <if test="nearPd != null">
+                near_pd,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="comment != null">
+                comment,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="prescriptionName != null">
+                #{prescriptionName},
+            </if>
+            <if test="rightSphere != null">
+                #{rightSphere},
+            </if>
+            <if test="rightCylinder != null">
+                #{rightCylinder},
+            </if>
+            <if test="rightAxis != null">
+                #{rightAxis},
+            </if>
+            <if test="rightAdd != null">
+                #{rightAdd},
+            </if>
+            <if test="rightPd != null">
+                #{rightPd},
+            </if>
+            <if test="leftSphere != null">
+                #{leftSphere},
+            </if>
+            <if test="leftCylinder != null">
+                #{leftCylinder},
+            </if>
+            <if test="leftAxis != null">
+                #{leftAxis},
+            </if>
+            <if test="leftAdd != null">
+                #{leftAdd},
+            </if>
+            <if test="leftPd != null">
+                #{leftPd},
+            </if>
+            <if test="nearPd != null">
+                #{nearPd},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="comment != null">
+                #{comment},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="deletePrescription" parameterType="java.lang.Integer">
+        update t_prescription set data_flag = 1 where prescription_id = #{prescriptionId}
+    </update>
+
+    <select id="getPrescriptionUserList" parameterType="java.lang.Integer" resultMap="BasePrescription">
+        select
+        <include refid="Base_Prescription_Column" />
+        from t_prescription
+        where data_flag = 0 and user_id = #{userId}
+    </select>
+
+    <select id="getPrescriptionById" parameterType="java.lang.Integer" resultMap="BasePrescription">
+        select
+        <include refid="Base_Prescription_Column" />
+        from t_prescription
+        where data_flag = 0 and prescription_id = #{pId}
+    </select>
+</mapper>
