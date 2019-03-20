@@ -20,5 +20,4 @@ public class WebApplication {
 	public Authentication user(Authentication user) {
 		return user;
 	}
-
 }
