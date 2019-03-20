@@ -2,7 +2,6 @@ package com.tangmo.yiliao;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
@@ -14,7 +13,6 @@ import org.springframework.context.annotation.PropertySource;
 
 import javax.servlet.MultipartConfigElement;
 
-@EnableAutoConfiguration
 @SpringBootApplication
 @ServletComponentScan(basePackages = "com.tangmo.yiliao.*")
 @ComponentScan(basePackages = "com.tangmo.yiliao.*")
