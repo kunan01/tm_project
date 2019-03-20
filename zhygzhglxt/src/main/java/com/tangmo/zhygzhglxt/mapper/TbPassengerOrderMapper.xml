@@ -49,7 +49,7 @@
     </sql>
 
     <!--
-      根据乘客订单的唯标识查询订单的详情
+      根据乘客订单的唯一标识查询订单的详情
     -->
     <select id="selOrderDetailByOrderCode" resultMap="BaseResultMap" parameterType="java.lang.String">
 
