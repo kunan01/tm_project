@@ -167,7 +167,10 @@
         from t_product p
         where p.data_flag = 0 and p.publish_status = 1
         <if test="productName != null"> and p.product_name like '%${productName}%'</if>
-        <if test="categoryId != null"> and p.category_id = #{categoryId}</if>
+        <if test="categoryId != null">
+            <if test="categoryLevel == 2">and p.category_id = #{categoryId}</if>
+            <if test="categoryLevel == 1">and p.category_id in (select category_id from t_category where parent_id = #{categoryId})</if>
+        </if>
         <if test="lIdList != null">
             and p.product_id in (
                 select product_id from t_product_param where value_id in
@@ -236,11 +239,18 @@
         t_category where parent_id = #{cId} and data_flag = 0
     </select>
 
+    <select id="getCateGoryByPId" parameterType="java.lang.Integer" resultMap="BaseCateGory">
+        select
+        <include refid="Base_Column_List" />
+        from
+        t_category where category_id = #{cId} and data_flag = 0
+    </select>
+
     <select id="getCateGoryList" parameterType="java.lang.Integer" resultMap="BaseCateGory">
         select
         <include refid="Base_Column_List" />
         from
-        t_category where category_level = #{level}  and data_flag = 0
+        t_category where category_level = #{level} and data_flag = 0
     </select>
 
     <select id="getNewGoods" resultMap="BaseProduct">
@@ -261,7 +271,7 @@
         ,p.product_image
         from t_product p
         where p.data_flag = 0 and p.publish_status = 1 and p.product_id != #{pId}
-        and p.product_id in (select product_id from t_recommend where ra_id in (select ra_id from recommend_advertising where start_date &lt; NOW() and end_date > NOW()))
+        and p.product_id in (select product_id from t_recommend where ra_id in (select ra_id from recommend_advertising))
         order by p.sell_count desc
         Limit 0,3
     </select>

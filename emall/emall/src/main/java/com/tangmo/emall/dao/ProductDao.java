@@ -43,11 +43,14 @@ public interface ProductDao {
     //增加商品库存
     int increaseInventory(@Param("specId") Integer specId,@Param("count") Integer count);
 
-    //通过商品级别获取商品分类
+    //通过级别获取商品分类
     List<CateGory> getCateGoryList(Integer level);
 
     //通过父级id获取下级所有分类
     List<CateGory> getCateGoryListByPId(Integer cId);
+
+    //通过id分类信息
+    CateGory getCateGoryByPId(Integer cId);
 
     //查询新品商品
     List<Product> getNewGoods();

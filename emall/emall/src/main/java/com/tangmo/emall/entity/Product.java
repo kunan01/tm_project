@@ -94,6 +94,9 @@ public class Product implements Serializable {
     //是否收藏 0未收藏 1已收藏
     private Byte isCollection;
 
+    //是否处方眼镜 0不是 1是
+    private Integer isPrescript;
+
     private String shopUserId;
 
 }

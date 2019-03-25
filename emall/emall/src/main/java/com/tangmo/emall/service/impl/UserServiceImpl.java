@@ -557,6 +557,10 @@ public class UserServiceImpl implements UserService{
             return ResultUtil.emailCodeError();
         }
 
+
+//        //加密用户id
+//        String str = CryptoUtil.encode(EncryptUtil.randomPwd36()+user.getUserId()+EncryptUtil.randomPwd36());
+
         //存入redis设置过期时间
         jedisStrings.set("EmailCode"+email, str);
 

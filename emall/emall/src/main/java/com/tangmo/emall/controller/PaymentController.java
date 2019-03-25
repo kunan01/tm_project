@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping("/web/paypal")
 public class PaymentController extends BizBaseController {
+
+
     /**
      * @api {POST} /paypal/createPay 创建paypal支付
      * @apiGroup Paypal
@@ -43,7 +45,7 @@ public class PaymentController extends BizBaseController {
             @ApiImplicitParam(name="userId",value="用户id",dataType="int",required=true,paramType="query"),
             @ApiImplicitParam(name="detailId",value="订单明细id（多个以,号隔开）",dataType="String",required=true,paramType="query")
     })
-    @UserLoginToken
+//    @UserLoginToken
     @PostMapping("/createPay")
     public Result createPay(Integer userId,String detailId){
         return paypalService.createPayment(userId,detailId);
@@ -54,8 +56,8 @@ public class PaymentController extends BizBaseController {
     public void cancelPay(HttpServletResponse response) throws Exception{
         //取消支付处理逻辑
         System.out.println("返回商家");
-        //取消支付
-        response.sendRedirect("http://114.115.211.170:8080/sysIndex.html#/tipsPay?payId=0");
+        //取消支付  47.254.179.109
+        response.sendRedirect("http://114.115.211.170:8080/#/tipsPay?payId=0");
     }
 
     //支付完成回调
@@ -67,10 +69,10 @@ public class PaymentController extends BizBaseController {
 
         if(str.equals("success")){
             //支付成功
-            response.sendRedirect("http://114.115.211.170:8080/sysIndex.html#/tipsPay?payId=1");
+            response.sendRedirect("http://114.115.211.170:8080/#/tipsPay?payId=1");
         }else{
             //支付失败
-            response.sendRedirect("http://114.115.211.170:8080/sysIndex.html#/tipsPay?payId=0");
+            response.sendRedirect("http://114.115.211.170:8080/#/tipsPay?payId=0");
         }
     }
 

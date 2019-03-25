@@ -69,6 +69,13 @@ public class ProductServiceImpl implements ProductService {
                 dto.setLIdList(null);
             }
 
+            if(dto.getCategoryId() != null){
+                CateGory cateGory = productDao.getCateGoryByPId(dto.getCategoryId());
+                if(cateGory != null){
+                    dto.setCategoryLevel(cateGory.getCategoryLevel());
+                }
+            }
+
             PageHelper.startPage(dto.getPageNo(),dto.getPageSize());
 
             PageInfo<Product> page = new PageInfo<>(productDao.getProductListByDto(dto));
@@ -213,6 +220,13 @@ public class ProductServiceImpl implements ProductService {
 
             if(product != null){
 
+                CateGory cateGory = productDao.getCateGoryByPId(product.getCategoryId());
+                if(cateGory.getParentId() == 18){
+                    product.setIsPrescript(1);
+                }else{
+                    product.setIsPrescript(0);
+                }
+
                 if(userId != null){
                     Collect collect = new Collect();
                     collect.setUserId(userId);
@@ -297,6 +311,7 @@ public class ProductServiceImpl implements ProductService {
 
             return ResultUtil.success(maps);
         }catch (Exception e){
+            e.printStackTrace();
             log.error("商品模块：'查询商品详情'接口异常 ："+e.getMessage());
             return ResultUtil.serviceError();
         }

@@ -30,6 +30,7 @@ public class SlidesServiceImpl implements SlidesService {
     private JedisUtil.Keys jedisKeys;
 
     @Override
+    @Cacheable(cacheNames = "SlidesList",key = "getSlidesList")
     public Result getSlidesList() {
         try {
             String key = "SlidesList";

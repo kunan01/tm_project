@@ -54,6 +54,9 @@ public class ProductDto {
     //商品分类id
     private Integer categoryId;
 
+    //商品分类id
+    private Integer categoryLevel;
+
     //趋势id
     private Integer taId;
 

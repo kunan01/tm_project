@@ -309,7 +309,7 @@ public class UserController extends BizBaseController {
      * @api {POST} /user/getEmailCode/ 发送邮箱验证
      * @apiGroup User
      * @apiVersion 0.0.1
-     * @apiDescription 发送邮箱验证
+     * @apiDescription 生成图文验证码
      * @apiParam {String} email 邮箱地址 （必填）
      * @apiParamExample {json} 请求样例：
      *             /user/getEmailCode?email=1473747181@qq.com

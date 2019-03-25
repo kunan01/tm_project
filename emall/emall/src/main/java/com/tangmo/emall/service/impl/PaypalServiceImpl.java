@@ -32,11 +32,13 @@ public class PaypalServiceImpl implements PaypalService {
     @Resource
     private OrderDao orderDao;
 
-    private APIContext apiContext = PaypalUtil.apiContext();
+    private APIContext apiContext = null;
 
     private static final String PAYPAL_INTENT = "sale";             //付款意图（sale：立即付款）
     private static final String PAYPAL_PAYMENT_METHOD = "paypal";   //付款方式（paypal：PayPal钱包付款）
     private static final String PAYPAL_CURRENCY = "USD";            //货币类型 （USD：美元）
+//    private static final String PAYPAL_SUCCESS_URL = "http://47.254.179.109:8080/web/paypal/success";  //成功回调
+//    private static final String PAYPAL_CANCEL_URL = "http://47.254.179.109:8080/web/paypal/cancel";    //失败回调
     private static final String PAYPAL_SUCCESS_URL = "http://114.115.211.170:8080/web/paypal/success";  //成功回调
     private static final String PAYPAL_CANCEL_URL = "http://114.115.211.170:8080/web/paypal/cancel";    //失败回调
 
@@ -44,6 +46,7 @@ public class PaypalServiceImpl implements PaypalService {
     @Transactional
     public Result createPayment(Integer userId,String detailId) {
         try {
+
             List<OrderDetail> orderDetails = new ArrayList<>();
 
             if(userId == null || detailId == null || detailId.equals("")){
@@ -93,6 +96,8 @@ public class PaypalServiceImpl implements PaypalService {
 
 
     public String createpaypal(List<OrderDetail> orderDetails,String payNo){
+
+        apiContext = PaypalUtil.apiContext();
 
         //多个商品信息
         List<Item> items = new ArrayList<>();
