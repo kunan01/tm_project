@@ -25,6 +25,10 @@
         update t_file set f_state = 1 where f_id = #{fId}
     </update>
 
+    <update id="updFileD" parameterType="java.lang.String">
+        update t_file set f_state = 2,created_time = NOW() where f_id = #{fId}
+    </update>
+
     <delete id="updateFile">
         delete from t_file where NOW() - created_time > 7200 and f_state = 2
     </delete>

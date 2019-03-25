@@ -79,6 +79,12 @@ public interface ProductDao {
     //查询商品
     List<Product> getProductListByDto(ProductDto productDto);
 
+    //筛选趋势商品
+    List<Product> getTrendProductListByDto(ProductDto productDto);
+
+    //筛选活动商品
+    List<Product> getAdvertisingProductList(ProductDto productDto);
+
     //通过商品id和valueId查询标签信息
     ProductParam getProductParamByName(ProductParam productParam);
 

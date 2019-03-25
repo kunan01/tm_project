@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.tangmo.emall.dao.FileDao;
 import com.tangmo.emall.dao.ShopParamDao;
 import com.tangmo.emall.entity.ParamType;
+import com.tangmo.emall.entity.ParamTypeVo;
 import com.tangmo.emall.entity.ParamValue;
 import com.tangmo.emall.entity.RsFile;
 import com.tangmo.emall.service.ShopParamService;
@@ -393,10 +394,10 @@ public class ShopParamServiceImpl implements ShopParamService {
     @Override
     public Result queryShopParamList() {
         try {
-            List<ParamType> paramTypeList = shopParamDao.getParamTypeListByShopId(1);
+            List<ParamTypeVo> paramTypeList = shopParamDao.getParamTypeListVoByShopId(1);
             if(paramTypeList != null){
-                for (ParamType paramType: paramTypeList) {
-                    paramType.setParamValues(shopParamDao.getParamValueListByTypeId(paramType.getTypeId()));
+                for (ParamTypeVo paramType: paramTypeList) {
+                    paramType.setParamValues(shopParamDao.getParamValueListVoByTypeId(paramType.getTypeId()));
                 }
             }
             return ResultUtil.success(paramTypeList);

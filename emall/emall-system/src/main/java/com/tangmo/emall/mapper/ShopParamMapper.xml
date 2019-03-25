@@ -11,10 +11,28 @@
         <result column="data_flag" property="dataFlag" jdbcType="TINYINT" />
     </resultMap>
 
+    <resultMap id="BaseParamTypeVo" type="com.tangmo.emall.entity.ParamTypeVo">
+        <id column="type_id" property="typeId" jdbcType="INTEGER" />
+        <result column="type_name" property="typeName" jdbcType="VARCHAR" />
+        <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="state" property="state" jdbcType="TINYINT" />
+        <result column="data_flag" property="dataFlag" jdbcType="TINYINT" />
+    </resultMap>
+
     <resultMap id="BaseParamValue" type="com.tangmo.emall.entity.ParamValue">
         <id column="value_id" property="valueId" jdbcType="INTEGER" />
         <result column="param_value" property="paramValue" jdbcType="VARCHAR" />
         <result column="type_id" property="typeId" jdbcType="INTEGER" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="param_image" property="paramImage" jdbcType="VARCHAR" />
+        <result column="state" property="state" jdbcType="TINYINT" />
+        <result column="data_flag" property="dataFlag" jdbcType="TINYINT" />
+    </resultMap>
+
+    <resultMap id="BaseParamValueVo" type="com.tangmo.emall.entity.ParamValueVo">
+        <id column="value_id" property="valueId" jdbcType="INTEGER" />
+        <result column="param_value" property="paramValue" jdbcType="VARCHAR" />
         <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
         <result column="param_image" property="paramImage" jdbcType="VARCHAR" />
         <result column="state" property="state" jdbcType="TINYINT" />
@@ -162,6 +180,23 @@
         select
         <include refid="Base_Column_Value" />
         ,t_param_value.param_image
+        from t_param_value
+        where t_param_value.type_id = #{typeId} and t_param_value.data_flag = 0
+        order by t_param_value.created_time desc
+    </select>
+
+    <select id="getParamTypeListVoByShopId" parameterType="java.lang.Integer" resultMap="BaseParamTypeVo">
+        select
+        <include refid="Base_Column_Type" />
+        from t_param_type
+        where shop_id = #{shopId} and data_flag = 0
+        order by created_time desc
+    </select>
+
+    <select id="getParamValueListVoByTypeId" parameterType="java.lang.Integer" resultMap="BaseParamValueVo">
+        select
+        t_param_value.value_id,t_param_value.param_value,t_param_value.created_time,
+        t_param_value.state,t_param_value.data_flag,t_param_value.param_image
         from t_param_value
         where t_param_value.type_id = #{typeId} and t_param_value.data_flag = 0
         order by t_param_value.created_time desc

@@ -22,7 +22,7 @@ public interface AdvertisingService {
     Result batchDelAdvertising(RecommendAdvertising recommendAdvertising);
 
     //添加热门活动广告商品
-    Result addAdvertisingProduct(Integer raId,Integer productId);
+    Result addAdvertisingProduct(Recommend recommend);
 
     //批量添加热门活动广告商品
     Result batchAddAdvertisingProduct(Recommend recommend);

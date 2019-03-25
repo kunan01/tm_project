@@ -1,6 +1,9 @@
 package com.tangmo.emall.entity;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.util.StringUtil;
+import com.tangmo.emall.entity.dto.ProductDto;
+import com.tangmo.emall.entity.dto.ProductUpdDto;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -10,6 +13,19 @@ import java.util.Map;
 
 @Data
 public class Product implements Serializable {
+
+    public Product(){}
+
+    public Product(ProductUpdDto productUpdDto){
+        this.productId = productUpdDto.getProductId();
+        this.productName = StringUtil.isEmpty(productUpdDto.getProductName())?null:productUpdDto.getProductName();
+        this.baseProp = StringUtil.isEmpty(productUpdDto.getBaseProp())?null:productUpdDto.getBaseProp();
+        this.productImage = StringUtil.isEmpty(productUpdDto.getProductImage())?null:productUpdDto.getProductImage();
+        this.categoryId = productUpdDto.getCategoryId()==null?null:productUpdDto.getCategoryId();
+        this.descript = StringUtil.isEmpty(productUpdDto.getDescript())?null:productUpdDto.getDescript();
+        this.price = productUpdDto.getPrice()==null?null:productUpdDto.getPrice();
+        this.publishStatus = productUpdDto.getPublishStatus()==null?null:productUpdDto.getPublishStatus();
+    }
 
     //商品表主键
     private Integer productId;
@@ -113,6 +129,13 @@ public class Product implements Serializable {
     //商品分类信息
     private CateGory cateGory;
 
+    //趋势id
+    private Integer ttId;
+
+    //活动id
+    private Integer trId;
+
     private String shopUserId;
+
 
 }

@@ -5,6 +5,10 @@
     <resultMap id="BaseAdvertising" type="com.tangmo.emall.entity.RecommendAdvertising">
         <id column="ra_id" property="raId" jdbcType="INTEGER" />
         <result column="advertising_image" property="advertisingImage" jdbcType="VARCHAR" />
+        <result column="descript" property="descript" jdbcType="VARCHAR" />
+        <result column="location" property="location" jdbcType="TINYINT" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="product_id" property="productId" jdbcType="INTEGER" />
         <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
     </resultMap>
     
@@ -16,14 +20,14 @@
     </resultMap>
 
     <sql id="Base_Advertising_Column_List">
-        ra.ra_id,ra.advertising_image,ra.created_time
+        ra.ra_id,ra.advertising_image,ra.descript,ra.location,ra.title,ra.product_id,ra.created_time
     </sql>
 
     <select id="getAdvertisingList" resultMap="BaseAdvertising">
         select
         <include refid="Base_Advertising_Column_List" />
         from recommend_advertising ra
-        order by ra.created_time
+        order by ra.location
     </select>
 
     <insert id="addAdvertising" parameterType="com.tangmo.emall.entity.RecommendAdvertising">
@@ -52,6 +56,15 @@
         <set>
             <if test="advertisingImage != null">
                 advertising_image = #{advertisingImage},
+            </if>
+            <if test="descript != null">
+                descript = #{descript},
+            </if>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="productId != null">
+                product_id = #{productId},
             </if>
         </set>
         where ra_id = #{raId}

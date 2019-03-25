@@ -28,6 +28,8 @@
         <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
         <result column="dis_proportion" property="disProportion" jdbcType="INTEGER" />
         <result column="data_flag" property="dataFlag" jdbcType="TINYINT"/>
+        <result column="tt_id" property="ttId" jdbcType="INTEGER"/>
+        <result column="tr_id" property="trId" jdbcType="INTEGER"/>
     </resultMap>
 
     <resultMap id="BaseProductSpec" type="com.tangmo.emall.entity.ProductSpec">
@@ -76,7 +78,7 @@
         l_id,product_id,value_id
     </sql>
 
-    <insert id="addProduct" parameterType="com.tangmo.emall.entity.Product">
+    <insert id="addProduct" parameterType="com.tangmo.emall.entity.Product" useGeneratedKeys="true" keyColumn="product_id" keyProperty="productId">
         insert into t_product
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="shopId != null">
@@ -210,8 +212,11 @@
             <if test="auditStatus != null">
                 audit_status = #{auditStatus},
             </if>
-            <if test="pulishDate != null">
-                pulish_date = #{pulishDate},
+            <if test="publishDate != null">
+                pulish_date = #{publishDate},
+            </if>
+            <if test="disProportion != null">
+                dis_proportion = #{disProportion},
             </if>
             updated_time = NOW()
         </set>
@@ -437,6 +442,26 @@
         <if test="sorting == 5"> order by p.view_count desc</if>
     </select>
 
+    <select id="getTrendProductListByDto" parameterType="com.tangmo.emall.entity.dto.ProductDto" resultMap="BaseProduct">
+        select
+        <include refid="Base_Product_Column_List" />
+        ,p.product_image
+        from t_product p
+        where data_flag = 0
+        <if test="productName != null"> and p.product_name like '%${productName}%' </if>
+        and p.product_id not in (select product_id from t_trend where ta_id = #{taId})
+    </select>
+
+    <select id="getAdvertisingProductList" parameterType="com.tangmo.emall.entity.dto.ProductDto" resultMap="BaseProduct">
+        select
+        <include refid="Base_Product_Column_List" />
+        ,p.product_image
+        from t_product p
+        where data_flag = 0
+        <if test="productName != null"> and p.product_name like '%${productName}%' </if>
+        and p.product_id not in (select product_id from t_recommend where ra_id = #{raId})
+    </select>
+
     <select id="getProductParamByName" parameterType="com.tangmo.emall.entity.ProductParam" resultMap="BaseProductParam">
         select
         <include refid="Base_Param_Column_List" />
@@ -489,20 +514,22 @@
     <select id="getProductByRaId" parameterType="java.lang.Integer" resultMap="BaseProduct">
         select
         <include refid="Base_Product_Column_List" />
-        ,p.product_image
+        ,p.product_image,tr.tr_id
         from t_product p
-        where p.data_flag = 0
-        and product_id in (select product_id from t_recommend where ra_id = #{raId})
+        left join t_recommend tr
+        on p.product_id = tr.product_id
+        where p.data_flag = 0 and tr.ra_id = #{raId}
         order by p.sell_count desc
     </select>
 
     <select id="getProductByTaId" parameterType="java.lang.Integer" resultMap="BaseProduct">
         select
         <include refid="Base_Product_Column_List" />
-        ,p.product_image
+        ,p.product_image,tt.tt_id
         from t_product p
-        where p.data_flag = 0
-        and product_id in (select product_id from t_trend where ta_id = #{taId})
+        left join t_trend tt
+        on p.product_id = tt.product_id
+        where p.data_flag = 0 and tt.ta_id = #{taId}
         order by p.sell_count desc
     </select>
 

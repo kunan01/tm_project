@@ -1,7 +1,9 @@
 package com.tangmo.emall.dao;
 
 import com.tangmo.emall.entity.ParamType;
+import com.tangmo.emall.entity.ParamTypeVo;
 import com.tangmo.emall.entity.ParamValue;
+import com.tangmo.emall.entity.ParamValueVo;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -47,5 +49,11 @@ public interface ShopParamDao {
 
     //通过typeId查询参数值
     List<ParamValue> getParamValueListByTypeId(Integer typeId);
+
+    //通过shopId查询参数类型
+    List<ParamTypeVo> getParamTypeListVoByShopId(Integer shopId);
+
+    //通过typeId查询参数值
+    List<ParamValueVo> getParamValueListVoByTypeId(Integer typeId);
 
 }

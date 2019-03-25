@@ -3,12 +3,16 @@ package com.tangmo.emall.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.util.StringUtil;
 import com.tangmo.emall.dao.CateGoryDao;
 import com.tangmo.emall.dao.FileDao;
 import com.tangmo.emall.dao.ProductDao;
 import com.tangmo.emall.dao.ShopParamDao;
 import com.tangmo.emall.entity.*;
 import com.tangmo.emall.entity.dto.ProductDto;
+import com.tangmo.emall.entity.dto.ProductImageDto;
+import com.tangmo.emall.entity.dto.ProductSpecDto;
+import com.tangmo.emall.entity.dto.ProductUpdDto;
 import com.tangmo.emall.service.ProductService;
 import com.tangmo.emall.utils.Result;
 import com.tangmo.emall.utils.ResultUtil;
@@ -16,6 +20,7 @@ import com.tangmo.emall.utils.jedis.JedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -40,36 +45,86 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public Result addProduct(Product product) {
+    public Result addProduct(ProductUpdDto productUpdDto) {
         try {
             //非空校验
-            if(product == null || product.getShopId() == null || product.getProductName() == null || product.getBrandId() == null
-                    || product.getCategoryId() == null || product.getDescript() == null || product.getBaseProp() == null
-                    || product.getProductImage() == null){
+            if(productUpdDto == null || productUpdDto.getProductName() == null || productUpdDto.getCategoryId() == null
+                    || productUpdDto.getDescript() == null || productUpdDto.getBaseProp() == null || productUpdDto.getProductImage() == null){
                 return ResultUtil.paramError();
             }
 
             //校验json数据格式
             try {
-                JSONObject.parseObject(product.getBaseProp());
-                if(product.getSellProp() != null){
-                    JSONObject.parseObject(product.getSellProp());
-                }
+                JSONObject.parseObject(productUpdDto.getBaseProp());
             }catch (Exception e){
                 return ResultUtil.jsonError();
             }
 
             //校验图片是否存在
-            RsFile rsFile = fileDao.getFileById(product.getProductImage());
+            RsFile rsFile = fileDao.getFileById(productUpdDto.getProductImage());
             if(rsFile == null){
                 return ResultUtil.imgError();
             }
 
             //把图片改为已用状态
-            fileDao.updFile(product.getProductImage());
+            fileDao.updFile(productUpdDto.getProductImage());
 
+            Product product = new Product(productUpdDto);
             //添加商品
             productDao.addProduct(product);
+
+            if(productUpdDto.getParamIdList() != null){
+                if(productUpdDto.getParamIdList().length != 0){
+
+                    ProductParam productParam = new ProductParam();
+                    productParam.setProductId(product.getProductId());
+                    for (Integer paramId: productUpdDto.getParamIdList()) {
+                        productParam.setValueId(paramId);
+                        //添加标签
+                        productDao.addProductParam(productParam);
+                    }
+                }
+            }
+
+            if(productUpdDto.getProductSpecDtoList() != null){
+                if(productUpdDto.getProductSpecDtoList().size() != 0){
+
+                    ProductSpec productSpec = new ProductSpec();
+                    productSpec.setProductId(product.getProductId());
+                    for (ProductSpecDto specDto: productUpdDto.getProductSpecDtoList()) {
+                        productSpec.setProductSpecs(specDto.getProductSpecs());
+                        productSpec.setStock(specDto.getStock());
+                        productSpec.setPrice(specDto.getPrice());
+                        //添加规格
+                        productDao.addProductProp(productSpec);
+
+                        if(specDto.getProductImageDtoList() != null){
+                            if(specDto.getProductImageDtoList().size() != 0){
+                                ProductImage productImage = new ProductImage();
+                                productImage.setProductId(product.getProductId());
+                                productImage.setSpecId(productSpec.getSpecId());
+                                for (ProductImageDto productImageDto: specDto.getProductImageDtoList()) {
+
+                                    //校验图片是否存在
+                                    RsFile rsFile1 = fileDao.getFileById(productImageDto.getImageUrl());
+
+                                    if(rsFile1 != null){
+                                        //把图片改为已用状态
+                                        fileDao.updFile(productImageDto.getImageUrl());
+                                        productImage.setImageDesc(productImageDto.getImageDesc());
+                                        productImage.setIsMaster(productImageDto.getIsMaster());
+                                        productImage.setImageUrl(productImageDto.getImageUrl());
+                                        productImage.setImageOrder(productImageDto.getImageOrder());
+                                        productImage.setImageStatus(productImageDto.getImageStatus());
+                                        //添加规格图片
+                                        productDao.addProductPropImage(productImage);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             return ResultUtil.success();
         }catch (Exception e){
@@ -80,71 +135,117 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public Result updProduct(Product product) {
-        try {
+    public Result updProduct(ProductUpdDto productUpdDto) {
+        //非空校验
+        if(productUpdDto == null || productUpdDto.getProductId() == null){
+            return ResultUtil.paramError();
+        }
 
-            //非空校验
-            if(product == null || product.getProductId() == null){
-                return ResultUtil.paramError();
+        Product product1 = productDao.getProductById(productUpdDto.getProductId());
+        if(product1 == null){
+            return ResultUtil.dataNoError();
+        }
+
+        if(product1.getPublishStatus().toString().equals("1")){
+            return ResultUtil.error("请先下架商品在进行修改操作");
+        }
+
+        Product product = new Product(productUpdDto);
+
+        if(product.getBaseProp() != null){
+            //校验json数据格式
+            try {
+                JSONObject.parseObject(product.getBaseProp());
+            }catch (Exception e){
+                return ResultUtil.jsonError();
+            }
+        }
+
+        if(product.getProductImage() != null){
+            //校验图片是否存在
+            RsFile rsFile = fileDao.getFileById(product.getProductImage());
+
+            if(rsFile == null){
+                return ResultUtil.imgError();
             }
 
-            Product product1 = productDao.getProductById(product.getProductId());
-
-            if(product1 == null){
-                return ResultUtil.dataNoError();
-            }
-
-            if(product1.getPublishStatus().toString().equals("1")){
-                return ResultUtil.error("请先下架商品在进行修改操作");
-            }
-
-            if(product.getBaseProp() != null){
-                //校验json数据格式
-                try {
-                    JSONObject.parseObject(product.getBaseProp());
-                }catch (Exception e){
-                    return ResultUtil.jsonError();
-                }
-            }
-
-            if(product.getSellProp() != null){
-                //校验json数据格式
-                try {
-                    JSONObject.parseObject(product.getSellProp());
-                }catch (Exception e){
-                    return ResultUtil.jsonError();
-                }
-            }
-
-            if(product.getProductImage() != null){
-
-                //校验图片是否存在
-                RsFile rsFile = fileDao.getFileById(product.getProductImage());
-
-                if(rsFile == null){
-                    return ResultUtil.imgError();
-                }
-
+            if(!product.getProductImage().equals(rsFile.getFId())){
                 //删除原图片
                 fileDao.delFile(product1.getProductImage());
 
-                try {
-                    //把新图片改为已用状态
-                    fileDao.updFile(product.getProductImage());
-                }catch (Exception e){
-                    return ResultUtil.error("说了让不修改图片就不要传图片，偏不信，报错了吧！");
-                }
-
+                //把新图片改为已用状态
+                fileDao.updFile(product.getProductImage());
             }
 
-            //修改商品
-            productDao.updProduct(product);
-
-            return ResultUtil.success();
-        }catch (Exception e){
-            System.out.println("修改商品接口异常"+e.getMessage());
-            return ResultUtil.serviceError();
         }
+
+        //修改商品
+        productDao.updProduct(product);
+
+        if(productUpdDto.getParamIdList() != null){
+            if(productUpdDto.getParamIdList().length != 0){
+
+                //清空标签
+                productDao.delProductParamByPId(product.getProductId());
+                ProductParam productParam = new ProductParam();
+                productParam.setProductId(product.getProductId());
+                for (Integer paramId: productUpdDto.getParamIdList()) {
+                    productParam.setValueId(paramId);
+                    //添加标签
+                    productDao.addProductParam(productParam);
+                }
+            }
+        }
+
+        if(productUpdDto.getProductSpecDtoList() != null){
+            if(productUpdDto.getProductSpecDtoList().size() != 0){
+
+                //清空商品规格
+                productDao.delProductSpecByPId(product.getProductId());
+
+                //清空商品图片
+                productDao.delProductImageByPId(product.getProductId());
+
+                ProductSpec productSpec = new ProductSpec();
+                productSpec.setProductId(product.getProductId());
+                for (ProductSpecDto specDto: productUpdDto.getProductSpecDtoList()) {
+                    productSpec.setProductSpecs(specDto.getProductSpecs());
+                    productSpec.setStock(specDto.getStock());
+                    productSpec.setPrice(specDto.getPrice());
+                    //添加规格
+                    productDao.addProductProp(productSpec);
+
+                    if(specDto.getProductImageDtoList() != null){
+                        if(specDto.getProductImageDtoList().size() != 0){
+                            ProductImage productImage = new ProductImage();
+                            productImage.setProductId(product.getProductId());
+                            productImage.setSpecId(productSpec.getSpecId());
+                            for (ProductImageDto productImageDto: specDto.getProductImageDtoList()) {
+
+                                //校验图片是否存在
+                                RsFile rsFile = fileDao.getFileById(productImageDto.getImageUrl());
+
+                                if(rsFile != null){
+                                    //把图片改为已用状态
+                                    fileDao.updFile(productImageDto.getImageUrl());
+
+                                    productImage.setImageDesc(productImageDto.getImageDesc());
+                                    productImage.setIsMaster(productImageDto.getIsMaster());
+                                    productImage.setImageUrl(productImageDto.getImageUrl());
+                                    productImage.setImageOrder(productImageDto.getImageOrder());
+                                    productImage.setImageStatus(productImageDto.getImageStatus());
+
+                                    //添加规格图片
+                                    productDao.addProductPropImage(productImage);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return ResultUtil.success();
     }
 
     @Override
@@ -290,7 +391,7 @@ public class ProductServiceImpl implements ProductService {
     public Result delProductProp(ProductSpec productSpec) {
         try {
 
-            if(productSpec == null || productSpec.getSpecId() == null || productSpec.getShopUserId() == null){
+            if(productSpec == null || productSpec.getSpecId() == null){
                 return ResultUtil.paramError();
             }
 
@@ -319,41 +420,59 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public Result delProduct(Product product) {
+    public Result delProduct(ProductDto productDto) {
         try {
 
-            if(product == null || product.getProductId() == null || product.getShopUserId() == null){
+            if(productDto == null || productDto.getProductIdList() == null){
+                return ResultUtil.paramError();
+            }
+            if(productDto.getProductIdList().length == 0){
                 return ResultUtil.paramError();
             }
 
-            Product product1 = productDao.getProductById(product.getProductId());
+            Integer success = 0;
+            String proId = "";
 
-            if(product1 == null){
-                return ResultUtil.dataNoError();
+            for (Integer productId: productDto.getProductIdList()) {
+                Product product1 = productDao.getProductById(productId);
+                if(product1 != null){
+                    if(!product1.getPublishStatus().toString().equals("1")){
+                        //删除商品
+                        productDao.delProduct(productId);
+
+                        //删除规格
+                        productDao.delProductSpecByPId(productId);
+
+                        //删除规格图片信息
+                        productDao.delProductImageByPId(productId);
+
+                        //把购物车和未支付订单当前商品改为失效状态
+                        productDao.updShopCartByPId(productId);
+                        productDao.updOrderByPId(productId);
+                        productDao.updCollectByPId(productId);
+                        //删除商品标签
+                        productDao.delProductParamByPId(productId);
+                        success++;
+                    }else{
+                        if(proId.equals("")){
+                            proId = productId.toString();
+                        }else{
+                            proId = proId + "," + productId.toString();
+                        }
+                    }
+                }else{
+                    if(proId.equals("")){
+                        proId = productId.toString();
+                    }else{
+                        proId = proId + "," + productId.toString();
+                    }
+                }
             }
-
-            if(product1.getPublishStatus().toString().equals("1")){
-                return ResultUtil.error("请先下架该商品在进行删除操作");
+            if(proId.equals("")){
+                return ResultUtil.success("删除成功");
+            }else{
+                return ResultUtil.error("操作完成，删除成功记录数："+success+"，未删除的商品编号为："+proId+"! 请确认商品下架后在进行删除操作");
             }
-
-            //删除商品
-            productDao.delProduct(product.getProductId());
-
-            //删除规格
-            productDao.delProductSpecByPId(product.getProductId());
-
-            //删除规格图片信息
-            productDao.delProductImageByPId(product.getProductId());
-
-
-            //把购物车和未支付订单当前商品改为失效状态
-            productDao.updShopCartByPId(product.getProductId());
-            productDao.updOrderByPId(product.getProductId());
-            productDao.updCollectByPId(product.getProductId());
-            //删除商品标签
-            productDao.delProductParamByPId(product.getProductId());
-
-            return ResultUtil.success("删除成功");
         }catch (Exception e){
             System.out.println("删除商品接口异常"+e.getMessage());
             return ResultUtil.serviceError();
@@ -395,6 +514,7 @@ public class ProductServiceImpl implements ProductService {
             productDao.updProduct(product);
             return ResultUtil.success("上架成功");
         }catch (Exception e){
+            e.printStackTrace();
             System.out.println("上架商品接口异常"+e.getMessage());
             return ResultUtil.serviceError();
         }
@@ -430,10 +550,43 @@ public class ProductServiceImpl implements ProductService {
             //删除商品标签
             productDao.delProductParamByPId(product.getProductId());
 
+            product.setPublishStatus(Byte.parseByte("0"));
+
             productDao.updProduct(product);
             return ResultUtil.success("下架成功");
         }catch (Exception e){
+            e.printStackTrace();
             System.out.println("下架商品接口异常"+e.getMessage());
+            return ResultUtil.serviceError();
+        }
+    }
+
+    @Override
+    @Transactional
+    public Result setProductDiscounts(ProductDto productDto) {
+        try {
+            if(productDto == null || productDto.getProductIdList() == null || productDto.getDiscount() == null){
+                return ResultUtil.paramError();
+            }
+            if(productDto.getProductIdList().length == 0){
+                return ResultUtil.paramError();
+            }
+            if(productDto.getDiscount() <= 0 || productDto.getDiscount() > 100){
+                return ResultUtil.error("折扣率输入有误");
+            }
+
+            Product product = new Product();
+            product.setDisProportion(productDto.getDiscount());
+            for (Integer productId: productDto.getProductIdList()) {
+                //修改折扣
+                product.setProductId(productId);
+                productDao.updProduct(product);
+            }
+
+            return ResultUtil.success("设置完成");
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println("设置商品折扣接口异常"+e.getMessage());
             return ResultUtil.serviceError();
         }
     }
@@ -442,11 +595,12 @@ public class ProductServiceImpl implements ProductService {
     public Result getProductList(ProductDto productDto) {
         try {
 
-            if(productDto == null || productDto.getPageNo() == null || productDto.getPageSize() == null || productDto.getSorting() == null){
+            if(productDto == null || productDto.getSorting() == null){
                 return ResultUtil.paramError();
             }
-
-            PageHelper.startPage(productDto.getPageNo(),productDto.getPageSize());
+            if(productDto.getPageNo() != null && productDto.getPageSize() != null){
+                PageHelper.startPage(productDto.getPageNo(),productDto.getPageSize());
+            }
 
             PageInfo<Product> page = new PageInfo<>(productDao.getProductListByDto(productDto));
 
@@ -480,6 +634,38 @@ public class ProductServiceImpl implements ProductService {
             return ResultUtil.success(page);
         }catch (Exception e){
             System.out.println("查询商品接口异常"+e.getMessage());
+            return ResultUtil.serviceError();
+        }
+    }
+
+    @Override
+    public Result getTrendProductList(ProductDto productDto) {
+        try {
+            if(productDto.getProductName() == null || productDto.getTaId() == null){
+                return ResultUtil.paramError();
+            }
+
+            List<Product> productList = productDao.getTrendProductListByDto(productDto);
+
+            return ResultUtil.success(productList);
+        }catch (Exception e) {
+            System.out.println("查询商品接口异常" + e.getMessage());
+            return ResultUtil.serviceError();
+        }
+    }
+
+    @Override
+    public Result getAdvertisingProductList(ProductDto productDto) {
+        try {
+            if(productDto.getProductName() == null || productDto.getRaId() == null){
+                return ResultUtil.paramError();
+            }
+
+            List<Product> productList = productDao.getAdvertisingProductList(productDto);
+
+            return ResultUtil.success(productList);
+        }catch (Exception e) {
+            System.out.println("查询商品接口异常" + e.getMessage());
             return ResultUtil.serviceError();
         }
     }
@@ -543,6 +729,7 @@ public class ProductServiceImpl implements ProductService {
             }
             return ResultUtil.success(product);
         }catch (Exception e){
+            e.printStackTrace();
             System.out.println("查询商品接口异常"+e.getMessage());
             return ResultUtil.serviceError();
         }

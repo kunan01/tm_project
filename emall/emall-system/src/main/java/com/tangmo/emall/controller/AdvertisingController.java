@@ -42,7 +42,7 @@ public class AdvertisingController extends BizBaseController {
             @ApiImplicitParam(name="pageNo",value="页码",dataType="int",required=true,paramType="query"),
             @ApiImplicitParam(name="pageSize",value="条数",dataType="int",required=true,paramType="query")
     })
-    @UserLoginToken
+//    @UserLoginToken
     @GetMapping("/getAdvertisingList")
     public Result getAdvertisingList(Integer pageNo,Integer pageSize) {
         return advertisingService.getAdvertisingList(pageNo,pageSize);
@@ -81,6 +81,9 @@ public class AdvertisingController extends BizBaseController {
      *                  {
      *                      raId:"广告id" （必填）
      *                      advertisingImage:"广告图片" （可选）
+     *                      descript:"描述语"（可选）
+     *                      title:"标题"（可选）
+     *                      productId:"商品id"（可选）
      *                  }
      * @apiSuccess (success) {POST} code  0:请求成功;
      * @apiSuccessExample {json} 返回样例:
@@ -164,14 +167,10 @@ public class AdvertisingController extends BizBaseController {
      *                       }
      */
     @ApiOperation(value="添加热门活动广告商品",notes="添加热门活动广告商品")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="raId",value="热门活动广告id",dataType="int",required=true,paramType="query"),
-            @ApiImplicitParam(name="productId",value="商品id",dataType="int",required=true,paramType="query")
-    })
     @UserLoginToken
     @PostMapping("/addAdvertisingProduct")
-    public Result addAdvertisingProduct(Integer raId,Integer productId) {
-        return advertisingService.addAdvertisingProduct(raId,productId);
+    public Result addAdvertisingProduct(@RequestBody Recommend recommend) {
+        return advertisingService.addAdvertisingProduct(recommend);
     }
 
     /**

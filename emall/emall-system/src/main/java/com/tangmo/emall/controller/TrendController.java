@@ -162,8 +162,6 @@ public class TrendController extends BizBaseController {
      * @apiGroup Trend
      * @apiVersion 0.0.1
      * @apiDescription 添加趋势商品
-     * @apiParam {Integer} taId 趋势id
-     * @apiParam {Integer} productId 商品id
      * @apiParamExample {json} 请求样例：
      *          /trend/addTrendProduct?taId=1&productId=1
      * @apiSuccess (success) {POST} code  0:请求成功;
@@ -175,14 +173,10 @@ public class TrendController extends BizBaseController {
      *                       }
      */
     @ApiOperation(value="添加趋势商品",notes="添加趋势商品")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="taId",value="趋势id",dataType="int",required=true,paramType="query"),
-            @ApiImplicitParam(name="productId",value="商品id",dataType="int",required=true,paramType="query")
-    })
     @UserLoginToken
     @PostMapping("/addTrendProduct")
-    public Result addTrendProduct(Integer taId,Integer productId) {
-        return trendService.addTrendProduct(taId,productId);
+    public Result addTrendProduct(@RequestBody Trend trend) {
+        return trendService.addTrendProduct(trend);
     }
 
     /**
@@ -282,7 +276,7 @@ public class TrendController extends BizBaseController {
             @ApiImplicitParam(name="pageNo",value="页码",dataType="int",required=true,paramType="query"),
             @ApiImplicitParam(name="pageSize",value="条数",dataType="int",required=true,paramType="query")
     })
-    @UserLoginToken
+//    @UserLoginToken
     @GetMapping("/getTrendProductList")
     public Result getTrendProductList(Integer taId,Integer pageNo,Integer pageSize) {
         return trendService.getTrendProductList(taId,pageNo,pageSize);

@@ -6,6 +6,7 @@ import com.tangmo.emall.entity.Product;
 import com.tangmo.emall.entity.ProductParam;
 import com.tangmo.emall.entity.ProductSpec;
 import com.tangmo.emall.entity.dto.ProductDto;
+import com.tangmo.emall.entity.dto.ProductUpdDto;
 import com.tangmo.emall.utils.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -50,15 +51,15 @@ public class ProductController extends BizBaseController {
     @ApiOperation(value="增加商品基本信息",notes="增加商品基本信息")
     @UserLoginToken
     @PostMapping(value = "/addProduct")
-    public Result addProduct(@RequestBody Product product) {
-        return productService.addProduct(product);
+    public Result addProduct(@RequestBody ProductUpdDto productUpdDto) {
+        return productService.addProduct(productUpdDto);
     }
 
     /**
-     * @api {POST} /product/updProduct 修改商品基本信息
+     * @api {POST} /product/updProduct 修改商品信息
      * @apiGroup Product
      * @apiVersion 0.0.1
-     * @apiDescription 修改商品基本信息（修改哪个属性传那个属性，不修改千万不能传，尤其是图片和json）
+     * @apiDescription 修改商品信息
      * @apiParamExample {json} 请求样例:
      *                      {
      *                          productId:"商品id",               (必填)
@@ -83,11 +84,11 @@ public class ProductController extends BizBaseController {
      *                          "data" : "修改成功"
      *                      }
      */
-    @ApiOperation(value="修改商品基本信息",notes="修改商品基本信息")
+    @ApiOperation(value="修改商品信息",notes="修改商品信息")
     @UserLoginToken
     @PostMapping(value = "/updProduct")
-    public Result updProduct(@RequestBody Product product) {
-        return productService.updProduct(product);
+    public Result updProduct(@RequestBody ProductUpdDto productUpdDto) {
+        return productService.updProduct(productUpdDto);
     }
 
     /**
@@ -213,8 +214,7 @@ public class ProductController extends BizBaseController {
      * @apiDescription 删除商品
      * @apiParamExample {json} 请求样例:
      *                      {
-     *                          productId:"商品id",
-     *                          shopUserId:"店铺工作人员id"
+     *                          productIdList:"商品id,数组",
      *                      }
      * @apiSuccess (success) {POST} 0:请求成功;
      * @apiSuccess (success) {POST} data 返回数据
@@ -225,11 +225,11 @@ public class ProductController extends BizBaseController {
      *                          "data" : "删除成功"
      *                      }
      */
-    @ApiOperation(value="删除商品",notes="删除商品")
+    @ApiOperation(value="批量删除删除商品",notes="批量删除删除商品")
     @UserLoginToken
     @PostMapping(value = "/delProduct")
-    public Result delProduct(@RequestBody Product product) {
-        return productService.delProduct(product);
+    public Result delProduct(@RequestBody ProductDto productDto) {
+        return productService.delProduct(productDto);
     }
 
     /**
@@ -282,6 +282,32 @@ public class ProductController extends BizBaseController {
     @PostMapping(value = "/theShelvesProduct")
     public Result theShelvesProduct(@RequestBody Product product) {
         return productService.theShelvesProduct(product);
+    }
+
+    /**
+     * @api {POST} /product/setProductDiscounts 设置商品折扣
+     * @apiGroup Product
+     * @apiVersion 0.0.1
+     * @apiDescription 设置商品折扣
+     * @apiParamExample {json} 请求样例:
+     *                  {
+     *                       productIdList:"商品主键id，数组",
+     *                       discount:"折扣率"
+     *                  }
+     * @apiSuccess (success) {POST} 0:请求成功;
+     * @apiSuccess (success) {POST} data 返回数据
+     * @apiSuccessExample {json} 返回样例:
+     *                      {
+     *                          "code" : "0",
+     *                          "msg"  : "请求成功",
+     *                          "data" : "添加成功"
+     *                      }
+     */
+    @ApiOperation(value="设置商品折扣",notes="设置商品折扣")
+    @UserLoginToken
+    @PostMapping(value = "/setProductDiscounts")
+    public Result setProductDiscounts(@RequestBody ProductDto productDto) {
+        return productService.setProductDiscounts(productDto);
     }
 
     /**
@@ -371,6 +397,56 @@ public class ProductController extends BizBaseController {
     }
 
     /**
+     * @api {POST} /product/getTrendProductList 查询商品
+     * @apiGroup Product
+     * @apiVersion 0.0.1
+     * @apiDescription 查询商品
+     * @apiParamExample {json} 请求样例:
+     *      /product/getTrendProductList
+     * @apiSuccess (success) {POST} 0:请求成功;
+     * @apiSuccess (success) {POST} data 返回数据
+     * @apiSuccessExample {json} 返回样例:
+     *                      {
+     *                          "code" : "0",
+     *                          "msg"  : "请求成功",
+     *                          "data" : {
+     *
+     *                          }
+     *                      }
+     */
+    @ApiOperation(value="筛选趋势商品",notes="筛选趋势商品")
+    @UserLoginToken
+    @PostMapping(value = "/getTrendProductList")
+    public Result getTrendProductList(@RequestBody ProductDto productDto) {
+        return productService.getTrendProductList(productDto);
+    }
+
+    /**
+     * @api {POST} /product/getAdvertisingProductList 筛选活动商品
+     * @apiGroup Product
+     * @apiVersion 0.0.1
+     * @apiDescription 筛选活动商品
+     * @apiParamExample {json} 请求样例:
+     *      /product/getTrendProductList
+     * @apiSuccess (success) {POST} 0:请求成功;
+     * @apiSuccess (success) {POST} data 返回数据
+     * @apiSuccessExample {json} 返回样例:
+     *                      {
+     *                          "code" : "0",
+     *                          "msg"  : "请求成功",
+     *                          "data" : {
+     *
+     *                          }
+     *                      }
+     */
+    @ApiOperation(value="筛选活动商品",notes="筛选活动商品")
+    @UserLoginToken
+    @PostMapping(value = "/getAdvertisingProductList")
+    public Result getAdvertisingProductList(@RequestBody ProductDto productDto) {
+        return productService.getAdvertisingProductList(productDto);
+    }
+
+    /**
      * @api {GET} /product/getProductListById 通过商品id查询商品详细信息
      * @apiGroup Product
      * @apiVersion 0.0.1
@@ -437,7 +513,7 @@ public class ProductController extends BizBaseController {
      *                          }
      *                      }
      */
-    @ApiOperation(value="查询商品",notes="查询商品")
+    @ApiOperation(value="查询商品详情",notes="查询商品详情")
     @ApiImplicitParams({
             @ApiImplicitParam(name="productId",value="商品id",dataType="String",required=true,paramType="query")
     })

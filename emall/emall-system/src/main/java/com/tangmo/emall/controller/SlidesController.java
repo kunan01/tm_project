@@ -157,7 +157,7 @@ public class SlidesController extends BizBaseController {
             @ApiImplicitParam(name="pageNo",value="页码",dataType="int",required=true,paramType="query"),
             @ApiImplicitParam(name="pageSize",value="条数",dataType="int",required=true,paramType="query")
     })
-    @UserLoginToken
+//    @UserLoginToken
     @GetMapping(value = "/getSlidesList")
     public Result getSlidesList(Integer pageNo,Integer pageSize) {
         return slidesService.getSlidesList(pageNo,pageSize);

@@ -1,5 +1,6 @@
 package com.tangmo.emall.entity;
 
+import com.github.pagehelper.PageInfo;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -26,6 +27,8 @@ public class TrendAdvertising implements Serializable {
     //创建时间
     private String createdTime;
 
+    private String[] imageIdList;
+
     private String[] images;
 
     public void setAdvertisingImage(String advertisingImage) {
@@ -36,4 +39,5 @@ public class TrendAdvertising implements Serializable {
     }
 
     private Integer[] taIdList;
+
 }

@@ -42,11 +42,9 @@ public class TrendServiceImpl implements TrendService {
     public Result getTrendList(Integer pageNo,Integer pageSize) {
         try {
 
-            if(pageNo == null || pageSize == null){
-                return ResultUtil.paramError();
+            if(pageNo != null && pageSize != null){
+                PageHelper.startPage(pageNo,pageSize);
             }
-
-            PageHelper.startPage(pageNo,pageSize);
 
             PageInfo<TrendAdvertising> pageInfo = new PageInfo<>(trendDao.getTrendList());
 
@@ -82,21 +80,34 @@ public class TrendServiceImpl implements TrendService {
                 }
             }
 
-            if(trendAdvertising.getAdvertisingImage() != null){
+            if(trendAdvertising.getImageIdList() != null){
+                if(trendAdvertising.getImageIdList().length != 0){
 
-                if(!trendAdvertising.getAdvertisingImage().equals(trendAdvertising1.getAdvertisingImage())){
-                    //校验图片
-                    RsFile rsFile = fileDao.getFileById(trendAdvertising.getAdvertisingImage());
+                    String imgs = "";
 
-                    if(rsFile == null){
-                        return ResultUtil.imgError();
+                    for (String img1: trendAdvertising1.getImages()) {
+                        fileDao.updFileD(img1);
                     }
 
-                    //删除原有图片
-                    fileDao.delFile(trendAdvertising1.getAdvertisingImage());
+                    for (String img: trendAdvertising.getImageIdList()) {
 
-                    //修改图片为已用状态
-                    fileDao.updFile(trendAdvertising.getAdvertisingImage());
+                        //校验图片
+                        RsFile rsFile = fileDao.getFileById(img);
+
+                        if(rsFile == null){
+                            return ResultUtil.imgError();
+                        }
+
+                        //修改图片为已用状态
+                        fileDao.updFile(img);
+
+                        if(imgs.equals("")){
+                            imgs = img;
+                        }else{
+                            imgs = imgs + "," +img;
+                        }
+                    }
+                    trendAdvertising.setAdvertisingImage(imgs);
                 }
             }
 
@@ -239,32 +250,49 @@ public class TrendServiceImpl implements TrendService {
 
     @Override
     @Transactional
-    public Result addTrendProduct(Integer taId, Integer productId) {
+    public Result addTrendProduct(Trend trend) {
         try {
-            if(taId == null || productId == null){
+            if(trend == null || trend.getTaId() == null || trend.getProductIdList() == null){
+                return ResultUtil.paramError();
+            }
+            if(trend.getProductIdList().length == 0){
                 return ResultUtil.paramError();
             }
 
             //校验趋势是否存在
-            TrendAdvertising trendAdvertising1 = trendDao.getTrendById(taId);
+            TrendAdvertising trendAdvertising1 = trendDao.getTrendById(trend.getTaId());
             if(trendAdvertising1 == null){
                 return ResultUtil.dataNoError();
             }
 
-            //校验商品是否存在
-            Product product = productDao.getProductById(productId);
-            if(product == null){
-                return ResultUtil.paramError();
+            Trend trend1 = new Trend();
+            trend1.setTaId(trend.getTaId());
+            int i = 0;
+            int j = 0;
+            String name = "";
+            for (Integer productId: trend.getProductIdList()) {
+                //校验商品是否存在
+                Product product = productDao.getProductById(productId);
+                if(product != null){
+                    j++;
+                    trend1.setProductId(productId);
+                    //添加趋势商品
+                    trendDao.addTrendProduct(trend1);
+                }else{
+                    i++;
+                    if(name.equals("")){
+                        name = product.getProductName();
+                    }else{
+                        name = name+","+product.getProductName();
+                    }
+                }
+            }
+            if(i == 0){
+                return ResultUtil.success("添加成功");
+            }else{
+                return ResultUtil.error("成功添加"+j+"个商品，添加异常"+i+"个商品，异常商品名为："+name);
             }
 
-            Trend trend = new Trend();
-            trend.setTaId(taId);
-            trend.setProductId(productId);
-
-            //添加趋势商品
-            trendDao.addTrendProduct(trend);
-
-            return ResultUtil.success("添加成功");
         }catch (Exception e){
             System.out.println("添加趋势商品接口异常"+e.getMessage());
             return ResultUtil.serviceError();

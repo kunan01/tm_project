@@ -3,13 +3,12 @@ package com.tangmo.emall.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.util.StringUtil;
 import com.tangmo.emall.dao.AdvertisingDao;
+import com.tangmo.emall.dao.CateGoryDao;
 import com.tangmo.emall.dao.FileDao;
 import com.tangmo.emall.dao.ProductDao;
-import com.tangmo.emall.entity.Product;
-import com.tangmo.emall.entity.Recommend;
-import com.tangmo.emall.entity.RecommendAdvertising;
-import com.tangmo.emall.entity.RsFile;
+import com.tangmo.emall.entity.*;
 import com.tangmo.emall.service.AdvertisingService;
 import com.tangmo.emall.utils.Result;
 import com.tangmo.emall.utils.ResultUtil;
@@ -34,6 +33,9 @@ public class AdvertisingServiceImpl implements AdvertisingService {
     @Resource
     private ProductDao productDao;
 
+    @Resource
+    private CateGoryDao cateGoryDao;
+
     @Autowired
     private JedisUtil.Keys jedisKeys;
 
@@ -50,10 +52,21 @@ public class AdvertisingServiceImpl implements AdvertisingService {
 
             PageHelper.startPage(pageNo,pageSize);
 
-            PageInfo<RecommendAdvertising> page = new PageInfo<>(advertisingDao.getAdvertisingList());
+            List<RecommendAdvertising> recommendAdvertisingList = advertisingDao.getAdvertisingList();
+            for (RecommendAdvertising recommend: recommendAdvertisingList) {
+                if(recommend.getLocation().toString().equals("5") || recommend.getLocation().toString().equals("6")){
+                    Product product = productDao.getProductById(recommend.getProductId());
+                    if(product != null){
+                        recommend.setProduct(product);
+                    }
+                }
+            }
+
+            PageInfo<RecommendAdvertising> page = new PageInfo<>(recommendAdvertisingList);
 
             return ResultUtil.success(page);
         }catch (Exception e){
+            e.printStackTrace();
             System.out.println("获取热门活动广告接口异常"+e.getMessage());
             return ResultUtil.serviceError();
         }
@@ -111,29 +124,36 @@ public class AdvertisingServiceImpl implements AdvertisingService {
                 return ResultUtil.dataNoError();
             }
 
-            if(recommendAdvertising.getAdvertisingImage() == null || recommendAdvertising.getAdvertisingImage().equals("")){
-                return ResultUtil.success("修改成功");
-            }
+            if(!StringUtil.isEmpty(recommendAdvertising.getAdvertisingImage())){
+                if(!recommendAdvertising1.getAdvertisingImage().equals(recommendAdvertising.getAdvertisingImage())){
+                    //校验图片
+                    RsFile rsFile = fileDao.getFileById(recommendAdvertising.getAdvertisingImage());
 
-            if(!recommendAdvertising.getAdvertisingImage().equals(recommendAdvertising1.getAdvertisingImage())){
-                //校验图片
-                RsFile rsFile = fileDao.getFileById(recommendAdvertising.getAdvertisingImage());
+                    if(rsFile == null){
+                        return ResultUtil.imgError();
+                    }
+                    //删除原有图片
+                    fileDao.delFile(recommendAdvertising1.getAdvertisingImage());
 
-                if(rsFile == null){
-                    return ResultUtil.imgError();
+                    //修改图片为已用状态
+                    fileDao.updFile(recommendAdvertising.getAdvertisingImage());
                 }
 
-                //删除原有图片
-                fileDao.delFile(recommendAdvertising1.getAdvertisingImage());
+            }
 
-                //修改图片为已用状态
-                fileDao.updFile(recommendAdvertising.getAdvertisingImage());
+            RecommendAdvertising advertising = new RecommendAdvertising();
+            advertising.setRaId(recommendAdvertising1.getRaId());
+            advertising.setAdvertisingImage(recommendAdvertising.getAdvertisingImage());
+
+            if(recommendAdvertising1.getLocation().toString().equals("5") || recommendAdvertising1.getLocation().toString().equals("6")){
+                advertising.setProductId(recommendAdvertising.getProductId());
             }else{
-                return ResultUtil.success("修改成功");
+                advertising.setTitle(recommendAdvertising.getTitle());
+                advertising.setDescript(recommendAdvertising.getDescript());
             }
 
             //修改活动广告
-            advertisingDao.updateAdvertising(recommendAdvertising);
+            advertisingDao.updateAdvertising(advertising);
 
             //清理缓存
             String key = "AdvertisingList";
@@ -231,32 +251,49 @@ public class AdvertisingServiceImpl implements AdvertisingService {
 
     @Override
     @Transactional
-    public Result addAdvertisingProduct(Integer raId,Integer productId) {
+    public Result addAdvertisingProduct(Recommend recommend) {
         try {
 
-            if(raId == null || productId == null){
+            if(recommend == null || recommend.getProductIdList() == null || recommend.getRaId() == null){
+                return ResultUtil.paramError();
+            }
+            if(recommend.getProductIdList().length == 0){
                 return ResultUtil.paramError();
             }
 
             //校验广告
-            RecommendAdvertising advertising = advertisingDao.getAdvertisingById(raId);
+            RecommendAdvertising advertising = advertisingDao.getAdvertisingById(recommend.getRaId());
             if(advertising == null){
                 return ResultUtil.dataNoError();
             }
+            Recommend recommend1 = new Recommend();
 
-            //校验商品
-            Product product = productDao.getProductById(productId);
-            if(product == null){
-                return ResultUtil.dataNoError();
+            recommend1.setRaId(recommend.getRaId());
+
+            int i = 0;
+            int j = 0;
+            String name = "";
+            for (Integer productId: recommend.getProductIdList()) {
+                //校验商品
+                Product product = productDao.getProductById(productId);
+                if(product != null){
+                    i++;
+                    recommend1.setProductId(productId);
+                    advertisingDao.addAdvertisingProduct(recommend1);
+                }else{
+                    j++;
+                    if(name.equals("")){
+                        name = product.getProductName();
+                    }else{
+                        name = name + product.getProductName();
+                    }
+                }
             }
-
-            Recommend recommend = new Recommend();
-            recommend.setRaId(raId);
-            recommend.setProductId(productId);
-
-            advertisingDao.addAdvertisingProduct(recommend);
-
-            return ResultUtil.success("添加成功");
+            if(j == 0){
+                return ResultUtil.success("添加成功");
+            }else{
+                return ResultUtil.error("成功添加"+i+"个商品，添加异常"+j+"个商品，异常商品名为："+name);
+            }
         }catch (Exception e){
             System.out.println("添加热门活动广告接口异常"+e.getMessage());
             return ResultUtil.serviceError();
@@ -356,9 +393,9 @@ public class AdvertisingServiceImpl implements AdvertisingService {
             if(raId == null || pageNo == null || pageSize == null){
                 return ResultUtil.paramError();
             }
-            List<Product> products = productDao.getProductByRaId(raId);
 
             PageHelper.startPage(pageNo,pageSize);
+            List<Product> products = productDao.getProductByRaId(raId);
 
             PageInfo<Product> page = new PageInfo<>(products);
             return ResultUtil.success(page);

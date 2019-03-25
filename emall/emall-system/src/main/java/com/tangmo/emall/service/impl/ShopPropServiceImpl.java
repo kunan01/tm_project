@@ -287,6 +287,24 @@ public class ShopPropServiceImpl implements ShopPropService {
     }
 
     @Override
+    public Result queryPropList() {
+        try {
+
+            List<PropKey> propKeys = shopPropDao.getPropKeyByShopIdAndCId(1);
+            if(propKeys != null){
+                for (PropKey propkey :propKeys) {
+                    propkey.setValueList(shopPropDao.getPropValueByKeyId(propkey.getKeyId()));
+                }
+            }
+
+            return ResultUtil.success(propKeys);
+        }catch (Exception e){
+            System.out.println("获取value集合接口异常"+e.getMessage());
+            return ResultUtil.serviceError();
+        }
+    }
+
+    @Override
     @Transactional
     public Result updPropKey(PropKey propKey) {
         try {

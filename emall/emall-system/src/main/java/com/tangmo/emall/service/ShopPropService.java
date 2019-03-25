@@ -33,6 +33,9 @@ public interface ShopPropService {
     //获取value集合
     Result getListValue(Integer keyId,Integer pageNo,Integer pageSize);
 
+    //获取全部规格集合
+    Result queryPropList();
+
     //修改店铺规格key 的属性名称
     Result updPropKey(PropKey propKey);
 

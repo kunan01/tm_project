@@ -22,7 +22,7 @@ public interface TrendService {
     Result batchDelTrend(TrendAdvertising trendAdvertising);
 
     //添加趋势商品
-    Result addTrendProduct(Integer taId,Integer productId);
+    Result addTrendProduct(Trend trend);
 
     //批量添加趋势商品
     Result batchAddTrendProduct(Trend trend);

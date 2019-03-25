@@ -8,9 +8,9 @@
         <version>2.0.3.RELEASE</version>
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>emall</artifactId>
+	<artifactId>emall-system</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>emall</name>
+	<name>emall-system</name>
 	<description>Demo project for Spring Boot</description>
 
     <packaging>jar</packaging>

@@ -35,4 +35,12 @@ public class ProductDto {
     private Integer pageNo;
 
     private Integer pageSize;
+
+    private Integer[] productIdList;
+
+    private Integer discount;
+
+    private Integer taId;
+
+    private Integer raId;
 }

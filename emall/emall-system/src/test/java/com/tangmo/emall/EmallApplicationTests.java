@@ -1,6 +1,7 @@
 package com.tangmo.emall;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.util.StringUtil;
 import com.tangmo.emall.dao.ProductDao;
 import com.tangmo.emall.entity.ProductParam;
 import com.tangmo.emall.entity.ProductSpec;
@@ -25,6 +26,8 @@ public class EmallApplicationTests {
 
 	@Test
 	public void contextLoads() {
+
+        System.out.println(StringUtil.isEmpty("")?null:0);
 
 	}
 

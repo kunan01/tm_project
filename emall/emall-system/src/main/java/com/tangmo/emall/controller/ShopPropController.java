@@ -271,6 +271,34 @@ public class ShopPropController extends BizBaseController {
     }
 
     /**
+     * @api {GET} /shopProp/queryPropList 获取全部规格集合
+     * @apiGroup Prop
+     * @apiVersion 0.0.1
+     * @apiDescription 获取全部规格集合
+     * @apiParamExample {json} 请求样例:
+     *          /shopProp/queryPropList
+     * @apiSuccess (success) {GET} 0:请求成功;
+     * @apiSuccess (success) {GET} data 返回数据
+     * @apiSuccessExample {json} 返回样例:
+     *                      {
+     *                          "code" : "0",
+     *                          "msg"  : "请求成功",
+     *                          "data" : {
+     *                              keyId:"key主键id"
+     *                              keyName:"key属性名"
+     *                              shopId:"店铺id"
+     *                              createdTime:"创建时间"
+     *                          }
+     *                      }
+     */
+    @ApiOperation(value="获取全部规格集合",notes="获取全部规格集合")
+    @UserLoginToken
+    @GetMapping(value = "/queryPropList")
+    public Result queryPropList() {
+        return shopPropService.queryPropList();
+    }
+
+    /**
      * @api {POST} /shopProp/updPropKey 修改店铺规格key 属性名称
      * @apiGroup Prop
      * @apiVersion 0.0.1

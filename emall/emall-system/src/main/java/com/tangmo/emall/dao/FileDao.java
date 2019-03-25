@@ -24,6 +24,9 @@ public interface FileDao {
     //修改图片状态为已用
     int updFile(String fId);
 
+    //修改图片状态为无用
+    int updFileD(String fId);
+
     //更新未使用的图片
     int updateFile();
 }
