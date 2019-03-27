@@ -3,16 +3,13 @@ package com.tangmo.zhygzhglxt.service.Impl;
 import com.github.pagehelper.PageHelper;
 import com.tangmo.zhygzhglxt.dao.*;
 import com.tangmo.zhygzhglxt.entity.*;
-import com.tangmo.zhygzhglxt.entity.dto.TbDriverVerifyDto;
-import com.tangmo.zhygzhglxt.entity.dto.UserDto;
 import com.tangmo.zhygzhglxt.enums.ResultCode;
 import com.tangmo.zhygzhglxt.service.TbDriverVerifyService;
 import com.tangmo.zhygzhglxt.utility.EncryptUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.tangmo.zhygzhglxt.utility.PageInfo;
 import com.tangmo.zhygzhglxt.utility.Result;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -241,7 +238,9 @@ public class TbDriverVerifyServiceImpl implements TbDriverVerifyService {
                             tbOrderRoute.setTm(1478031031);
                         } else {
                             int s = (int) (new Date().getTime() / 1000);
-                            tbOrderRoute.setTm(s - tbOrderRoute1.getTm());
+                            // 上一次记录发送保存时间
+                            int preTime = (int) (tbOrderRoute1.getCreateTime().getTime() / 1000);
+                            tbOrderRoute.setTm(s - preTime);
                         }
                         tbOrderRouteMapper.insertSelective(tbOrderRoute);
                     }

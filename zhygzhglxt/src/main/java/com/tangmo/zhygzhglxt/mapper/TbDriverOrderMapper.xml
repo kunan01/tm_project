@@ -91,6 +91,7 @@
         from tb_driver_order
         where driver_id = #{driverCode,jdbcType=VARCHAR}
         AND flag = "0"
+        order by create_time desc
     </select>
 
     <!--

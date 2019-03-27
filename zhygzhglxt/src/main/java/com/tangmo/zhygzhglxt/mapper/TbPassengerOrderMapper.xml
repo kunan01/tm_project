@@ -717,6 +717,7 @@
         <foreach collection="passegerCodes" open="(" close=")" item="item" index="index" separator=",">
             #{item}
         </foreach>
+        order by creat_time desc
     </select>
 
 
