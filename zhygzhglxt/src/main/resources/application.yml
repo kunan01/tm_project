@@ -8,7 +8,7 @@ server:
 #运用是激活配置文件{application-{key}.yml or application-{key}.properties}
 spring:
   profiles:
-    active: test
+    active: pro
   http:
     encoding:
       force: true
@@ -23,22 +23,22 @@ mybatis:
 
 ---
 #部署服务器需要注释
-spring:
-  profiles: test
-  datasource:
-      url: jdbc:mysql://127.0.0.1:3306/zhygzhglxt?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useSSL=false&allowMultiQueries=true
-      driver-class-name: com.mysql.jdbc.Driver
-      username: root
-      password: root123
+#spring:
+#  profiles: test
+#  datasource:
+#      url: jdbc:mysql://127.0.0.1:3306/zhygzhglxt?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useSSL=false&allowMultiQueries=true
+#      driver-class-name: com.mysql.jdbc.Driver
+#      username: root
+#      password: root123
 
 #部署服务器需要解注释
-#spring:
-#  profiles: pro
-#  datasource:
-#    url: jdbc:mysql://119.3.213.252:3306/zhygzhglxt?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useSSL=false&allowMultiQueries=true
-#    driver-class-name: com.mysql.jdbc.Driver
-#    username: root
-#    password: tangmo
+spring:
+  profiles: pro
+  datasource:
+    url: jdbc:mysql://119.3.213.252:3306/zhygzhglxt?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useSSL=false&allowMultiQueries=true
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: tangmo
 
 logging:
   level:
