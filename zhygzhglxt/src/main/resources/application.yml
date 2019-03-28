@@ -54,6 +54,7 @@ jedis:
       maxWaitMillis: 3000
       testOnBorrow: true
 
+# 静态资源存放路径
 app:
   upload-head-path: D:/zhygzhglxt/apache-tomcat-7.0.62/webapps/static/app/userHead
   upload-identity-path: D:/zhygzhglxt/apache-tomcat-7.0.62/webapps/static/app/identity
@@ -67,3 +68,10 @@ sys:
   upload-food-path: D:/zhygzhglxt/apache-tomcat-7.0.62/webapps/static/sys/food
   upload-privateRoom-path: D:/zhygzhglxt/apache-tomcat-7.0.62/webapps/static/sys/privateRoom
   upload-ueditor-path: D:/zhygzhglxt/apache-tomcat-7.0.62/webapps/static/sys/ueditor
+
+# app 客户端存放路径
+RF:
+  BASE_DIR: D:/zhygzhglxt
+# 日志存放路径
+PATH:
+  LOG: D:/zhygzhglxt/log

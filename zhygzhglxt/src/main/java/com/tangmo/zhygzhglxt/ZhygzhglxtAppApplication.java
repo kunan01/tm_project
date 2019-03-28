@@ -12,7 +12,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @ServletComponentScan
 @MapperScan("com.tangmo.zhygzhglxt.dao")
-@PropertySource(value = {"classpath:prop/path.properties"})
 public class ZhygzhglxtAppApplication extends SpringBootServletInitializer {
 
     //部署服务器打成war包需要解注释
