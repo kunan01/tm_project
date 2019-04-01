@@ -35,12 +35,13 @@ public class TbBusController extends BaseController {
     @SuppressWarnings("rawtypes")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageSize", value = "每页几条", dataType = "int", required = false, paramType = "query"),
-            @ApiImplicitParam(name = "pageNo", value = "当前页", dataType = "int", required = false, paramType = "query")
+            @ApiImplicitParam(name = "pageNo", value = "当前页", dataType = "int", required = false, paramType = "query"),
+            @ApiImplicitParam(name = "busType", value = "公交类型", dataType = "String", required = false, paramType = "query")
     })
     @GetMapping("/likeBusByName")
-    public Result likeBusByName(Integer pageSize, Integer pageNo) {
+    public Result likeBusByName(Integer pageSize, Integer pageNo, String busType) {
 
-        return tbBusService.likeBusByName(pageSize, pageNo);
+        return tbBusService.likeBusByName(pageSize, pageNo, busType);
     }
 
     /*

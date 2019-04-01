@@ -48,6 +48,17 @@ public class TbParmController extends BaseController {
     }
 
     /*
+     * 根据类型查询数字参数信息
+     * bus 代表查询公交类型
+     * */
+    @ApiOperation(value = "根据类型查询类别参数信息 ：传 busType 代表查询公交类型", notes = "根据类型查询类别参数信息 busType：传 bus 代表查询公交类型")
+    @SuppressWarnings("rawtypes")
+    @GetMapping("/selBusType")
+    public Result<List<TbParm>> selBusType() {
+        return tbParmService.selBusType();
+    }
+
+    /*
      * 专门为党诚林所写根据类型查询数字参数信息
      *numberType：1查询车辆类型 2投诉类型 3车辆颜色
      * */

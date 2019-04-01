@@ -7,7 +7,7 @@ import com.tangmo.zhygzhglxt.utility.Result;
  */
 public interface TbBusService {
 
-    Result likeBusByName(Integer pageSize, Integer pageNo);
+    Result likeBusByName(Integer pageSize, Integer pageNo, String busType);
 
     Result selBusByTime(String busNumber);
 

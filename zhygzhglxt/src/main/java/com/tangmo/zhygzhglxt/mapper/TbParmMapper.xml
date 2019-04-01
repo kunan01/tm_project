@@ -51,6 +51,13 @@
         where parm_type = #{numberType,jdbcType=VARCHAR} and flag=0
         ORDER BY parm_id DESC
     </select>
+    <select id="selBusType" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_parm
+        where parm_type like CONCAT('%',#{busType},'%')  and flag=0
+        ORDER BY parm_id ASC
+    </select>
 
 
     <!--<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >-->

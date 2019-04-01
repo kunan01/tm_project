@@ -19,13 +19,15 @@
         <result column="flag" property="flag" jdbcType="VARCHAR"/>
         <result column="winter_start_time" property="winterStartTime" jdbcType="VARCHAR"/>
         <result column="winter_end_time" property="winterEndTime" jdbcType="VARCHAR"/>
+        <result column="bus_type" property="busType" jdbcType="VARCHAR"/>
+        <result column="parm_name" property="parmName" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
         <!--
           列名
         -->
         bus_id, bus_code, bus_name, bus_number, bus_start_time, bus_end_time, bus_price,
-        distance, route_codes, create_time, update_time, flag ,winter_start_time, winter_end_time
+        distance, route_codes, create_time, update_time, flag ,winter_start_time, winter_end_time, bus_type
     </sql>
 
     <!--
@@ -56,11 +58,17 @@
      -->
     <select id="likeBusByName" resultMap="BaseResultMap">
         select
-        bus_id, bus_code, bus_name, bus_number, bus_start_time, bus_end_time, bus_price,
-        distance, route_codes, create_time, update_time,winter_start_time, winter_end_time
-        from tb_bus
-        where flag = '0'
-        ORDER BY create_time DESC
+        t.bus_id, t.bus_code, t.bus_name, t.bus_number, t.bus_start_time, t.bus_end_time, t.bus_price,
+        t.distance, t.route_codes, t.create_time, t.update_time,t.winter_start_time, t.winter_end_time,
+        t.bus_type, p.parm_name
+        from tb_bus t
+        left join tb_parm p
+        on t.bus_type = p.parm_type
+        where t.flag = '0'
+        <if test="busType != null and busType != ''">
+          and t.bus_type = #{busType}
+        </if>
+        ORDER BY t.create_time DESC
         limit #{pageNo},#{pageSize}
     </select>
 

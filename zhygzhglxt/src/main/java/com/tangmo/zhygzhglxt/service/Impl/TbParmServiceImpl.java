@@ -36,6 +36,12 @@ public class TbParmServiceImpl implements TbParmService {
     }
 
     @Override
+    public Result selBusType() {
+        String busType = "busType";
+        return new Result(ResultCode.SUCCESS, tbParmMapper.selBusType(busType));
+    }
+
+    @Override
     public Result selParmById(String parmId) {
         return new Result(ResultCode.SUCCESS, tbParmMapper.selectByPrimaryKey(parmId));
     }

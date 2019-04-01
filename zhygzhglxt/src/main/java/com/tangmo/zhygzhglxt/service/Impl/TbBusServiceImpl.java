@@ -47,9 +47,9 @@ public class TbBusServiceImpl implements TbBusService {
     private JedisUtil.Strings jedisStrings;
 
     @Override
-    public Result likeBusByName(Integer pageSize, Integer pageNo) {
+    public Result likeBusByName(Integer pageSize, Integer pageNo, String busType) {
 
-        List<TbBus> tbBuses = tbBusMapper.likeBusByName(pageSize, (pageNo - 1) * pageSize); //查询公交车
+        List<TbBus> tbBuses = tbBusMapper.likeBusByName(pageSize, (pageNo - 1) * pageSize, busType); //查询公交车
 
         List<TbBus> tbBusList = new ArrayList<>();
         if (tbBuses != null && tbBuses.size() > 0) {
@@ -63,7 +63,7 @@ public class TbBusServiceImpl implements TbBusService {
                             String[] str = tbRoute.getRouteName().split("-");
                             tbRoute.setRouteNameStart(str[0]);
                             tbRoute.setRouteNameEnd(str[1]);
-                            TbBus tbBus = new TbBus(tbBuses.get(j).getBusId(), tbBuses.get(j).getBusCode(), tbBuses.get(j).getBusName(), tbBuses.get(j).getBusNumber(), tbBuses.get(j).getBusStartTime(), tbBuses.get(j).getBusEndTime(), tbBuses.get(j).getBusPrice(), tbBuses.get(j).getDistance(), tbBuses.get(j).getRouteCodes(), tbBuses.get(j).getCreateTime(), tbBuses.get(j).getUpdateTime(), tbRoute);
+                            TbBus tbBus = new TbBus(tbBuses.get(j).getBusId(), tbBuses.get(j).getBusCode(), tbBuses.get(j).getBusName(), tbBuses.get(j).getBusNumber(), tbBuses.get(j).getBusStartTime(), tbBuses.get(j).getBusEndTime(), tbBuses.get(j).getBusPrice(), tbBuses.get(j).getDistance(), tbBuses.get(j).getRouteCodes(), tbBuses.get(j).getCreateTime(), tbBuses.get(j).getUpdateTime(), tbBuses.get(j).getBusType(), tbBuses.get(j).getParmName(), tbRoute);
                             tbBusList.add(tbBus);
                         }
                     }

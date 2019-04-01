@@ -108,11 +108,17 @@ public class TbBus {
     @ApiModelProperty(value = "冬季公交车末班时间")
     private String winterEndTime;
 
+    @ApiModelProperty(value = "公交类型 busType_0-城市公交 busType_1-城乡公交 busType_2-专线")
+    private String busType;
+
+    @ApiModelProperty(value = "公交类型名称")
+    private String parmName;
+
     public TbBus() {
 
     }
 
-    public TbBus(String busId, String busCode, String busName, String busNumber, String busStartTime, String busEndTime, String busPrice, BigDecimal distance, String routeCodes, String createTime, String updateTime, TbRoute tbRoute) {
+    public TbBus(String busId, String busCode, String busName, String busNumber, String busStartTime, String busEndTime, String busPrice, BigDecimal distance, String routeCodes, String createTime, String updateTime, String busType, String parmName, TbRoute tbRoute) {
         this.busId = busId;
         this.busCode = busCode;
         this.busName = busName;
@@ -124,6 +130,8 @@ public class TbBus {
         this.routeCodes = routeCodes;
         this.createTime = createTime;
         this.updateTime = updateTime;
+        this.busType = busType;
+        this.parmName = parmName;
         this.tbRoute = tbRoute;
     }
 
@@ -261,6 +269,22 @@ public class TbBus {
 
     public void setFlag(String flag) {
         this.flag = flag == null ? null : flag.trim();
+    }
+
+    public String getBusType() {
+        return busType;
+    }
+
+    public void setBusType(String busType) {
+        this.busType = busType;
+    }
+
+    public String getParmName() {
+        return parmName;
+    }
+
+    public void setParmName(String parmName) {
+        this.parmName = parmName;
     }
 
     @Override

@@ -35,7 +35,7 @@ public interface TbBusMapper {
     /**
      * 模糊查询公交车（可根据公交车的名称查询，或者公交车牌号查询）
      */
-    List<TbBus> likeBusByName(@Param("pageSize") Integer pageSize, @Param("pageNo") Integer pageNo);
+    List<TbBus> likeBusByName(@Param("pageSize") Integer pageSize, @Param("pageNo") Integer pageNo, @Param("busType") String busType);
 
 
     /**

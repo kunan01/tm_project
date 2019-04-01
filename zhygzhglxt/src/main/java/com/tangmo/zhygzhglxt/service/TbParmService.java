@@ -24,6 +24,11 @@ public interface TbParmService {
      * */
     Result selParmByType(String numberType);
 
+    /*
+     * 根据类别参数查询公交类型
+     * */
+    Result selBusType();
+
     /**
      * 根据类别参数id查询信息
      */
