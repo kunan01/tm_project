@@ -10,6 +10,7 @@ import com.tangmo.zhygzhglxt.utility.EncryptUtil;
 import com.tangmo.zhygzhglxt.utility.OrderRelated;
 import com.tangmo.zhygzhglxt.utility.PageInfo;
 import com.tangmo.zhygzhglxt.utility.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ import java.util.*;
  * Created by chengge on 2018/10/24.
  */
 @Service
+@Slf4j
 public class TbPassengerOrderServiceImpl implements TbPassengerOrderService {
 
     @Autowired
@@ -119,6 +121,7 @@ public class TbPassengerOrderServiceImpl implements TbPassengerOrderService {
         tbPassengerOrder.setOrderCode(orderCode);//设置订单唯一标识
         tbPassengerOrder.setOrderId(EncryptUtil.get32Uuid());//设置订单主键
         tbPassengerOrder.setOrderNumber(OrderRelated.getOrderIdByUUId());//设置订单编号
+        log.info("生成的乘客订单编号：{}",tbPassengerOrder.getOrderNumber());
         if (tbPassengerOrder.getAppointmentTime() == null || "".equals(tbPassengerOrder.getAppointmentTime())) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             tbPassengerOrder.setAppointmentTime(sdf.format(new Date()));

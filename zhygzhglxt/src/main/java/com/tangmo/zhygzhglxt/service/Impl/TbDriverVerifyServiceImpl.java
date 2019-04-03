@@ -8,6 +8,7 @@ import com.tangmo.zhygzhglxt.service.TbDriverVerifyService;
 import com.tangmo.zhygzhglxt.utility.EncryptUtil;
 import com.tangmo.zhygzhglxt.utility.PageInfo;
 import com.tangmo.zhygzhglxt.utility.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ import java.util.Map;
  * Created by chengge on 2018/10/23.
  */
 @Service
+@Slf4j
 public class TbDriverVerifyServiceImpl implements TbDriverVerifyService {
 
     @Autowired
@@ -218,9 +220,9 @@ public class TbDriverVerifyServiceImpl implements TbDriverVerifyService {
         if (carLo == null || "".equals(carLo)) {
             return new Result(ResultCode.FAIL, "当前司机的经度不能为空！");
         }
-
+        log.info("实时更新司机经纬度司机code：{}，经度：{} ， 维度： {}， 司机订单编码：{}", userCode, carLo, carLa, driverOrderCode);
         int a = tbDriverVerifyMapper.updateCarLaLo(userCode, carLa, carLo);
-
+        log.info("实时更新司机经纬度结果 a ：{}", a);
         if (a > 0) {
             //将订单经纬度存储起来
             TbDriverOrder tbDriverOrder = tbDriverOrderMapper.selectByCode(driverOrderCode);
@@ -240,6 +242,7 @@ public class TbDriverVerifyServiceImpl implements TbDriverVerifyService {
                             int s = (int) (new Date().getTime() / 1000);
                             // 上一次记录发送保存时间
                             int preTime = (int) (tbOrderRoute1.getCreateTime().getTime() / 1000);
+                            log.info("每次更新时间差：{}", preTime);
                             tbOrderRoute.setTm(s - preTime);
                         }
                         tbOrderRouteMapper.insertSelective(tbOrderRoute);
@@ -254,7 +257,7 @@ public class TbDriverVerifyServiceImpl implements TbDriverVerifyService {
 
     @Override
     public Result selCarLaLoByUserCode(String driverUserCode) {
-
+        log.info("根据司机用户的唯一标识获取当前司机的实时的经度纬度,司机唯一标识：{}", driverUserCode);
         if (driverUserCode == null || "".equals(driverUserCode)) {
             return new Result(ResultCode.FAIL, "司机用户的唯一标识不能为空！");
         }
