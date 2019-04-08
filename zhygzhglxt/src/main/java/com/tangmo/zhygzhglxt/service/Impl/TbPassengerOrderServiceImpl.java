@@ -121,7 +121,7 @@ public class TbPassengerOrderServiceImpl implements TbPassengerOrderService {
         tbPassengerOrder.setOrderCode(orderCode);//设置订单唯一标识
         tbPassengerOrder.setOrderId(EncryptUtil.get32Uuid());//设置订单主键
         tbPassengerOrder.setOrderNumber(OrderRelated.getOrderIdByUUId());//设置订单编号
-        log.info("生成的乘客订单编号：{}",tbPassengerOrder.getOrderNumber());
+        // log.info("生成的乘客订单编号：{}",tbPassengerOrder.getOrderNumber());
         if (tbPassengerOrder.getAppointmentTime() == null || "".equals(tbPassengerOrder.getAppointmentTime())) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             tbPassengerOrder.setAppointmentTime(sdf.format(new Date()));
@@ -714,10 +714,21 @@ public class TbPassengerOrderServiceImpl implements TbPassengerOrderService {
 
         if (tbPassengerOrders != null && tbPassengerOrders.size() > 0) {
             for (TbPassengerOrder tbPassengerOrder : tbPassengerOrders) {
+                // 根据用户的唯一标识查找用户
                 TbSysUser tbSysUser = tbSysUserMapper.selectByCode(tbPassengerOrder.getUserCode());
                 if (tbSysUser != null) {
                     tbPassengerOrder.setUserName(tbSysUser.getUserName());
                 }
+                // 根据乘客订单，查出接单司机信息
+                Map<String, Object> map = tbDriverVerifyMapper.getDriverByPassengerOrder(tbPassengerOrder.getOrderCode());
+                if (map != null) {
+                    tbPassengerOrder.setDriverNumber(map.get("driverNumber").toString());// 司机端订单编号
+                    tbPassengerOrder.setDriverName(map.get("driverName").toString());// 司机姓名
+                    tbPassengerOrder.setDriverPhone(map.get("driverPhone").toString());// 司机手机号
+                    tbPassengerOrder.setCarNumber(map.get("carNumber").toString());// 车牌号
+                    tbPassengerOrder.setCarType(map.get("carType").toString());// 车类型
+                }
+
             }
         }
 

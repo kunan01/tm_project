@@ -1,10 +1,8 @@
 package com.tangmo.zhygzhglxt.dao;
 
 import com.tangmo.zhygzhglxt.entity.TbDriverVerify;
-import com.tangmo.zhygzhglxt.utility.Result;
 import org.apache.ibatis.annotations.Param;
 
-import javax.annotation.security.PermitAll;
 import java.util.List;
 import java.util.Map;
 
@@ -107,6 +105,13 @@ public interface TbDriverVerifyMapper {
      * @return
      */
     List<TbDriverVerify> jtQueryList(@Param("name") String name, @Param("state") String state);
+
+    /**
+     * 根据乘客订单查询司机信息
+     * @param passengerOrder
+     * @return
+     */
+    Map<String, Object> getDriverByPassengerOrder(String passengerOrder);
 
 
 }

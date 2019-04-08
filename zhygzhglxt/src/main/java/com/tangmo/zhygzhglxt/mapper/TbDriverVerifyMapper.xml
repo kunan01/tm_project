@@ -526,6 +526,18 @@
         AND state =#{state}
 
     </select>
+    <select id="getDriverByPassengerOrder" resultType="java.util.Map">
+        select
+        tdo.driver_id as driverId,tdo.driver_order_code as driverNumber,
+        tdv.driver_name as driverName,tdv.phone as driverPhone,tdv.car_number as carNumber,
+        tdv.company as company,tdv.car_type as carType
+        from
+        tb_driver_order tdo
+        left join
+        tb_driver_verify tdv
+        on tdo.driver_id = tdv.driver_userid
+        where tdo.passenger_order_code = #{passengerOrder}
+    </select>
 
 
 </mapper>
