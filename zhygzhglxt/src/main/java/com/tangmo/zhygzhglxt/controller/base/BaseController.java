@@ -71,6 +71,9 @@ public class BaseController {
     @Autowired
     protected TbListenOrderService tbListenOrderService; //监听订单
 
+    @Autowired
+    protected AnalysisService analysisService;// 统计分析模块service
+
 
     /**
      * 得到request对象

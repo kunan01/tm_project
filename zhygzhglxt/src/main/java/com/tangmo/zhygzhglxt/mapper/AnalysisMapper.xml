@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tangmo.zhygzhglxt.dao.AnalysisMapper">
+
+    <select id="getOrderCountByCar" resultType="java.util.Map">
+        select tco.car_number as carNumber, tco.orderCount as orderCount,
+        tdvy.phone as driverPhone, tdvy.driver_name as driverName, tdvy.company as company,
+        tdvy.car_type as carType, date_format(tco.create_time, '%Y-%m-%d') as createTime
+        from(
+        select tmp.car_number,count(*) orderCount,tdo.create_time as create_time FROM
+        (select tdv.driver_userid,tc.car_number FROM tb_car tc
+        left join tb_driver_verify tdv
+        on tc.car_number = tdv.car_number
+        where tdv.state = 1 and tdv.flag = '0'
+        <if test="driverPhone">
+            and tdv.phone = #{driverPhone}
+        </if>
+        <if test="carNumber">
+            and tdv.car_number like CONCAT('%',#{carNumber},'%')
+        </if>
+        ) tmp
+        left join tb_driver_order tdo
+        on tdo.driver_id = tmp.driver_userid
+        where (tdo.driver_order_state = '0' or tdo.driver_order_state = '1')
+        <if test="startTime">
+            and date_format(tdo.create_time, '%Y-%m-%d') >= #{startTime}
+        </if>
+        <if test="endTime">
+            and date_format(tdo.create_time, '%Y-%m-%d') &lt;= #{endTime}
+        </if>
+        group by tmp.car_number
+        ) tco
+        left join tb_driver_verify tdvy
+        on tdvy.car_number = tco.car_number
+        order by tco.create_time desc
+    </select>
+</mapper>
