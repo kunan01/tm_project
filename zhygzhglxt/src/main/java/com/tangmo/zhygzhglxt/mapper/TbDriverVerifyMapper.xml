@@ -537,6 +537,7 @@
         tb_driver_verify tdv
         on tdo.driver_id = tdv.driver_userid
         where tdo.passenger_order_code = #{passengerOrder}
+        limit 0,1
     </select>
 
 

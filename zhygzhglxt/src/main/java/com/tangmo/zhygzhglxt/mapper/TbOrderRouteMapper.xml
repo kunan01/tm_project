@@ -49,13 +49,12 @@
         根据司机订单的唯一标识查询订单路线
       -->
     <select id="selectByDriverOrderCodeOne" resultMap="BaseResultMap" parameterType="java.lang.String">
-
         select
         <include refid="Base_Column_List"/>
         from tb_order_route
         where driver_order_code = #{driverOrderCode,jdbcType=VARCHAR}
         AND flag = "0"
-        ORDER BY create_time ASC
+        ORDER BY create_time DESC
         limit 0,1
     </select>
 
