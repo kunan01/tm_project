@@ -104,7 +104,7 @@ public interface TbPassengerOrderService {
      * @param pageNo     当前页
      * @return
      */
-    Result jtQueryByList(String name, String orderState, String endAbout, Integer pageSize, Integer pageNo);
+    Result jtQueryByList(String name, String orderState, String endAbout, Integer pageSize, Integer pageNo, String startTime, String endTime);
 
     /**
      * 查询指定订单详情

@@ -654,7 +654,6 @@
 
     <!--后台根据查询所有订单（模糊(开始地，结束地),订单状态,预约实时单查询,分页,）-->
     <select id="jtQueryByList" resultMap="BaseResultMap">
-
         SELECT
         <include refid="Base_Column_List"/>
         FROM tb_passenger_order
@@ -667,8 +666,14 @@
         <if test="endAbout != null">
             AND end_about= #{endAbout,jdbcType=VARCHAR}
         </if>
+        <if test="startTime != null and startTime != ''">
+            AND date_format(creat_time,  '%Y-%m-%d') >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            AND date_format(creat_time, '%Y-%m-%d') &lt;= #{endTime}
+        </if>
         AND flag = 0
-
+        ORDER BY creat_time DESC
     </select>
 
     <!--
@@ -687,10 +692,13 @@
         <if test="orderState != null">
             AND order_state = #{orderState,jdbcType=VARCHAR}
         </if>
-        <if test="startDate != null and endDate != null">
-            AND creat_time BETWEEN #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR}
+        <if test="startDate != null and startDate != ''">
+            AND date_format(creat_time,  '%Y-%m-%d') >= #{startDate}
         </if>
-        order by creat_time desc
+        <if test="endDate != null and endDate != ''">
+            AND date_format(creat_time, '%Y-%m-%d') &lt;= #{endDate}
+        </if>
+        ORDER BY creat_time DESC
 
 
     </select>

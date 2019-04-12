@@ -105,13 +105,15 @@ public class TbPassengerOrderController extends BaseController {
             @ApiImplicitParam(name = "name", value = "开始地，结束地", dataType = "string", required = false, paramType = "query"),
             @ApiImplicitParam(name = "orderState", value = "0未接 1已接 2完成 3取消", dataType = "string", required = false, paramType = "query"),
             @ApiImplicitParam(name = "endAbout", value = "0预约  1实时", dataType = "string", required = false, paramType = "query"),
-            @ApiImplicitParam(name = "pageSize", value = "每页几行", dataType = "int", required = false, paramType = "query"),
-            @ApiImplicitParam(name = "pageNo", value = "当前页", dataType = "int", required = false, paramType = "query")
+            @ApiImplicitParam(name = "pageSize", value = "每页几行", dataType = "int", defaultValue = "10", paramType = "query"),
+            @ApiImplicitParam(name = "pageNo", value = "当前页", dataType = "int", defaultValue = "1", paramType = "query"),
+            @ApiImplicitParam(name = "startDate", value = "开始时间（2019-04-07）", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "endDate", value = "结束时间（2019-04-11）", dataType = "String", paramType = "query")
     })
     @GetMapping("/jtQueryByList")
-    public Map jtQueryByList(String name, String orderState, String endAbout, Integer pageSize, Integer pageNo) {
+    public Map jtQueryByList(String name, String orderState, String endAbout, Integer pageSize, Integer pageNo, String startDate, String endDate) {
 
-        Result result = tbPassengerOrderService.jtQueryByList(name, orderState, endAbout, pageSize, pageNo);
+        Result result = tbPassengerOrderService.jtQueryByList(name, orderState, endAbout, pageSize, pageNo, startDate, endDate);
         PageInfo pageInfo = (PageInfo) result.getData();
         Map map = new HashMap();
         map.put("code", result.getCode());
@@ -269,8 +271,8 @@ public class TbPassengerOrderController extends BaseController {
             @ApiImplicitParam(name = "endDate", value = "结束时间2018-12-30", dataType = "string", required = false, paramType = "query"),
             @ApiImplicitParam(name = "orderState", value = "订单状态", dataType = "string", required = false, paramType = "query"),
             @ApiImplicitParam(name = "carNumber", value = "车牌号", dataType = "string", required = false, paramType = "query"),
-            @ApiImplicitParam(name = "pageSize", value = "每页几行", dataType = "int", required = false, paramType = "query"),
-            @ApiImplicitParam(name = "pageNo", value = "当前页", dataType = "int", required = false, paramType = "query")
+            @ApiImplicitParam(name = "pageSize", value = "每页几行", dataType = "int", defaultValue = "10", paramType = "query"),
+            @ApiImplicitParam(name = "pageNo", value = "当前页", dataType = "int", defaultValue = "1", paramType = "query")
     })
     @GetMapping("/selOrderByCountry")
     public Map selOrderByCountry(String name, String startDate, String endDate, String orderState, String carNumber, Integer pageSize, Integer pageNo) {

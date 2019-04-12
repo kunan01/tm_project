@@ -17,17 +17,33 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class AnalysisController extends BaseController {
 
-    @ApiOperation(value = "每辆车每天接单数量统计", notes = "每辆车每天接单数量统计")
+    @ApiOperation(value = "每辆车的接单数量统计（日/月/年）", notes = "每辆车的接单数量统计（日/月/年）")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageNo", value = "当前页码", dataType = "int", defaultValue = "1", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "显示条数", dataType = "int", defaultValue = "10", paramType = "query"),
-            @ApiImplicitParam(name = "startTime", value = "开始时间", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "endTime", value = "结束时间", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "startDate", value = "开始时间(YYYY-MM-DD)", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "endDate", value = "结束时间(YYYY-MM-DD)", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "carNumber", value = "车牌号码", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "driverPhone", value = "车主手机号码", dataType = "String", paramType = "query")
+            @ApiImplicitParam(name = "driverPhone", value = "车主手机号码", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "dateType", value = "日期类型 0-天 1-月 2-年", dataType = "int",defaultValue = "1", paramType = "query")
     })
     @GetMapping("/getOrderCountByCar")
-    public Result getOrderCountByCar(Integer pageNo, Integer pageSize, String startTime, String endTime, String carNumber, String driverPhone){
-        return analysisService.getOrderCountByCar(pageNo, pageSize, startTime, endTime, carNumber, driverPhone);
+    public Result getOrderCountByCar(Integer pageNo, Integer pageSize, String startDate, String endDate, String carNumber, String driverPhone, Integer dateType){
+        return analysisService.getOrderCountByCar(pageNo, pageSize, startDate, endDate, carNumber, driverPhone, dateType);
+    }
+
+    @ApiOperation(value = "每辆车跑的公里数统计（日/月/年）", notes = "每辆车跑的公里数统计（日/月/年）")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNo", value = "当前页码", dataType = "int", defaultValue = "1", paramType = "query"),
+            @ApiImplicitParam(name = "pageSize", value = "显示条数", dataType = "int", defaultValue = "10", paramType = "query"),
+            @ApiImplicitParam(name = "startDate", value = "开始时间(YYYY-MM-DD)", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "endDate", value = "结束时间(YYYY-MM-DD)", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "carNumber", value = "车牌号码", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "driverPhone", value = "车主手机号码", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "dateType", value = "日期类型 0-天 1-月 2-年", dataType = "int",defaultValue = "1", paramType = "query")
+    })
+    @GetMapping("/getTotalKmByCar")
+    public Result getTotalKmByCar(Integer pageNo, Integer pageSize, String startDate, String endDate, String carNumber, String driverPhone, Integer dateType){
+        return analysisService.getTotalKmByCar(pageNo, pageSize, startDate, endDate, carNumber, driverPhone, dateType);
     }
 }

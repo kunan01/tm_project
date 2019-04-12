@@ -468,7 +468,7 @@ public class TbPassengerOrderServiceImpl implements TbPassengerOrderService {
      * @return
      */
     @Override
-    public Result jtQueryByList(String name, String orderState, String endAbout, Integer pageSize, Integer pageNo) {
+    public Result jtQueryByList(String name, String orderState, String endAbout, Integer pageSize, Integer pageNo, String startTime, String endTime) {
 
         if (pageSize != null && pageNo != null) {
             PageHelper.startPage(pageNo, pageSize);
@@ -486,7 +486,7 @@ public class TbPassengerOrderServiceImpl implements TbPassengerOrderService {
             endAbout = null;
         }
 
-        List<TbPassengerOrder> jtQueryByList = tbPassengerOrderMapper.jtQueryByList(name, orderState, endAbout);
+        List<TbPassengerOrder> jtQueryByList = tbPassengerOrderMapper.jtQueryByList(name, orderState, endAbout, startTime, endTime);
         if (jtQueryByList != null && jtQueryByList.size() > 0) {
             for (TbPassengerOrder tbPassengerOrder : jtQueryByList) {
                 TbSysUser tbSysUser = tbSysUserMapper.selectByCode(tbPassengerOrder.getUserCode());
