@@ -699,8 +699,6 @@
             AND date_format(creat_time, '%Y-%m-%d') &lt;= #{endDate}
         </if>
         ORDER BY creat_time DESC
-
-
     </select>
 
     <!--
