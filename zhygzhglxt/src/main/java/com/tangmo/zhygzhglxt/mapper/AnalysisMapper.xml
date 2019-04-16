@@ -8,12 +8,21 @@
         from tb_driver_verify tdv
         left join (
         select tdo.driver_id from tb_driver_order tdo
+        left join tb_passenger_order tpo                    -- 系统验收因为不断假数据问题原因，时间区间暂时根据乘客订单时间查询
+        on tdo.passenger_order_code = tpo.order_code        -- 正式上线在真实数据下将 不需要这里的 left join 这几句, 时间区间根据司机订单时间查询
         where tdo.driver_order_state = '1' and tdo.flag = '0' and tdo.tb_parm_id = '1018'
-        <if test="startDate != null and startDate !=''">
-            and DATE_FORMAT(tdo.create_time, #{dateFormat}) >= #{startDate}
-        </if>
+        <choose>
+            <when test="startDate != null and startDate !='' and (endDate == null or endDate = '')">
+                and DATE_FORMAT(tpo.creat_time, #{dateFormat}) = #{startDate}       -- 正式上线在真实数据下将 tpo.creat_time 改为 tdo.create_time
+            </when>
+            <otherwise>
+                <if test = "startDate != null and startDate !=''">
+                    and DATE_FORMAT(tpo.creat_time, #{dateFormat}) >= #{startDate}
+                </if>
+            </otherwise>
+        </choose>
         <if test="endDate != null and endDate != ''">
-            and DATE_FORMAT(tdo.create_time, #{dateFormat}) &lt;= #{endDate}
+            and DATE_FORMAT(tpo.creat_time, #{dateFormat}) &lt;= #{endDate}
         </if>
         <if test="carNumber != null and carNumber != ''">
             and tdv.car_number = #{carNumber}
@@ -37,11 +46,18 @@
         on tdo.passenger_order_code = tpo.order_code
         where tpo.order_state = '2' and tpo.flag = '0'
         and tdo.driver_order_state = '1' and tdo.flag = '0' and tdo.tb_parm_id = '1018'
-        <if test="startDate != null and startDate !=''">
-            and DATE_FORMAT(tdo.create_time, #{dateFormat}) >= #{startDate}
-        </if>
+        <choose>
+            <when test="startDate != null and startDate !='' and (endDate == null or endDate = '')">    -- 兼容精确查询
+                and DATE_FORMAT(tpo.creat_time, #{dateFormat}) = #{startDate}          -- 正式上线在真实数据下将 tpo.creat_time 改为 tdo.create_time
+            </when>
+            <otherwise>
+                <if test = "startDate != null and startDate !=''">
+                    and DATE_FORMAT(tpo.creat_time, #{dateFormat}) >= #{startDate}
+                </if>
+            </otherwise>
+        </choose>
         <if test="endDate != null and endDate != ''">
-            and DATE_FORMAT(tdo.create_time, #{dateFormat}) &lt;= #{endDate}
+            and DATE_FORMAT(tpo.creat_time, #{dateFormat}) &lt;= #{endDate}
         </if>
         ) tmp
         on tdv.driver_userid = tmp.driver_id
