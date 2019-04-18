@@ -74,4 +74,4 @@ RF:
   BASE_DIR: D:/zhygzhglxt
 # 日志存放路径
 PATH:
-  LOG: D:/zhygzhglxt/log
+  LOG: D:/logs/zhygzhglxt
