@@ -114,6 +114,9 @@ public class TbComplain {
     @ApiModelProperty(value = "车辆颜色")
     private String color;
 
+    @ApiModelProperty(value = "投诉图片")
+    private String imgList;// 投诉图片（多个）
+
     public String getType() {
         return type;
     }
@@ -256,5 +259,13 @@ public class TbComplain {
 
     public void setFlag(String flag) {
         this.flag = flag == null ? null : flag.trim();
+    }
+
+    public String getImgList() {
+        return imgList;
+    }
+
+    public void setImgList(String imgList) {
+        this.imgList = imgList;
     }
 }

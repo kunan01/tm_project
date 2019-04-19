@@ -1,5 +1,6 @@
 package com.tangmo.zhygzhglxt.service.Impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.github.pagehelper.PageHelper;
 import com.tangmo.zhygzhglxt.dao.TbComplainMapper;
 import com.tangmo.zhygzhglxt.dao.TbParmMapper;
@@ -71,7 +72,8 @@ public class TbComplainServiceImpl implements TbComplainService {
                 tbComplain.setColor(tbParmMapper.selectByPrimaryKey(tbComplain.getCarColor()).getParmName());
             }
         }
-        return new Result(ResultCode.SUCCESS, new PageInfo(tbComplains));
+//        return new Result(ResultCode.SUCCESS, new PageInfo(tbComplains));
+        return new Result(ResultCode.SUCCESS, tbComplains);
     }
 
     @Override

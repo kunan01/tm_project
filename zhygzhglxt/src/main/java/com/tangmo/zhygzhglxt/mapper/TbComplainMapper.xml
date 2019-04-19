@@ -21,6 +21,7 @@
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
         <result column="flag" property="flag" jdbcType="VARCHAR"/>
         <result column="user_code" property="userCode" jdbcType="VARCHAR"/>
+        <result column="image_url" property="imgList" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
         <!--
@@ -29,7 +30,7 @@
         -->
         complain_id, complain_code, complain_type, car_num, car_color, driver_name, route_desc,
         departure_time, detail_desc, complain_state, back_desc, remarks, create_time, update_time,
-        flag,user_code
+        flag,user_code,image_url
     </sql>
 
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
@@ -51,7 +52,7 @@
         select
         a.complain_id, a.complain_code,a.complain_type, a.car_num, a.car_color, a.driver_name, a.route_desc,
         a.departure_time, a.detail_desc, a.complain_state, a.back_desc, a.remarks, a.create_time, a.update_time,
-        a.flag,a.user_code,b.parm_name type
+        a.flag,a.user_code,b.parm_name type,a.image_url
         from tb_complain a,tb_parm b
         where a.complain_type = b.parm_id
         AND a.flag = "0"
@@ -73,7 +74,7 @@
         select
         a.complain_id, a.complain_code,a.complain_type, a.car_num, a.car_color, a.driver_name, a.route_desc,
         a.departure_time, a.detail_desc, a.complain_state, a.back_desc, a.remarks, a.create_time, a.update_time,
-        a.flag,a.user_code,b.parm_name type
+        a.flag,a.user_code,b.parm_name type, a.image_url
         from tb_complain a,tb_parm b
         where a.complain_type = b.parm_id
         AND a.complain_code = #{code,jdbcType=VARCHAR}
@@ -171,6 +172,9 @@
             <if test="userCode != null">
                 user_code,
             </if>
+            <if test="imgList != null and imgList != ''">
+                image_url
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="complainId != null">
@@ -216,6 +220,9 @@
             </if>
             <if test="userCode != null">
                 #{userCode,jdbcType=VARCHAR},
+            </if>
+            <if test="imgList != null and imgList != ''">
+                #{imgList,jdbcType=VARCHAR}
             </if>
         </trim>
     </insert>
