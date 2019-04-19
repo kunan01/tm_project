@@ -115,7 +115,7 @@ public class TbComplain {
     private String color;
 
     @ApiModelProperty(value = "投诉图片")
-    private String imgList;// 投诉图片（多个）
+    private String imgList = "";// 投诉图片（多个）
 
     public String getType() {
         return type;
