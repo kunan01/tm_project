@@ -11,6 +11,7 @@ import com.tangmo.zhygzhglxt.utility.*;
 import com.tangmo.zhygzhglxt.utility.foreign.ForeignUtil;
 import com.tangmo.zhygzhglxt.utility.jedis.JedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -45,6 +46,8 @@ public class TbBusServiceImpl implements TbBusService {
 
     @Autowired
     private JedisUtil.Strings jedisStrings;
+
+
 
     @Override
     public Result likeBusByName(Integer pageSize, Integer pageNo, String busType) {
@@ -586,7 +589,6 @@ public class TbBusServiceImpl implements TbBusService {
 
         String loginKey = "";
         if (!jedisKeys.exists("login")) {
-
             return new Result(ResultCode.FAIL, "login不能为空！");
         } else {
             //若存在，则直接从redis里面取出相应数
@@ -659,6 +661,7 @@ public class TbBusServiceImpl implements TbBusService {
     }
 
     @Override
+    @Async("asyncServiceExecutor")
     public Result getLastInfoByImei(String imei) {
 
         String loginKey = "";

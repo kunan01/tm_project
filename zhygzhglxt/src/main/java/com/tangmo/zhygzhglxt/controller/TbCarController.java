@@ -92,5 +92,10 @@ public class TbCarController extends BaseController {
         return tbCarService.selCarByCarNumber(carNumber);
     }
 
+    @ApiOperation("返回所有车辆位置信息")
+    @GetMapping("/getAllCarLocation")
+    public Result getAllCarLocation() {
+        return tbCarService.getAllCarLocation();
+    }
 
 }

@@ -5,12 +5,16 @@ import com.alibaba.fastjson.JSONObject;
 import com.tangmo.zhygzhglxt.dao.TbRouteDetailMapper;
 import com.tangmo.zhygzhglxt.utility.HttpUtils;
 import com.tangmo.zhygzhglxt.utility.sendMsg.HttpUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Date;
 
 /**
  * Created by chengge on 2018/11/27.
  * desc:进行一些对外接口的调用
  */
+@Slf4j
 public class ForeignUtil {
 
     public static final String URL1 = "http://43.247.69.180:11009/get.html?";
@@ -36,22 +40,28 @@ public class ForeignUtil {
         String url = URL1 + info;
         //String url = "{URL}/get.html?{\"commbases\":[{\"id\":1,\"seqno\":2,\"content\":\"{\\\"username\\\":\\\"zhanghao\\\",\\\"password\\\":\\\"mima\\\",\\\"stamp\\\":1528963860732,\\\"srcnodetype\\\": 202,\\\"srcnodeid\\\": 202,\\\"remotenodetype\\\": 114}\"}]}";
         try {
+            Long startTime = new Date().getTime();
+            log.info("开始调用第三方接口: {}", startTime);
             result = HttpUtil.sendGet(url);
-            json = JSONObject.parseObject(result);
-            System.out.println("=======开始输出返回数据=========");
-            System.out.println(json);
-            JSONArray jsonArray = json.getJSONArray("commbases");
-            JSONObject jsonObject = (JSONObject) jsonArray.get(0);
-            JSONObject jsonObject1 = jsonObject.getJSONObject("content");
-            System.out.println("====resultarr===" + jsonObject1.getIntValue("retcode"));
+            log.info("结束调用第三方接口耗时: {}", new Date().getTime()-startTime);
+            System.out.println("=======开始输出返回数据========="+ result);
+            if (result != null) {
+                json = JSONObject.parseObject(result);
+                JSONArray jsonArray = json.getJSONArray("commbases");
+                JSONObject jsonObject = (JSONObject) jsonArray.get(0);
+                JSONObject jsonObject1 = jsonObject.getJSONObject("content");
+                System.out.println("====resultarr===" + jsonObject1.getIntValue("retcode"));
 
-            if (jsonObject1.getIntValue("retcode") == 0) {
-                return jsonObject1;
-            } else {
-                return null;
+                if (jsonObject1.getIntValue("retcode") == 0) {
+                    return jsonObject1;
+                } else {
+                    return null;
+                }
             }
+            return null;
         } catch (Exception e) {
             e.printStackTrace();
+            log.info("调用第三方接口异常: {}",e.getMessage());
             return null;
         }
         // return new Result(ResultCode.SUCCESS,json);

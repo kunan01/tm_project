@@ -18,5 +18,8 @@ public interface TbCarService {
 
     Result selCarByCarNumber(String carNumber);
 
+    // 查询所有车辆的位置（gps中查询）
+    Result getAllCarLocation();
+
 
 }
