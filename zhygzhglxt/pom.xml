@@ -21,7 +21,7 @@
     <properties>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <mysql-connector>5.1.38</mysql-connector>
+        <mysql-connector>8.0.16</mysql-connector>
         <pagehelper-spring-boot-starter>1.2.3</pagehelper-spring-boot-starter>
         <pagehelper>4.1.6</pagehelper>
         <fastjosn>1.2.24</fastjosn>
